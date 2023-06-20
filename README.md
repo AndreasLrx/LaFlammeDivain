@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/AndreasLrx/LaFlammeDivain">
-    <img src="logo.png" alt="Logo" width="350" height="auto">
+    <img src="Assets/Icons/logo.png" alt="Logo" width="350" height="auto">
   </a>
 
 <h3 align="center">La Flamme Divain</h3>
