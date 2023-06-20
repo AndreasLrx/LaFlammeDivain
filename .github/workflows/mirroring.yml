@@ -1,0 +1,28 @@
+# Mirrors the commits of this repo to the Epitech repo
+name: Mirroring
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  epitech_mirror:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # Fetch depth set to 0 means that all commits are to be mirrored
+        lfs: true
+
+    - name: Fetch lfs objects
+      run: |
+        git lfs fetch --all
+
+    - uses: pixta-dev/repository-mirroring-action@v1
+      with:
+        target_repo_url:
+          git@github.com:EpitechMscProPromo2025/T-YEP-600-NAN-6-1-finalproject-enzo.drapron.git
+        ssh_private_key:
+          ${{secrets.EPITECH_MIRROR_SSH_KEY}}
