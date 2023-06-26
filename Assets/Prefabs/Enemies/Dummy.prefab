@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2339356556658307271}
   - component: {fileID: 4557188609176430170}
-  - component: {fileID: 6819832977486650885}
+  - component: {fileID: 7440906974918022532}
   - component: {fileID: 344452906587162988}
   m_Layer: 0
   m_Name: Dummy
@@ -32,7 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4557188609176430170
 MonoBehaviour:
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 10
---- !u!50 &6819832977486650885
+--- !u!50 &7440906974918022532
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -55,7 +55,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6285399730554940182}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -113,7 +113,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 424877953
-  m_SortingLayer: 4
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d35dbd4324b9ea646b18d5dc81d57e14, type: 3}
   m_Color: {r: 0.81960785, g: 0, b: 0.69411767, a: 1}
