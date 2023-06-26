@@ -38,13 +38,19 @@
 
 - Prefer putting detailed informations inside the commit's description.
 
+- Include the issue(s) linked to the commit in the commit description in the following format:
+  - `Linked: #42` if the issue is not closed by the commit. 
+  - `Close #42` if the commit close the issue.
+
 - Example:
 
   ```sh
   $> git commit -m 'Fix infinite loop when pressing Alt-F4
 
   This was caused by a missing check in the event loop
-  The program now checks when the window is set to close'
+  The program now checks when the window is set to close
+
+  Close #42'
   ```
 
 ---
