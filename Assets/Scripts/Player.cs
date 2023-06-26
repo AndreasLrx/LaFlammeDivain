@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
    float moveLimiter = 0.7f;
 
    public float runSpeed = 10.0f;
+   public GameObject wispsGroup;
 
    void Start ()
    {
@@ -22,6 +23,9 @@ public class Player : MonoBehaviour
       // Gives a value between -1 and 1
       horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
       vertical = Input.GetAxisRaw("Vertical"); // -1 is down
+
+      if (Input.GetButtonDown("ActivateWisp"))
+         wispsGroup.GetComponent<WispsGroup>().getSelectedWisp().Activate();
    }
 
    void FixedUpdate()
