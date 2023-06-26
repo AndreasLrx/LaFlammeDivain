@@ -9,10 +9,13 @@ public class BoardManager : MonoBehaviour
     public int columns = 8;
     public int rows = 8;
     public int wallCount = 10;
+    public int enemiesCount = 1;
 
     public GameObject[] outerWallTiles;
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
+    public GameObject enemy;
+    public Player player;
 
     private Transform boardHolder;
     private List<Vector3> gridPositions = new List<Vector3>();
@@ -68,11 +71,28 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    void LayoutEnemiesAtRandom(GameObject enemy)
+    {
+        for (int i = 0; i < enemiesCount; i++)
+        {
+            Vector3 randomPosition = RandomPosition();
+            Instantiate(enemy, randomPosition, Quaternion.identity);
+        }
+    }
+
+    void LayoutPlayer(Player player)
+    {
+        Vector3 randomPosition = RandomPosition();
+        Instantiate(player, randomPosition, Quaternion.identity);
+    }
+
     public void SetupScene()
     {
         BoardSetup();
         InitialiseList();
         LayoutObjectAtRandom(wallTiles);
+        LayoutEnemiesAtRandom(enemy);
+        LayoutPlayer(player);
     }
 
     // Start is called before the first frame update

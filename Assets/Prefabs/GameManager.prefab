@@ -61,9 +61,12 @@ MonoBehaviour:
   columns: 8
   rows: 8
   wallCount: 10
+  enemiesCount: 1
   outerWallTiles:
   - {fileID: 6765124784350681279, guid: 3bc6f6454839a4fcda3b6ec7446829f1, type: 3}
   floorTiles:
   - {fileID: 457957571952232914, guid: 7f12890b0dee84ff59e09c4d8a289fb7, type: 3}
   wallTiles:
   - {fileID: 6765124784350681279, guid: 3bc6f6454839a4fcda3b6ec7446829f1, type: 3}
+  enemy: {fileID: 6285399730554940182, guid: d41a2c6c82ba17717ad817cffe1ef7aa, type: 3}
+  player: {fileID: 340608572071852336, guid: 2d33b4fe839fb244fab0387b66ad980a, type: 3}
