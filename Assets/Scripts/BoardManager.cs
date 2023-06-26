@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using Cinemachine;
 
 public class BoardManager : MonoBehaviour
 {
@@ -53,6 +54,17 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    void SetupCameraBoundaries()
+    {
+        // change polygon collider points to match the map boundaries
+        GameObject.Find("MapBoundary").GetComponent<PolygonCollider2D>().points = new Vector2[] {
+            new Vector2(-1, rows+0.5f),
+            new Vector2(columns, rows+0.5f),
+            new Vector2(columns, -1),
+            new Vector2(-1, -1)
+        };
+    }
+
     Vector3 RandomPosition()
     {
         int randomIndex = Random.Range(0, gridPositions.Count);
@@ -83,7 +95,11 @@ public class BoardManager : MonoBehaviour
     void LayoutPlayer(Player player)
     {
         Vector3 randomPosition = RandomPosition();
-        Instantiate(player, randomPosition, Quaternion.identity);
+        Player p = Instantiate(player, randomPosition, Quaternion.identity);
+
+        //Set virtual camera to follow player
+        var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
+        vcam.Follow = p.transform;
     }
 
     public void SetupScene()
@@ -93,6 +109,7 @@ public class BoardManager : MonoBehaviour
         LayoutObjectAtRandom(wallTiles);
         LayoutEnemiesAtRandom(enemy);
         LayoutPlayer(player);
+        SetupCameraBoundaries();
     }
 
     // Start is called before the first frame update
