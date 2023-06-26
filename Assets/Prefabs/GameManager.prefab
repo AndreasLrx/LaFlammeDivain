@@ -58,8 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 014ac53cc031e48eb8156ac1478da423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  columns: 8
-  rows: 8
+  columns: 15
+  rows: 15
   wallCount: 10
   enemiesCount: 1
   outerWallTiles:
