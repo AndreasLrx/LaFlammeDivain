@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
       horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
       vertical = Input.GetAxisRaw("Vertical"); // -1 is down
 
-      if (Input.GetButtonDown("ActivateWisp"))
+      if (Input.GetButtonDown("Attack"))
       {
          Wisp wisp = GetWisps().GetSelectedWisp();
          if (wisp != null)
