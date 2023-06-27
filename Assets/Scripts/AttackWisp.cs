@@ -4,10 +4,20 @@ using UnityEngine;
 
 public class AttackWisp : Wisp
 {
-    protected override bool OnActivate()
+    public float range = 5;
+
+    protected override IEnumerator OnActivate()
     {
-        GetComponent<SpriteRenderer>().color = Color.blue;
-        Invoke("ResetColor", 0.1f);
-        return true;
+        return SmoothMovement((Vector2)playerObject.transform.position + Player().AimedDirection() * range);
+    }
+
+    protected override IEnumerator OnDetach()
+    {
+        yield break;
+    }
+
+    protected override IEnumerator OnAttach()
+    {
+        yield break;
     }
 }
