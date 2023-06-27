@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
    public float runSpeed = 10.0f;
    public GameObject wispsGroup;
 
-   void Start ()
+   void Start()
    {
       body = GetComponent<Rigidbody2D>();
    }
@@ -25,7 +25,12 @@ public class Player : MonoBehaviour
       vertical = Input.GetAxisRaw("Vertical"); // -1 is down
 
       if (Input.GetButtonDown("ActivateWisp"))
-         wispsGroup.GetComponent<WispsGroup>().getSelectedWisp().Activate();
+      {
+         Wisp wisp = wispsGroup.GetComponent<WispsGroup>().GetSelectedWisp();
+         if (wisp != null)
+            StartCoroutine(wisp.Activate());
+      }
+
    }
 
    void FixedUpdate()
@@ -35,8 +40,13 @@ public class Player : MonoBehaviour
          // limit movement speed diagonally, so you move at 70% speed
          horizontal *= moveLimiter;
          vertical *= moveLimiter;
-      } 
+      }
 
       body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
+   }
+
+   public Vector2 AimedDirection()
+   {
+      return ((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - (Vector2)transform.position).normalized;
    }
 }
