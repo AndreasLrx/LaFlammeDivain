@@ -16,8 +16,10 @@ public class BoardManager : MonoBehaviour
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
     public GameObject enemy;
-    public Player player;
+    public GameObject[] wisps;
+    public Player playerPrefab;
 
+    private Player player;
     private Transform boardHolder;
     private List<Vector3> gridPositions = new List<Vector3>();
 
@@ -92,14 +94,14 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    void LayoutPlayer(Player player)
+    void LayoutPlayer(Player playerPrefab)
     {
         Vector3 randomPosition = RandomPosition();
-        Player p = Instantiate(player, randomPosition, Quaternion.identity);
+        player = Instantiate(playerPrefab, randomPosition, Quaternion.identity);
 
         //Set virtual camera to follow player
         var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
-        vcam.Follow = p.transform;
+        vcam.Follow = player.transform;
     }
 
     public void SetupScene()
@@ -108,7 +110,7 @@ public class BoardManager : MonoBehaviour
         InitialiseList();
         LayoutObjectAtRandom(wallTiles);
         LayoutEnemiesAtRandom(enemy);
-        LayoutPlayer(player);
+        LayoutPlayer(playerPrefab);
         SetupCameraBoundaries();
     }
 
@@ -121,6 +123,8 @@ public class BoardManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        // Debug new wisp
+        if (Input.GetKeyDown(KeyCode.Q))
+            player.AddWisp(Instantiate(wisps[Random.Range(0, wisps.Length)], null));
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class Wisp : MonoBehaviour
 {
     public GameObject playerObject;
-    public Rigidbody2D rb2D;           //The Rigidbody2D component attached to this object.
     public Color color;
     public Color disabledColor;
     public float moveSpeed = 20;
@@ -89,9 +88,7 @@ public abstract class Wisp : MonoBehaviour
             // Call the effective activation effect
             yield return StartCoroutine(OnActivate());
             // Return the wisp to the player position
-            Vector2 returnPosition = playerObject.transform.position;
-            returnPosition -= ((Vector2)(playerObject.transform.position - transform.position)).normalized * owningWispsGroup.GetComponent<WispsGroup>().orbitDistance;
-            yield return StartCoroutine(SmoothMovement(returnPosition));
+            yield return StartCoroutine(ReturnToPlayer());
             // Attach back the wisp to the group
             yield return StartCoroutine(Attach());
             // Reset the color
@@ -105,26 +102,28 @@ public abstract class Wisp : MonoBehaviour
 
     protected abstract IEnumerator OnAttach();
 
+    protected bool MoveTowardsPoint(Vector2 point)
+    {
+        float sqrRemainingDistance = ((Vector2)transform.position - point).sqrMagnitude;
+
+        // No need to move
+        if (sqrRemainingDistance < float.Epsilon)
+            return false;
+
+        // Move towards the point
+        transform.position = Vector3.MoveTowards(transform.position, point, moveSpeed * Time.deltaTime);
+        return true;
+    }
+
     protected IEnumerator SmoothMovement(Vector3 end)
     {
-        //Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
-        //Square magnitude is used instead of magnitude because it's computationally cheaper.
-        float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-
-        //While that distance is greater than a very small amount (Epsilon, almost zero):
-        while (sqrRemainingDistance > float.Epsilon)
-        {
-            //Find a new position proportionally closer to the end, based on the moveTime
-            Vector3 newPostion = Vector3.MoveTowards(transform.position, end, moveSpeed * Time.deltaTime);
-
-            //Call MovePosition on attached Rigidbody2D and move it to the calculated position.
-            transform.position = newPostion;
-
-            //Recalculate the remaining distance after moving.
-            sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-
-            //Return and loop until sqrRemainingDistance is close enough to zero to end the function
+        while (MoveTowardsPoint(end))
             yield return null;
-        }
+    }
+
+    protected IEnumerator ReturnToPlayer()
+    {
+        while (MoveTowardsPoint((Vector2)playerObject.transform.position - ((Vector2)(playerObject.transform.position - transform.position)).normalized * owningWispsGroup.GetComponent<WispsGroup>().orbitDistance))
+            yield return null;
     }
 }
