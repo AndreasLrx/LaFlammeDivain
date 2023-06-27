@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Dummy : MonoBehaviour
-{
+{   
+    
     public float hp = 10;
+    
     public void getDamage(float damage)
     {
         hp -= damage;
@@ -16,5 +18,10 @@ public class Dummy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void ResetColor()
+    {
+      GetComponent<SpriteRenderer>().color = Color.white;
     }
 }
