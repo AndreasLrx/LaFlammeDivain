@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+   [SerializeField] private LayerMask enemyLayers;
+
    Rigidbody2D body;
 
    float horizontal;
    float vertical;
    float moveLimiter = 0.7f;
+   float timeUntilNextAttack;
 
    public float runSpeed = 10.0f;
    public GameObject wispsGroupPrefab;
+
+   private Vector2 pointerInput;
+   private Weapon weapon;
+
+   private void Awake() {
+         weapon = GetComponentInChildren<Weapon>();
+   }
 
    void Start()
    {
@@ -21,6 +31,7 @@ public class Player : MonoBehaviour
 
    void Update()
    {
+      weapon.PointerDirection = AimedDirection();
       // Gives a value between -1 and 1
       horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
       vertical = Input.GetAxisRaw("Vertical"); // -1 is down
@@ -37,6 +48,13 @@ public class Player : MonoBehaviour
    WispsGroup GetWisps()
    {
       return gameObject.GetComponentInChildren<WispsGroup>();
+   }
+
+   void ResetColor()
+   {
+      Color greenColor;
+      ColorUtility.TryParseHtmlString("#2F880D", out greenColor);
+      GetComponent<SpriteRenderer>().color = Color.green;
    }
 
    void FixedUpdate()
