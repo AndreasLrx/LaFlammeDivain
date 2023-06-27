@@ -11,11 +11,12 @@ public class Player : MonoBehaviour
    float moveLimiter = 0.7f;
 
    public float runSpeed = 10.0f;
-   public GameObject wispsGroup;
+   public GameObject wispsGroupPrefab;
 
    void Start()
    {
       body = GetComponent<Rigidbody2D>();
+      Instantiate(wispsGroupPrefab, transform);
    }
 
    void Update()
@@ -26,11 +27,16 @@ public class Player : MonoBehaviour
 
       if (Input.GetButtonDown("ActivateWisp"))
       {
-         Wisp wisp = wispsGroup.GetComponent<WispsGroup>().GetSelectedWisp();
+         Wisp wisp = GetWisps().GetSelectedWisp();
          if (wisp != null)
             StartCoroutine(wisp.Activate());
       }
 
+   }
+
+   WispsGroup GetWisps()
+   {
+      return gameObject.GetComponentInChildren<WispsGroup>();
    }
 
    void FixedUpdate()
@@ -48,5 +54,11 @@ public class Player : MonoBehaviour
    public Vector2 AimedDirection()
    {
       return ((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - (Vector2)transform.position).normalized;
+   }
+
+   public void AddWisp(GameObject wispObject)
+   {
+      wispObject.GetComponent<Wisp>().playerObject = gameObject;
+      GetWisps().AddWisp(wispObject);
    }
 }

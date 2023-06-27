@@ -6,12 +6,13 @@ public class WispsGroup : MonoBehaviour
 {
     public float orbitSpeed = 10;
     public float orbitDistance = 1.5f;
-    public List<GameObject> wisps;
     public int selectedWispIndex = -1;
+    private List<GameObject> wisps;
 
     // Start is called before the first frame update
     void Start()
     {
+        wisps = new();
         EqualizeWisps();
     }
 
@@ -29,10 +30,7 @@ public class WispsGroup : MonoBehaviour
             selectedWispIndex = 0;
 
         for (int i = 0; i < wisps.Count; i++)
-        {
-            Transform child = wisps[i].transform;
-            child.position = Quaternion.AngleAxis(gap * i, Vector3.forward) * Vector2.down * orbitDistance;
-        }
+            wisps[i].transform.localPosition = Quaternion.AngleAxis(gap * i, Vector3.forward) * Vector2.down * orbitDistance;
     }
 
     public void AddWisp(GameObject wisp)
@@ -52,6 +50,7 @@ public class WispsGroup : MonoBehaviour
             selectedWispIndex = -1;
         else if (selectedWispIndex >= wisps.Count)
             selectedWispIndex--;
+        EqualizeWisps();
     }
 
     public Wisp GetSelectedWisp()
