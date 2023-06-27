@@ -22,22 +22,56 @@ public class WispsGroup : MonoBehaviour
         transform.Rotate(new Vector3(0, 0, orbitSpeed) * Time.deltaTime);
     }
 
-    private void EqualizeWisps()
+    private void EqualizeWisps(int wispIndex = 0)
     {
         float gap = 360.0f / wisps.Count;
 
         if (wisps.Count > 0)
             selectedWispIndex = 0;
+        else
+            return;
 
-        for (int i = 0; i < wisps.Count; i++)
-            wisps[i].transform.localPosition = Quaternion.AngleAxis(gap * i, Vector3.forward) * Vector2.down * orbitDistance;
+        float startingAngle = Vector2.SignedAngle(Vector2.down, wisps[wispIndex].transform.localPosition);
+        for (int i = wispIndex; i >= 0; i--)
+            wisps[i].transform.localPosition = Quaternion.AngleAxis(startingAngle - gap * (wispIndex - i), Vector3.forward) * Vector2.down * orbitDistance;
+        for (int i = wispIndex + 1; i < wisps.Count; i++)
+            wisps[i].transform.localPosition = Quaternion.AngleAxis(startingAngle + gap * (i - wispIndex), Vector3.forward) * Vector2.down * orbitDistance;
+    }
+
+    private float GetWispAngle(GameObject wisp)
+    {
+        float res = Vector2.SignedAngle(Vector2.down, wisp.transform.localPosition);
+        if (res < 0)
+            return res + 360;
+        return res;
+    }
+
+    private void InsertWispNaturally(GameObject wisp)
+    {
+        int wispIndex;
+        // Avoid division by zero
+        if (wisps.Count == 0)
+            wispIndex = wisps.Count;
+        else
+            wispIndex = (int)(GetWispAngle(wisp) / (360f / wisps.Count)) + 1;
+
+        // Append wisp at the end
+        if (wispIndex == wisps.Count)
+            wisps.Add(wisp);
+        // Insert wisp between others and update selectedWispIndex if required
+        else
+        {
+            wisps.Insert(wispIndex, wisp);
+            if (wispIndex <= selectedWispIndex)
+                selectedWispIndex++;
+        }
+        EqualizeWisps(wispIndex);
     }
 
     public void AddWisp(GameObject wisp)
     {
-        wisps.Add(wisp);
         wisp.transform.SetParent(transform);
-        EqualizeWisps();
+        InsertWispNaturally(wisp);
     }
 
     public void DetachWisp(GameObject wisp)

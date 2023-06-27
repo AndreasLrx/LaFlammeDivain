@@ -47,7 +47,7 @@ public abstract class Wisp : MonoBehaviour
         return owningWispsGroup != null;
     }
 
-    void ResetColor()
+    protected void ResetColor()
     {
         // Wisp is in detached mode
         if (IsDetached())
