@@ -33,9 +33,9 @@ public class WispsGroup : MonoBehaviour
 
         float startingAngle = Vector2.SignedAngle(Vector2.down, wisps[wispIndex].transform.localPosition);
         for (int i = wispIndex; i >= 0; i--)
-            wisps[i].transform.localPosition = Quaternion.AngleAxis(startingAngle - gap * (wispIndex - i), Vector3.forward) * Vector2.down * orbitDistance;
+            wisps[i].GetComponent<Wisp>().SetTarget(Quaternion.AngleAxis(startingAngle - gap * (wispIndex - i), Vector3.forward) * Vector2.down * orbitDistance, true);
         for (int i = wispIndex + 1; i < wisps.Count; i++)
-            wisps[i].transform.localPosition = Quaternion.AngleAxis(startingAngle + gap * (i - wispIndex), Vector3.forward) * Vector2.down * orbitDistance;
+            wisps[i].GetComponent<Wisp>().SetTarget(Quaternion.AngleAxis(startingAngle + gap * (i - wispIndex), Vector3.forward) * Vector2.down * orbitDistance, true);
     }
 
     private float GetWispAngle(GameObject wisp)
@@ -53,7 +53,12 @@ public class WispsGroup : MonoBehaviour
         if (wisps.Count == 0)
             wispIndex = wisps.Count;
         else
-            wispIndex = (int)(GetWispAngle(wisp) / (360f / wisps.Count)) + 1;
+        {
+            float angle = GetWispAngle(wisp) - GetWispAngle(wisps[0]);
+            if (angle < 0)
+                angle += 360;
+            wispIndex = (int)(angle / (360f / wisps.Count)) + 1;
+        }
 
         // Append wisp at the end
         if (wispIndex == wisps.Count)

@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Wisp : MonoBehaviour
+public abstract class Wisp : MovingObject
 {
     public GameObject playerObject;
     public Color color;
     public Color disabledColor;
-    public float moveSpeed = 20;
 
 
     // The cooldown time, in seconds
@@ -24,8 +23,9 @@ public abstract class Wisp : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         if (currentCooldown > float.Epsilon)
         {
             currentCooldown -= Time.deltaTime;
@@ -102,28 +102,9 @@ public abstract class Wisp : MonoBehaviour
 
     protected abstract IEnumerator OnAttach();
 
-    protected bool MoveTowardsPoint(Vector2 point)
-    {
-        float sqrRemainingDistance = ((Vector2)transform.position - point).sqrMagnitude;
-
-        // No need to move
-        if (sqrRemainingDistance < float.Epsilon)
-            return false;
-
-        // Move towards the point
-        transform.position = Vector3.MoveTowards(transform.position, point, moveSpeed * Time.deltaTime);
-        return true;
-    }
-
-    protected IEnumerator SmoothMovement(Vector3 end)
-    {
-        while (MoveTowardsPoint(end))
-            yield return null;
-    }
-
     protected IEnumerator ReturnToPlayer()
     {
-        while (MoveTowardsPoint((Vector2)playerObject.transform.position - ((Vector2)(playerObject.transform.position - transform.position)).normalized * owningWispsGroup.GetComponent<WispsGroup>().orbitDistance))
+        while (MoveTowardsTarget((Vector2)playerObject.transform.position - ((Vector2)(playerObject.transform.position - transform.position)).normalized * owningWispsGroup.GetComponent<WispsGroup>().orbitDistance))
             yield return null;
     }
 }

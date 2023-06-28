@@ -18,7 +18,7 @@ public class AttackWisp : Wisp
 
     protected override IEnumerator OnActivate()
     {
-        return SmoothMovement((Vector2)playerObject.transform.position + Player().AimedDirection() * range);
+        return MoveToTarget((Vector2)playerObject.transform.position + Player().AimedDirection() * range);
     }
 
     protected override IEnumerator OnDetach()
