@@ -11,16 +11,15 @@ public class Player : MonoBehaviour
    float horizontal;
    float vertical;
    float moveLimiter = 0.7f;
-   float timeUntilNextAttack;
 
    public float runSpeed = 10.0f;
    public GameObject wispsGroupPrefab;
 
-   private Vector2 pointerInput;
    private Weapon weapon;
 
-   private void Awake() {
-         weapon = GetComponentInChildren<Weapon>();
+   private void Awake()
+   {
+      weapon = GetComponentInChildren<Weapon>();
    }
 
    void Start()
@@ -37,24 +36,12 @@ public class Player : MonoBehaviour
       vertical = Input.GetAxisRaw("Vertical"); // -1 is down
 
       if (Input.GetButtonDown("Attack"))
-      {
-         Wisp wisp = GetWisps().GetSelectedWisp();
-         if (wisp != null)
-            StartCoroutine(wisp.Activate());
-      }
-
+         Attack();
    }
 
    WispsGroup GetWisps()
    {
       return gameObject.GetComponentInChildren<WispsGroup>();
-   }
-
-   void ResetColor()
-   {
-      Color greenColor;
-      ColorUtility.TryParseHtmlString("#2F880D", out greenColor);
-      GetComponent<SpriteRenderer>().color = Color.green;
    }
 
    void FixedUpdate()
@@ -78,5 +65,14 @@ public class Player : MonoBehaviour
    {
       wispObject.GetComponent<Wisp>().playerObject = gameObject;
       GetWisps().AddWisp(wispObject);
+   }
+
+   private void Attack()
+   {
+      Wisp wisp = GetWisps().GetSelectedWisp();
+      if (wisp != null)
+         StartCoroutine(wisp.Activate());
+      else
+         gameObject.GetComponentInChildren<Weapon>().Attack();
    }
 }
