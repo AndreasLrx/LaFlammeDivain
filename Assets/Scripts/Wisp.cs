@@ -1,11 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
+
 
 public abstract class Wisp : MovingObject
 {
     public GameObject playerObject;
-    public Color color;
+
+    private Color _color;
+    public Color color
+    {
+        get { return _color; }
+        set
+        {
+            _color = value;
+            gameObject.GetComponent<Light2D>().color = _color;
+        }
+    }
     public Color disabledColor;
 
 
