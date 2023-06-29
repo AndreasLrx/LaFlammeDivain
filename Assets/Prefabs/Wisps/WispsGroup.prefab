@@ -46,4 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orbitSpeed: 10
   orbitDistance: 1.5
-  selectedWispIndex: -1
+  selectedOrbitDistance: 0.8

@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
          Attack();
    }
 
-   WispsGroup GetWisps()
+   public WispsGroup GetWisps()
    {
       return gameObject.GetComponentInChildren<WispsGroup>();
    }
@@ -61,10 +61,10 @@ public class Player : MonoBehaviour
       return ((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - (Vector2)transform.position).normalized;
    }
 
-   public void AddWisp(GameObject wispObject)
+   public void AddWisp(Wisp wisp)
    {
-      wispObject.GetComponent<Wisp>().playerObject = gameObject;
-      GetWisps().AddWisp(wispObject);
+      wisp.playerObject = gameObject;
+      GetWisps().AddWisp(wisp);
    }
 
    private void Attack()
