@@ -26,7 +26,7 @@ public abstract class Wisp : MovingObject
     // The time remaining before the wisp can be activated
     private float currentCooldown = 0;
 
-    protected GameObject owningWispsGroup = null;
+    protected WispsGroup owningWispsGroup = null;
 
     // Start is called before the first frame update
     void Start()
@@ -77,14 +77,14 @@ public abstract class Wisp : MovingObject
 
     private IEnumerator Detach()
     {
-        owningWispsGroup = gameObject.transform.parent.gameObject;
-        owningWispsGroup.GetComponent<WispsGroup>().DetachWisp(gameObject);
+        owningWispsGroup = gameObject.transform.GetComponentInParent<Player>().GetWisps();
+        owningWispsGroup.DetachWisp(this);
         yield return StartCoroutine(OnDetach());
     }
 
     private IEnumerator Attach()
     {
-        owningWispsGroup.GetComponent<WispsGroup>().AddWisp(gameObject);
+        owningWispsGroup.AddWisp(this);
         owningWispsGroup = null;
         yield return StartCoroutine(OnAttach());
     }

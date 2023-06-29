@@ -6,8 +6,19 @@ public class WispsGroup : MonoBehaviour
 {
     public float orbitSpeed = 10;
     public float orbitDistance = 1.5f;
-    public int selectedWispIndex = -1;
-    private List<GameObject> wisps;
+    public float selectedOrbitDistance = 0.8f;
+    private List<Wisp> wisps;
+    private Wisp _selectedWisp;
+    private Wisp selectedWisp
+    {
+        get { return _selectedWisp; }
+        set
+        {
+            _selectedWisp = value;
+            if (value != null)
+                _selectedWisp.transform.SetParent(GetComponentInParent<Player>().transform);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -20,25 +31,30 @@ public class WispsGroup : MonoBehaviour
     void Update()
     {
         transform.Rotate(new Vector3(0, 0, orbitSpeed) * Time.deltaTime);
+
+        if (selectedWisp)
+        {
+            Player player = GetComponentInParent<Player>();
+            selectedWisp.SetTarget((Vector2)player.transform.position + player.AimedDirection() * selectedOrbitDistance);
+        }
     }
 
     private void EqualizeWisps(int wispIndex = 0)
     {
-        float gap = 360.0f / wisps.Count;
-
-        if (wisps.Count > 0)
-            selectedWispIndex = 0;
-        else
+        // Avoid division by zero
+        if (wisps.Count == 0)
             return;
+
+        float gap = 360.0f / wisps.Count;
 
         float startingAngle = Vector2.SignedAngle(Vector2.down, wisps[wispIndex].transform.localPosition);
         for (int i = wispIndex; i >= 0; i--)
-            wisps[i].GetComponent<Wisp>().SetTarget(Quaternion.AngleAxis(startingAngle - gap * (wispIndex - i), Vector3.forward) * Vector2.down * orbitDistance, true);
+            wisps[i].SetTarget(Quaternion.AngleAxis(startingAngle - gap * (wispIndex - i), Vector3.forward) * Vector2.down * orbitDistance, true);
         for (int i = wispIndex + 1; i < wisps.Count; i++)
-            wisps[i].GetComponent<Wisp>().SetTarget(Quaternion.AngleAxis(startingAngle + gap * (i - wispIndex), Vector3.forward) * Vector2.down * orbitDistance, true);
+            wisps[i].SetTarget(Quaternion.AngleAxis(startingAngle + gap * (i - wispIndex), Vector3.forward) * Vector2.down * orbitDistance, true);
     }
 
-    private float GetWispAngle(GameObject wisp)
+    private float GetWispAngle(Wisp wisp)
     {
         float res = Vector2.SignedAngle(Vector2.down, wisp.transform.localPosition);
         if (res < 0)
@@ -46,7 +62,7 @@ public class WispsGroup : MonoBehaviour
         return res;
     }
 
-    private void InsertWispNaturally(GameObject wisp)
+    private void InsertWispNaturally(Wisp wisp)
     {
         int wispIndex;
         // Avoid division by zero
@@ -63,40 +79,44 @@ public class WispsGroup : MonoBehaviour
         // Append wisp at the end
         if (wispIndex == wisps.Count)
             wisps.Add(wisp);
-        // Insert wisp between others and update selectedWispIndex if required
+        // Insert wisp between others
         else
-        {
             wisps.Insert(wispIndex, wisp);
-            if (wispIndex <= selectedWispIndex)
-                selectedWispIndex++;
-        }
         EqualizeWisps(wispIndex);
     }
 
-    public void AddWisp(GameObject wisp)
+    public void AddWisp(Wisp wisp)
     {
         wisp.transform.SetParent(transform);
-        InsertWispNaturally(wisp);
+        if (selectedWisp == null)
+            selectedWisp = wisp;
+        else
+            InsertWispNaturally(wisp);
     }
 
-    public void DetachWisp(GameObject wisp)
+    public void DetachSelectedWisp()
     {
-        if (selectedWispIndex == -1)
-            return;
-        wisps[selectedWispIndex].transform.SetParent(null);
-        wisps.Remove(wisp);
         if (wisps.Count == 0)
-            selectedWispIndex = -1;
-        else if (selectedWispIndex >= wisps.Count)
-            selectedWispIndex--;
+            selectedWisp = null;
+        else
+        {
+            selectedWisp = wisps[0];
+            wisps.RemoveAt(0);
+        }
+    }
+
+    public void DetachWisp(Wisp wisp)
+    {
+        if (wisp == selectedWisp)
+            DetachSelectedWisp();
+        else
+            wisps.Remove(wisp);
+        wisp.transform.SetParent(null);
         EqualizeWisps();
     }
 
     public Wisp GetSelectedWisp()
     {
-        // No wisp left
-        if (selectedWispIndex == -1)
-            return null;
-        return wisps[selectedWispIndex].GetComponent<Wisp>();
+        return selectedWisp;
     }
 }

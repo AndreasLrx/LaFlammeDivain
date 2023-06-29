@@ -125,6 +125,6 @@ public class BoardManager : MonoBehaviour
     {
         // Debug new wisp
         if (Input.GetKeyDown(KeyCode.Q))
-            player.AddWisp(Instantiate(wisps[Random.Range(0, wisps.Length)], player.transform.position, Quaternion.identity, null));
+            player.AddWisp(Instantiate(wisps[Random.Range(0, wisps.Length)], player.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
     }
 }
