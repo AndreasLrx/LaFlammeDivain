@@ -65,10 +65,12 @@ MonoBehaviour:
     minimum: 6
     maximum: 15
   numberOfRoomParts:
-    minimum: 1
-    maximum: 1
+    minimum: 4
+    maximum: 4
   wallCount: 10
   enemiesCount: 1
+  innerWallCount: 10
+  innerWallLength: 5
   outerWallTiles:
   - {fileID: 6765124784350681279, guid: 3bc6f6454839a4fcda3b6ec7446829f1, type: 3}
   floorTiles:

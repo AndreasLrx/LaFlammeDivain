@@ -36,6 +36,9 @@ public class BoardManager : MonoBehaviour
     public int wallCount = 10;
     public int enemiesCount = 1;
 
+    public int innerWallCount = 3;
+    public int innerWallLength = 5;
+
     public GameObject[] outerWallTiles;
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
@@ -47,14 +50,17 @@ public class BoardManager : MonoBehaviour
     private Player player;
     private Transform boardHolder;
     private List<Vector3> gridPositions = new List<Vector3>();
-    private List<Vector3> wallGridPositions = new List<Vector3>();
+    private List<Vector3> outerWallGridPositions = new List<Vector3>();
+    private List<Vector3> innerWallGridPositions = new List<Vector3>();
+
+    private int numberOfRoom = 1;
 
     void BoardSetup()
     {
         columnsCount = Random.Range(columns.minimum, columns.maximum + 1);
         rowsCount = Random.Range(rows.minimum, rows.maximum + 1);
 
-        int numberOfRoom = Random.Range(numberOfRoomParts.minimum, numberOfRoomParts.maximum + 1) - 1;
+        numberOfRoom = Random.Range(numberOfRoomParts.minimum, numberOfRoomParts.maximum + 1) - 1;
 
         boardHolder = new GameObject("Board").transform;
 
@@ -144,21 +150,19 @@ public class BoardManager : MonoBehaviour
                 if ((x == xNumber && wallPositions.Contains("left")) || (x == (columnsCount + xNumber) && wallPositions.Contains("right")) || (y == yNumber && wallPositions.Contains("bottom")) || (y == (rowsCount + yNumber) && wallPositions.Contains("top")))
                 {
                     //Don't add a wall if there is already one
-                    if (!wallGridPositions.Contains(vector3) && !gridPositions.Contains(vector3))
+                    if (!outerWallGridPositions.Contains(vector3) && !gridPositions.Contains(vector3))
                     {
                         toInstantiate = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
                         GameObject instance = Instantiate(toInstantiate, vector3, Quaternion.identity) as GameObject;
                         instance.transform.SetParent(boardHolder);
-                        wallGridPositions.Add(vector3);
+                        outerWallGridPositions.Add(vector3);
                     }
                 }
                 else
                 {
-                    //Don't add a tile if there is already one
-                    if (!gridPositions.Contains(vector3) && !wallGridPositions.Contains(vector3))
+                    //Don't add a floor tile if there is already one
+                    if (!gridPositions.Contains(vector3) && !outerWallGridPositions.Contains(vector3))
                     {
-                        GameObject instance = Instantiate(toInstantiate, vector3, Quaternion.identity) as GameObject;
-                        instance.transform.SetParent(boardHolder);
                         gridPositions.Add(vector3);
                     }
                 }
@@ -220,14 +224,129 @@ public class BoardManager : MonoBehaviour
         return RandomPosition;
     }
 
-    void LayoutObjectAtRandom(GameObject[] tileArray)
+    Vector3 RandomPositionNotCloseToInnerWall(List<Vector3> innerWallGridPositions)
     {
-        for (int i = 0; i < wallCount; i++)
+        int randomIndex = Random.Range(0, gridPositions.Count);
+        Vector3 RandomPosition = gridPositions[randomIndex];
+        if (!CheckIfPositionIsNextToPositions(RandomPosition, innerWallGridPositions))
         {
-            Vector3 randomPosition = RandomPosition();
-            GameObject tileChoice = tileArray[Random.Range(0, tileArray.Length)];
-            Instantiate(tileChoice, randomPosition, Quaternion.identity, boardHolder);
+            gridPositions.RemoveAt(randomIndex);
+            return RandomPosition;
         }
+        return RandomPositionNotCloseToInnerWall(innerWallGridPositions);
+    }
+
+    bool CheckIfPositionIsNextToPositions(Vector3 position, List<Vector3> positions)
+    {
+        foreach (var pos in positions)
+        {
+            int diffX = (int)Math.Abs((float)(pos.x - position.x));
+            int diffY = (int)Math.Abs((float)(pos.y - position.y));
+
+            if (diffX + diffY <= 2 && diffX != 2 && diffY != 2)
+                if (diffX + diffY > 0)
+                    return true;
+        }
+        return false;
+    }
+
+    bool CheckIfPositionIsNextToWall(Vector3 position, List<Vector3> innerWalls)
+    {
+        return (CheckIfPositionIsNextToPositions(position, outerWallGridPositions) || CheckIfPositionIsNextToPositions(position, innerWallGridPositions)) && !CheckIfPositionIsNextToPositions(position, innerWalls);
+    }
+
+    void LayoutWallAtRandom()
+    {
+        for (int i = 0; i < innerWallCount; i++)
+        {
+            List<Vector3> innerWalls = new List<Vector3>();
+            bool isTouchingWall = false;
+            Vector3 startingPosition = RandomPositionNotCloseToInnerWall(innerWallGridPositions);
+
+            GameObject tileChoice = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
+            Instantiate(tileChoice, startingPosition, Quaternion.identity);
+
+            innerWallGridPositions.Add(startingPosition);
+            innerWalls.Add(startingPosition);
+            if (CheckIfPositionIsNextToWall(startingPosition, innerWallGridPositions))
+            {
+                isTouchingWall = true;
+            }
+
+            Vector3 randomPosition = startingPosition;
+
+            for (int a = 0; a < innerWallLength - 1; a++)
+            {
+                List<Vector3> possiblePositions = new List<Vector3>() {
+                    new Vector3(randomPosition.x + 1, randomPosition.y, 0),
+                    new Vector3(randomPosition.x, randomPosition.y + 1, 0),
+                    new Vector3(randomPosition.x - 1, randomPosition.y, 0),
+                    new Vector3(randomPosition.x, randomPosition.y -1, 0),
+                    };
+                foreach (var item in innerWalls)
+                    possiblePositions.Remove(item);
+
+                foreach (var item in outerWallGridPositions)
+                    possiblePositions.Remove(item);
+
+                randomPosition = possiblePositions[Random.Range(0, possiblePositions.Count)];
+
+                if (!gridPositions.Contains(randomPosition) ||
+                isTouchingWall ||
+                CheckIfPositionIsNextToWall(randomPosition, innerWalls)
+                )
+                    break;
+
+                innerWalls.Add(randomPosition);
+                innerWallGridPositions.Add(randomPosition);
+
+                Instantiate(tileChoice, randomPosition, Quaternion.identity);
+                gridPositions.Remove(randomPosition);
+            }
+        }
+        //Flood fill to lay floor tiles
+        Vector3 startingPoint = gridPositions[0];
+        List<Vector3> oldGridPositions = gridPositions;
+        gridPositions = new List<Vector3>();
+        FloodFill(startingPoint);
+
+        //Check if the room is big enough else remove the floor tiles and redo FloodFill
+        int totalSizeOfRoom = columnsCount * rowsCount * (numberOfRoom + 1);
+        if (gridPositions.Count < totalSizeOfRoom * 0.20)
+        {
+            foreach (var item in gridPositions)
+            {
+                oldGridPositions.Remove(item);
+            }
+            gridPositions = oldGridPositions;
+            FloodFill(startingPoint);
+            //check if the room is big enough else regenerate the room
+            if (gridPositions.Count < totalSizeOfRoom * 0.20)
+            {
+                gridPositions = new List<Vector3>();
+                outerWallGridPositions = new List<Vector3>();
+                innerWallGridPositions = new List<Vector3>();
+                BoardSetup();
+            }
+        }
+    }
+
+    void FloodFill(Vector3 startingPoint)
+    {
+        if (outerWallGridPositions.Contains(startingPoint) || innerWallGridPositions.Contains(startingPoint))
+            return;
+        if (gridPositions.Contains(startingPoint))
+            return;
+
+        GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
+        GameObject instance = Instantiate(toInstantiate, startingPoint, Quaternion.identity) as GameObject;
+        instance.transform.SetParent(boardHolder);
+        gridPositions.Add(startingPoint);
+
+        FloodFill(new Vector3(startingPoint.x, startingPoint.y - 1, 0));
+        FloodFill(new Vector3(startingPoint.x + 1, startingPoint.y, 0));
+        FloodFill(new Vector3(startingPoint.x, startingPoint.y + 1, 0));
+        FloodFill(new Vector3(startingPoint.x - 1, startingPoint.y, 0));
     }
 
     void LayoutEnemiesAtRandom(GameObject enemy)
@@ -259,7 +378,7 @@ public class BoardManager : MonoBehaviour
     public void SetupScene()
     {
         BoardSetup();
-        //LayoutObjectAtRandom(wallTiles);
+        LayoutWallAtRandom();
         //LayoutEnemiesAtRandom(enemy);
         LayoutPlayer(playerPrefab);
         LayoutEnemiesAtRandom(enemy);
