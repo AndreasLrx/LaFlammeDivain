@@ -6,7 +6,7 @@ public class Dummy : MonoBehaviour
 {   
     
     public float hp = 10;
-    
+
     public void getDamage(float damage)
     {
         hp -= damage;
@@ -23,5 +23,10 @@ public class Dummy : MonoBehaviour
     void ResetColor()
     {
       GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
+    private void OnTriggerStay2D(Collider2D other) {
+        if (other.tag == "Player")
+            other.GetComponent<Player>().GetDamage();
     }
 }
