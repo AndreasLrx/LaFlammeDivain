@@ -5,16 +5,16 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
    [SerializeField] private LayerMask enemyLayers;
-
+   [SerializeField] private GameManager gameManager;
    Rigidbody2D body;
-
+  
    float horizontal;
    float vertical;
    float moveLimiter = 0.7f;
-
    public float runSpeed = 10.0f;
+   public float invisibleCoolDown = 2.0f;
+   float invisibleCurrentCoolDown = 0.0f;
    public GameObject wispsGroupPrefab;
-
    private Weapon weapon;
 
    private void Awake()
@@ -37,6 +37,10 @@ public class Player : MonoBehaviour
 
       if (Input.GetButtonDown("Attack"))
          Attack();
+      
+      if(invisibleCurrentCoolDown >= float.Epsilon)
+         invisibleCurrentCoolDown -= Time.deltaTime;
+      
    }
 
    public WispsGroup GetWisps()
@@ -74,5 +78,18 @@ public class Player : MonoBehaviour
          StartCoroutine(wisp.Activate());
       else
          gameObject.GetComponentInChildren<Weapon>().Attack();
+   }
+
+   public void GetDamage(){
+      if (invisibleCurrentCoolDown > float.Epsilon)
+         return;
+      Wisp wisp = GetWisps().GetSelectedWisp();
+      invisibleCurrentCoolDown = invisibleCoolDown;
+      if (wisp != null){
+         GetWisps().DetachWisp(wisp);
+         Destroy(wisp.gameObject);
+      }
+      else
+         gameManager.GameOver();
    }
 }
