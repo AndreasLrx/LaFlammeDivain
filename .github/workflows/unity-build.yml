@@ -70,6 +70,10 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
+          buildMethod: Packages.Rider.Editor.RiderScriptEditor.SyncSolution
+
+      - run: dotnet format --verify-no-changes 'workspace.sln'
+        continue-on-error: false
 
       # Upload the build folder as artifact
       - uses: actions/upload-artifact@v2
