@@ -9,13 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2424827839646830928}
+  - component: {fileID: 1243573945538697391}
   - component: {fileID: 7821377942047575218}
   - component: {fileID: 7445364912580172314}
   - component: {fileID: -954866054393023798}
   - component: {fileID: -1624360911332544719}
-  - component: {fileID: 3206609104498396570}
-  - component: {fileID: 3902533294257358200}
-  - component: {fileID: -425883497913312740}
   m_Layer: 0
   m_Name: AICompanion
   m_TagString: Untagged
@@ -38,6 +36,30 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1243573945538697391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4411840252245956147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf767bab8c0f9424f9360f66396441ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  isTraining: 1
+  player: {fileID: 0}
+  roomSize: {x: 0, y: 0}
+  numRaycasts: 10
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 768
+  movingSpeed: 10
 --- !u!114 &7821377942047575218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51,16 +73,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 23
-    NumStackedVectorObservations: 10
+    VectorObservationSize: 26
+    NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 0
-      BranchSizes: 0300000003000000
-    VectorActionSize: 0300000003000000
+      m_NumContinuousActions: 2
+      BranchSizes: 
+    VectorActionSize: 02000000
     VectorActionDescriptions: []
-    VectorActionSpaceType: 0
+    VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 1a26f23607be2e9428d1f72e837fd0c8, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: Movement
