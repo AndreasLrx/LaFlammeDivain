@@ -7,16 +7,6 @@ public class AttackWisp : Wisp
     public float range = 5;
     public float wispDamage = 1.0f;
 
-    void Start()
-    {
-        color = new Color(
-            Random.Range(0.4f, 1f),
-            Random.Range(0.4f, 1f),
-            Random.Range(0.4f, 1f)
-        );
-        ResetColor();
-    }
-
     protected override IEnumerator OnActivate()
     {
         SetTarget((Vector2)playerObject.transform.position + Player().AimedDirection() * range);

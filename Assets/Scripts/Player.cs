@@ -40,7 +40,6 @@ public class Player : MonoBehaviour
       
       if(invisibleCurrentCoolDown >= float.Epsilon)
          invisibleCurrentCoolDown -= Time.deltaTime;
-      
    }
 
    public WispsGroup GetWisps()
