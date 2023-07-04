@@ -71,4 +71,5 @@ MonoBehaviour:
   enemy: {fileID: 6285399730554940182, guid: d41a2c6c82ba17717ad817cffe1ef7aa, type: 3}
   wisps:
   - {fileID: 8281400056468518210, guid: 33dde5e59ab92c7469c5d74b5f101738, type: 3}
+  - {fileID: 5846959578341104856, guid: ffc40f52d391baf459575ea7ad0c17df, type: 3}
   playerPrefab: {fileID: 4740647157137170677, guid: 2d0117e30a4e7ad499133c85ff18cef6, type: 3}

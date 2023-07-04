@@ -8,7 +8,7 @@ public abstract class Wisp : MovingObject
 {
     public GameObject playerObject;
 
-    private Color _color;
+    [SerializeField] private Color _color;
     public Color color
     {
         get { return _color; }
