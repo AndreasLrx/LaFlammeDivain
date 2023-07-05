@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Dummy : MonoBehaviour
-{   
-    
+{
     public float hp = 10;
 
     public void getDamage(float damage)
@@ -22,10 +21,11 @@ public class Dummy : MonoBehaviour
 
     void ResetColor()
     {
-      GetComponent<SpriteRenderer>().color = Color.white;
+        GetComponent<SpriteRenderer>().color = Color.white;
     }
 
-    private void OnTriggerStay2D(Collider2D other) {
+    private void OnTriggerStay2D(Collider2D other)
+    {
         if (other.tag == "Player")
             other.GetComponent<Player>().GetDamage();
     }

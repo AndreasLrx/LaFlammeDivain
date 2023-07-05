@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PoisonWisp : Wisp
-{   
+{
     EdgeCollider2D edgeCollider2D;
     static List<EdgeCollider2D> unusedColliders = new List<EdgeCollider2D>();
-    
+
     public float range = 5;
     public float poisonDamage = 3.0f;
     public float detachedTrailWidth = 0.3f;
@@ -15,39 +15,46 @@ public class PoisonWisp : Wisp
 
     float poisonCurrentCoolDown = 0.0f;
 
-    void Awake() {
+    protected override void Awake()
+    {
         edgeCollider2D = GetValidCollider();
         base.Awake();
     }
 
-    void Update() {
+    protected override void Update()
+    {
         SetColliderPointFromTrail(trailRenderer, edgeCollider2D);
-        if(poisonCurrentCoolDown >= float.Epsilon)
+        if (poisonCurrentCoolDown >= float.Epsilon)
             poisonCurrentCoolDown -= Time.deltaTime;
         Attack(poisonDamage);
 
         base.Update();
     }
 
-    EdgeCollider2D GetValidCollider(){
+    EdgeCollider2D GetValidCollider()
+    {
         EdgeCollider2D validCollider;
-        if(unusedColliders.Count > 0){
+        if (unusedColliders.Count > 0)
+        {
             validCollider = unusedColliders[0];
             validCollider.enabled = true;
             unusedColliders.RemoveAt(0);
-        } else {
+        }
+        else
+        {
             validCollider = new GameObject("TrailCollider", typeof(EdgeCollider2D)).GetComponentInParent<EdgeCollider2D>();
             validCollider.GetComponent<EdgeCollider2D>().isTrigger = true;
         }
         return validCollider;
     }
 
-    void SetColliderPointFromTrail(TrailRenderer trail, EdgeCollider2D collider){
+    void SetColliderPointFromTrail(TrailRenderer trail, EdgeCollider2D collider)
+    {
         List<Vector2> points = new List<Vector2>();
-        if(trailRenderer.positionCount == 0)
+        if (trailRenderer.positionCount == 0)
             points.Add(trail.transform.position);
-        else 
-            for(int position = 0; position < trail.positionCount; position++)
+        else
+            for (int position = 0; position < trail.positionCount; position++)
                 points.Add(trail.GetPosition(position));
         collider.points = points.ToArray();
     }
@@ -56,7 +63,7 @@ public class PoisonWisp : Wisp
     {
         SetTarget((Vector2)playerObject.transform.position + Player().AimedDirection() * range);
         while (MoveTowardsTarget() && !Attack(poisonDamage))
-           yield return null;
+            yield return null;
     }
 
     protected override IEnumerator OnDetach()
@@ -74,8 +81,10 @@ public class PoisonWisp : Wisp
         yield break;
     }
 
-    private void OnDestroy() {
-        if(edgeCollider2D != null){
+    private void OnDestroy()
+    {
+        if (edgeCollider2D != null)
+        {
             edgeCollider2D.enabled = false;
             unusedColliders.Add(edgeCollider2D);
         }
@@ -84,12 +93,13 @@ public class PoisonWisp : Wisp
     public bool Attack(float damage)
     {
         List<Collider2D> colliders = new();
-        edgeCollider2D.GetContacts(colliders);        
-        foreach (Collider2D other in colliders){
+        edgeCollider2D.GetContacts(colliders);
+        foreach (Collider2D other in colliders)
+        {
             switch (other.tag)
             {
                 case "Enemy":
-                    if(poisonCurrentCoolDown > float.Epsilon)
+                    if (poisonCurrentCoolDown > float.Epsilon)
                         break;
                     other.GetComponent<Dummy>().getDamage(damage);
                     poisonCurrentCoolDown = poisonCoolDown;
