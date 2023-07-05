@@ -19,7 +19,7 @@ public class MovingObject : MonoBehaviour
     public float moveSpeed = 10;
     private List<Target> targets;
 
-    public void Awake()
+    protected virtual void Awake()
     {
         targets = new();
     }

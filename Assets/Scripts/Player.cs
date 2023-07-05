@@ -4,91 +4,93 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-   [SerializeField] private LayerMask enemyLayers;
-   [SerializeField] private GameManager gameManager;
-   Rigidbody2D body;
-  
-   float horizontal;
-   float vertical;
-   float moveLimiter = 0.7f;
-   public float runSpeed = 10.0f;
-   public float invisibleCoolDown = 2.0f;
-   float invisibleCurrentCoolDown = 0.0f;
-   public GameObject wispsGroupPrefab;
-   private Weapon weapon;
+    [SerializeField] private LayerMask enemyLayers;
+    [SerializeField] private GameManager gameManager;
+    Rigidbody2D body;
 
-   private void Awake()
-   {
-      weapon = GetComponentInChildren<Weapon>();
-   }
+    float horizontal;
+    float vertical;
+    float moveLimiter = 0.7f;
+    public float runSpeed = 10.0f;
+    public float invisibleCoolDown = 2.0f;
+    float invisibleCurrentCoolDown = 0.0f;
+    public GameObject wispsGroupPrefab;
+    private Weapon weapon;
 
-   void Start()
-   {
-      body = GetComponent<Rigidbody2D>();
-      Instantiate(wispsGroupPrefab, transform);
-   }
+    private void Awake()
+    {
+        weapon = GetComponentInChildren<Weapon>();
+    }
 
-   void Update()
-   {
-      weapon.PointerDirection = AimedDirection();
-      // Gives a value between -1 and 1
-      horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
-      vertical = Input.GetAxisRaw("Vertical"); // -1 is down
+    void Start()
+    {
+        body = GetComponent<Rigidbody2D>();
+        Instantiate(wispsGroupPrefab, transform);
+    }
 
-      if (Input.GetButtonDown("Attack"))
-         Attack();
-      
-      if(invisibleCurrentCoolDown >= float.Epsilon)
-         invisibleCurrentCoolDown -= Time.deltaTime;
-   }
+    void Update()
+    {
+        weapon.PointerDirection = AimedDirection();
+        // Gives a value between -1 and 1
+        horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
+        vertical = Input.GetAxisRaw("Vertical"); // -1 is down
 
-   public WispsGroup GetWisps()
-   {
-      return gameObject.GetComponentInChildren<WispsGroup>();
-   }
+        if (Input.GetButtonDown("Attack"))
+            Attack();
 
-   void FixedUpdate()
-   {
-      if (horizontal != 0 && vertical != 0) // Check for diagonal movement
-      {
-         // limit movement speed diagonally, so you move at 70% speed
-         horizontal *= moveLimiter;
-         vertical *= moveLimiter;
-      }
+        if (invisibleCurrentCoolDown >= float.Epsilon)
+            invisibleCurrentCoolDown -= Time.deltaTime;
+    }
 
-      body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
-   }
+    public WispsGroup GetWisps()
+    {
+        return gameObject.GetComponentInChildren<WispsGroup>();
+    }
 
-   public Vector2 AimedDirection()
-   {
-      return ((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - (Vector2)transform.position).normalized;
-   }
+    void FixedUpdate()
+    {
+        if (horizontal != 0 && vertical != 0) // Check for diagonal movement
+        {
+            // limit movement speed diagonally, so you move at 70% speed
+            horizontal *= moveLimiter;
+            vertical *= moveLimiter;
+        }
 
-   public void AddWisp(Wisp wisp)
-   {
-      wisp.playerObject = gameObject;
-      GetWisps().AddWisp(wisp);
-   }
+        body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
+    }
 
-   private void Attack()
-   {
-      Wisp wisp = GetWisps().GetSelectedWisp();
-      if (wisp != null)
-         StartCoroutine(wisp.Activate());
-      else
-         gameObject.GetComponentInChildren<Weapon>().Attack();
-   }
+    public Vector2 AimedDirection()
+    {
+        return ((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - (Vector2)transform.position).normalized;
+    }
 
-   public void GetDamage(){
-      if (invisibleCurrentCoolDown > float.Epsilon)
-         return;
-      Wisp wisp = GetWisps().GetSelectedWisp();
-      invisibleCurrentCoolDown = invisibleCoolDown;
-      if (wisp != null){
-         GetWisps().DetachWisp(wisp);
-         Destroy(wisp.gameObject);
-      }
-      else
-         gameManager.GameOver();
-   }
+    public void AddWisp(Wisp wisp)
+    {
+        wisp.playerObject = gameObject;
+        GetWisps().AddWisp(wisp);
+    }
+
+    private void Attack()
+    {
+        Wisp wisp = GetWisps().GetSelectedWisp();
+        if (wisp != null)
+            StartCoroutine(wisp.Activate());
+        else
+            gameObject.GetComponentInChildren<Weapon>().Attack();
+    }
+
+    public void GetDamage()
+    {
+        if (invisibleCurrentCoolDown > float.Epsilon)
+            return;
+        Wisp wisp = GetWisps().GetSelectedWisp();
+        invisibleCurrentCoolDown = invisibleCoolDown;
+        if (wisp != null)
+        {
+            GetWisps().DetachWisp(wisp);
+            Destroy(wisp.gameObject);
+        }
+        else
+            gameManager.GameOver();
+    }
 }
