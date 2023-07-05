@@ -55,6 +55,18 @@
 
 ---
 
+### Coding Style
+
+- The format to use is defined in the [.editorconfig](https://github.com/AndreasLrx/LaFlammeDivain/blob/main/.editorconfig) file at the root of the project. You can check your format using `dotnet format "La Flamme Divain.sln"`.
+
+- Use lowerCamelCase for non-constant variables.
+
+- Use UpperCamelCase for functions and type names (classes, structs and enums).
+
+- Separate functions by an empty line.
+
+---
+
 ### **DOs and DONTs**
 
 - :x: **DONT**: Push to the `main` branch for any reason, please submit a PR instead.
