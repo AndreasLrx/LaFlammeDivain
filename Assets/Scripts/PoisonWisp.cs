@@ -4,25 +4,19 @@ using UnityEngine;
 
 public class PoisonWisp : Wisp
 {   
-    TrailRenderer trailRenderer;
     EdgeCollider2D edgeCollider2D;
     static List<EdgeCollider2D> unusedColliders = new List<EdgeCollider2D>();
     
     public float range = 5;
     public float poisonDamage = 3.0f;
-    public float detachTrailWidth = 0.3f;
-    public float attachTrailWidth = 0.2f;
-    public float detachTrailTime = 0.3f;
-    public float attachTrailTime = 0.2f;
+    public float detachedTrailWidth = 0.3f;
+    public float attachedTrailWidth = 0.2f;
     public float poisonCoolDown = 0.5f;
 
     float poisonCurrentCoolDown = 0.0f;
 
     void Awake() {
         edgeCollider2D = GetValidCollider();
-        trailRenderer = this.GetComponent<TrailRenderer>();
-        trailRenderer.material.color = Color.green;
-
         base.Awake();
     }
 
@@ -50,7 +44,7 @@ public class PoisonWisp : Wisp
 
     void SetColliderPointFromTrail(TrailRenderer trail, EdgeCollider2D collider){
         List<Vector2> points = new List<Vector2>();
-        if(trail.positionCount == 0)
+        if(trailRenderer.positionCount == 0)
             points.Add(trail.transform.position);
         else 
             for(int position = 0; position < trail.positionCount; position++)
@@ -67,15 +61,16 @@ public class PoisonWisp : Wisp
 
     protected override IEnumerator OnDetach()
     {
-        trailRenderer.startWidth = detachTrailWidth;
-        trailRenderer.time = detachTrailTime;
+        trailRenderer.startWidth = detachedTrailWidth;
         yield break;
     }
 
     protected override IEnumerator OnAttach()
     {
-        trailRenderer.startWidth = attachTrailWidth;
-        trailRenderer.time = attachTrailTime;
+        // Wait for the trail to disapear to validate the attach 
+        // (quickfix for trail disappearing when wisp was attached back to the player)
+        yield return new WaitForSeconds(detachedTrailDuration);
+        trailRenderer.startWidth = attachedTrailWidth;
         yield break;
     }
 

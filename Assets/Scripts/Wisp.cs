@@ -7,6 +7,10 @@ using UnityEngine.Rendering.Universal;
 public abstract class Wisp : MovingObject
 {
     public GameObject playerObject;
+    protected TrailRenderer trailRenderer;
+
+    public float detachedTrailDuration = 0.05f;
+    public float attachedTrailDuration = 0.2f;
 
     [SerializeField] private Color _color;
     public Color color
@@ -16,6 +20,7 @@ public abstract class Wisp : MovingObject
         {
             _color = value;
             gameObject.GetComponent<Light2D>().color = _color;
+            trailRenderer.material.color = _color;
         }
     }
     public Color disabledColor;
@@ -31,6 +36,9 @@ public abstract class Wisp : MovingObject
     // Start is called before the first frame update
     void Start()
     {
+        trailRenderer = GetComponent<TrailRenderer>();
+        // Triggers light/trail color update
+        color = color;
         ResetColor();
     }
 
@@ -80,6 +88,7 @@ public abstract class Wisp : MovingObject
         owningWispsGroup = gameObject.transform.GetComponentInParent<Player>().GetWisps();
         owningWispsGroup.DetachWisp(this);
         yield return StartCoroutine(OnDetach());
+        trailRenderer.time = detachedTrailDuration;
     }
 
     private IEnumerator Attach()
@@ -87,6 +96,7 @@ public abstract class Wisp : MovingObject
         owningWispsGroup.AddWisp(this);
         owningWispsGroup = null;
         yield return StartCoroutine(OnAttach());
+        trailRenderer.time = attachedTrailDuration;
     }
 
     public IEnumerator Activate()
