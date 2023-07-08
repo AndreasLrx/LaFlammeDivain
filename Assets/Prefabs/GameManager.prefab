@@ -73,3 +73,4 @@ MonoBehaviour:
   - {fileID: 8281400056468518210, guid: 33dde5e59ab92c7469c5d74b5f101738, type: 3}
   - {fileID: 5846959578341104856, guid: ffc40f52d391baf459575ea7ad0c17df, type: 3}
   playerPrefab: {fileID: 4740647157137170677, guid: 2d0117e30a4e7ad499133c85ff18cef6, type: 3}
+  navMeshSurface: {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
