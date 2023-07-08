@@ -1,10 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Dummy : MonoBehaviour
 {
     public float hp = 10;
+    public GameObject target;
+    private NavMeshAgent agent;
+
+    void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
+
+    void Update()
+    {
+        agent.SetDestination(target.transform.position);
+    }
 
     public void getDamage(float damage)
     {

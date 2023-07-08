@@ -1,7 +1,12 @@
 using System.Collections.Generic;
 using Cinemachine;
+using NavMeshPlus.Components;
+using NavMeshPlus.Extensions;
+using UnityEditor.Build.Content;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
+
 
 public class BoardManager : MonoBehaviour
 {
@@ -17,6 +22,7 @@ public class BoardManager : MonoBehaviour
     public GameObject enemy;
     public GameObject[] wisps;
     public Player playerPrefab;
+    public NavMeshSurface navMeshSurface;
 
     private Player player;
     private Transform boardHolder;
@@ -48,9 +54,7 @@ public class BoardManager : MonoBehaviour
                 {
                     toInstantiate = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
                 }
-                GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
-
-                instance.transform.SetParent(boardHolder);
+                Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity, boardHolder);
             }
         }
     }
@@ -80,7 +84,7 @@ public class BoardManager : MonoBehaviour
         {
             Vector3 randomPosition = RandomPosition();
             GameObject tileChoice = tileArray[Random.Range(0, tileArray.Length)];
-            Instantiate(tileChoice, randomPosition, Quaternion.identity);
+            Instantiate(tileChoice, randomPosition, Quaternion.identity, boardHolder);
         }
     }
 
@@ -89,7 +93,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < enemiesCount; i++)
         {
             Vector3 randomPosition = RandomPosition();
-            Instantiate(enemy, randomPosition, Quaternion.identity);
+            Instantiate(enemy, randomPosition, Quaternion.identity).GetComponent<Dummy>().target = player.gameObject;
         }
     }
 
@@ -103,14 +107,22 @@ public class BoardManager : MonoBehaviour
         vcam.Follow = player.transform;
     }
 
+    void BuildNavMesh()
+    {
+        NavMeshSurface navMeshInstance = Instantiate(navMeshSurface);
+        navMeshInstance.GetComponent<RootSources2d>().RooySources.Add(boardHolder.gameObject);
+        navMeshInstance.BuildNavMesh();
+    }
+
     public void SetupScene()
     {
         BoardSetup();
         InitialiseList();
         LayoutObjectAtRandom(wallTiles);
-        LayoutEnemiesAtRandom(enemy);
         LayoutPlayer(playerPrefab);
+        LayoutEnemiesAtRandom(enemy);
         SetupCameraBoundaries();
+        BuildNavMesh();
     }
 
     // Start is called before the first frame update
