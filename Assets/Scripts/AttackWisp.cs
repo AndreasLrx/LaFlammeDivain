@@ -16,11 +16,13 @@ public class AttackWisp : Wisp
 
     protected override IEnumerator OnDetach()
     {
+        trailRenderer.time = detachedTrailDuration;
         yield break;
     }
 
     protected override IEnumerator OnAttach()
     {
+        StartCoroutine(SmoothlyChangeTrailDuration(attachedTrailDuration));
         yield break;
     }
 

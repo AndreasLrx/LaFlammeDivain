@@ -68,7 +68,8 @@ public class PoisonWisp : Wisp
 
     protected override IEnumerator OnDetach()
     {
-        trailRenderer.startWidth = detachedTrailWidth;
+        StartCoroutine(SmoothlyChangeTrailDuration(detachedTrailDuration));
+        StartCoroutine(SmoothlyChangeTrailWidth(detachedTrailWidth));
         yield break;
     }
 
@@ -76,8 +77,8 @@ public class PoisonWisp : Wisp
     {
         // Wait for the trail to disapear to validate the attach 
         // (quickfix for trail disappearing when wisp was attached back to the player)
-        yield return new WaitForSeconds(detachedTrailDuration);
-        trailRenderer.startWidth = attachedTrailWidth;
+        StartCoroutine(SmoothlyChangeTrailDuration(attachedTrailDuration, true));
+        StartCoroutine(SmoothlyChangeTrailWidth(attachedTrailWidth, true));
         yield break;
     }
 
