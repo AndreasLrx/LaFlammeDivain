@@ -119,4 +119,32 @@ public class WispsGroup : MonoBehaviour
     {
         return selectedWisp;
     }
+
+    public void SelectNextWisp()
+    {
+        if (selectedWisp == null || wisps.Count == 0)
+            return;
+        // Get the selected wisp back into the group
+        selectedWisp.transform.SetParent(transform);
+        wisps.Add(selectedWisp);
+        // Select the next wisp
+        selectedWisp = wisps[0];
+        wisps.RemoveAt(0);
+        // Equalize the orbiting wisps positions
+        EqualizeWisps(wisps.Count - 1);
+    }
+
+    public void SelectPreviousWisp()
+    {
+        if (selectedWisp == null || wisps.Count == 0)
+            return;
+        // Get the selected wisp back into the group
+        selectedWisp.transform.SetParent(transform);
+        wisps.Insert(0, selectedWisp);
+        // Select the previous wisp
+        selectedWisp = wisps[^1];
+        wisps.RemoveAt(wisps.Count - 1);
+        // Equalize the orbiting wisps positions
+        EqualizeWisps(0);
+    }
 }

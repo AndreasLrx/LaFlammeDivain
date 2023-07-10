@@ -38,6 +38,11 @@ public class Player : MonoBehaviour
         if (Input.GetButtonDown("Attack"))
             Attack();
 
+        if (Input.GetButtonDown("SelectNextWisp"))
+            GetWisps().SelectNextWisp();
+        if (Input.GetButtonDown("SelectPreviousWisp"))
+            GetWisps().SelectPreviousWisp();
+
         if (invisibleCurrentCoolDown >= float.Epsilon)
             invisibleCurrentCoolDown -= Time.deltaTime;
     }
