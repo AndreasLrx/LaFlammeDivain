@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,7 @@ public abstract class Wisp : MovingObject
 
     public float detachedTrailDuration = 0.05f;
     public float attachedTrailDuration = 0.2f;
+    public float trailChangeDuration = 0.5f;
 
     [SerializeField] private Color _color;
     public Color color
@@ -88,7 +90,6 @@ public abstract class Wisp : MovingObject
         owningWispsGroup = gameObject.transform.GetComponentInParent<Player>().GetWisps();
         owningWispsGroup.DetachWisp(this);
         yield return StartCoroutine(OnDetach());
-        trailRenderer.time = detachedTrailDuration;
     }
 
     private IEnumerator Attach()
@@ -96,7 +97,6 @@ public abstract class Wisp : MovingObject
         owningWispsGroup.AddWisp(this);
         owningWispsGroup = null;
         yield return StartCoroutine(OnAttach());
-        trailRenderer.time = attachedTrailDuration;
     }
 
     public IEnumerator Activate()
@@ -129,4 +129,28 @@ public abstract class Wisp : MovingObject
         while (MoveTowardsTarget((Vector2)playerObject.transform.position - ((Vector2)(playerObject.transform.position - transform.position)).normalized * owningWispsGroup.GetComponent<WispsGroup>().orbitDistance))
             yield return null;
     }
+
+    private IEnumerator SmoothlyChangeTrailParameter(float newValue, Func<float> getter, Func<float, float> setter, bool waitCurrentDuration = false)
+    {
+        if (waitCurrentDuration)
+            yield return new WaitForSeconds(trailRenderer.time);
+        float delta = (getter() - newValue) / trailChangeDuration;
+        while ((delta > 0 && getter() > newValue) || (delta < 0 && getter() < newValue))
+        {
+            setter(getter() - delta * Time.deltaTime);
+            yield return null;
+        }
+        setter(newValue);
+    }
+
+    protected IEnumerator SmoothlyChangeTrailDuration(float newDuration, bool waitCurrentDuration = false)
+    {
+        return SmoothlyChangeTrailParameter(newDuration, () => trailRenderer.time, (float newValue) => trailRenderer.time = newValue, waitCurrentDuration);
+    }
+
+    protected IEnumerator SmoothlyChangeTrailWidth(float newWidth, bool waitCurrentDuration = false)
+    {
+        return SmoothlyChangeTrailParameter(newWidth, () => trailRenderer.startWidth, (float newValue) => trailRenderer.startWidth = newValue, waitCurrentDuration);
+    }
+
 }
