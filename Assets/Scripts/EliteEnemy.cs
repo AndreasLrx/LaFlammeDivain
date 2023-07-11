@@ -6,16 +6,17 @@ using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 public class EliteEnemy : MonoBehaviour
-{   
+{
     public GameObject[] wisps;
     private Enemy enemyClass;
 
     private void Awake()
     {
         enemyClass = gameObject.GetComponent<Enemy>();
-       
+
     }
-    private void Update() {
+    private void Update()
+    {
         if (enemyClass.hp <= 0)
             StartCoroutine(Death());
     }
