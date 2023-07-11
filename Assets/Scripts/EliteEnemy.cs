@@ -5,21 +5,22 @@ using UnityEngine.AI;
 
 using Random = UnityEngine.Random;
 
-public class EliteEnemy : MonoBehaviour
+public abstract class EliteEnemy : MonoBehaviour
 {
-    public GameObject[] wisps;
-    private Enemy enemyClass;
 
-    private void Awake()
+    protected Enemy enemyClass;
+
+    protected virtual void Awake()
     {
         enemyClass = gameObject.GetComponent<Enemy>();
-
     }
-    private void Update()
+
+    protected virtual void Update()
     {
         if (enemyClass.hp <= 0)
             StartCoroutine(Death());
     }
+
     private IEnumerator Death()
     {
         yield return StartCoroutine(OnDeath());
@@ -28,8 +29,7 @@ public class EliteEnemy : MonoBehaviour
 
     protected virtual IEnumerator OnDeath()
     {
-        Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        player.AddWisp(Instantiate(wisps[Random.Range(0, wisps.Length)], player.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
+        Player.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), Player.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
         yield break;
     }
 }

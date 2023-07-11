@@ -54,6 +54,8 @@ MonoBehaviour:
   - {fileID: 457957571952232914, guid: 7f12890b0dee84ff59e09c4d8a289fb7, type: 3}
   enemies:
   - {fileID: 4557188609176430170, guid: d41a2c6c82ba17717ad817cffe1ef7aa, type: 3}
+  - {fileID: 1284062824709781337, guid: d33347bb42554854bb1d8ed088f10374, type: 3}
+  - {fileID: -7919757597832941716, guid: 59c726a11dedf3c4585eaa8cdc0ff8f4, type: 3}
   wisps:
   - {fileID: 9030161684494959953, guid: 33dde5e59ab92c7469c5d74b5f101738, type: 3}
   - {fileID: 6865338212822090350, guid: ffc40f52d391baf459575ea7ad0c17df, type: 3}
@@ -92,7 +94,7 @@ MonoBehaviour:
   numberOfRoomParts:
     minimum: 2
     maximum: 7
-  enemiesCount: 1
+  enemiesCount: 10
   innerWallCountRange:
     minimum: 3
     maximum: 7

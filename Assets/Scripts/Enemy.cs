@@ -47,6 +47,6 @@ public abstract class Enemy : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.tag == "Player")
-            other.GetComponent<Player>().GetDamage();
+            other.GetComponent<Player>().TakeDamage();
     }
 }

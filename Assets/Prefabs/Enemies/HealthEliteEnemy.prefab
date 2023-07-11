@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 1749593030490726593}
   - component: {fileID: -8493329528550477638}
   m_Layer: 9
-  m_Name: Health Elite Enemy
+  m_Name: HealthEliteEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

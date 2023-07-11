@@ -81,7 +81,7 @@ public class Player : Singleton<Player>
             gameObject.GetComponentInChildren<Weapon>().Attack();
     }
 
-    public void GetDamage()
+    public void TakeDamage()
     {
         if (invisibleCurrentCoolDown > float.Epsilon)
             return;
