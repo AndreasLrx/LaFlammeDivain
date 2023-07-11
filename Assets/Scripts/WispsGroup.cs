@@ -94,14 +94,32 @@ public class WispsGroup : MonoBehaviour
             InsertWispNaturally(wisp);
     }
 
+    private int GetNextActivableWispIndex(int defaultIndex = -1)
+    {
+        for (int i = 0; i < wisps.Count; i++)
+            if (wisps[i].IsActivable())
+                return i;
+        return defaultIndex;
+    }
+
+    private int GetPreviousActivableWispIndex(int defaultIndex = -1)
+    {
+        for (int i = wisps.Count - 1; i >= 0; i--)
+            if (wisps[i].IsActivable())
+                return i;
+        return defaultIndex;
+    }
+
     public void DetachSelectedWisp()
     {
         if (wisps.Count == 0)
             selectedWisp = null;
         else
         {
-            selectedWisp = wisps[0];
-            wisps.RemoveAt(0);
+            // Get the next activable wisp if any, or the next one if they are all in cooldown
+            int wispIndex = GetNextActivableWispIndex(0);
+            selectedWisp = wisps[wispIndex];
+            wisps.RemoveAt(wispIndex);
         }
     }
 
@@ -124,27 +142,38 @@ public class WispsGroup : MonoBehaviour
     {
         if (selectedWisp == null || wisps.Count == 0)
             return;
-        // Get the selected wisp back into the group
-        selectedWisp.transform.SetParent(transform);
-        wisps.Add(selectedWisp);
-        // Select the next wisp
-        selectedWisp = wisps[0];
-        wisps.RemoveAt(0);
-        // Equalize the orbiting wisps positions
-        EqualizeWisps(wisps.Count - 1);
+        int wispIndex = GetNextActivableWispIndex(0);
+
+        for (int i = 0; i < wispIndex + 1; i++)
+        {
+            // Get the selected wisp back into the group
+            selectedWisp.transform.SetParent(transform);
+            wisps.Add(selectedWisp);
+            // Select the next wisp
+            selectedWisp = wisps[0];
+            wisps.RemoveAt(0);
+
+            // Equalize the orbiting wisps positions
+            EqualizeWisps(wisps.Count - 1);
+        }
     }
 
     public void SelectPreviousWisp()
     {
         if (selectedWisp == null || wisps.Count == 0)
             return;
-        // Get the selected wisp back into the group
-        selectedWisp.transform.SetParent(transform);
-        wisps.Insert(0, selectedWisp);
-        // Select the previous wisp
-        selectedWisp = wisps[^1];
-        wisps.RemoveAt(wisps.Count - 1);
-        // Equalize the orbiting wisps positions
-        EqualizeWisps(0);
+        int wispIndex = GetPreviousActivableWispIndex(wisps.Count - 1);
+
+        for (int i = wisps.Count - 1; i >= wispIndex; i--)
+        {
+            // Get the selected wisp back into the group
+            selectedWisp.transform.SetParent(transform);
+            wisps.Insert(0, selectedWisp);
+            // Select the previous wisp
+            selectedWisp = wisps[^1];
+            wisps.RemoveAt(wisps.Count - 1);
+            // Equalize the orbiting wisps positions
+            EqualizeWisps(0);
+        }
     }
 }
