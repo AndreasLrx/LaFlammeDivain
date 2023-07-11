@@ -39,7 +39,6 @@ public class BoardManager : MonoBehaviour
     private int innerWallLength = 5;
     public NavMeshSurface navMeshSurface;
 
-    private Player player;
     private Transform boardHolder;
     private List<Vector2> gridPositions = new();
     private List<Vector2> outerWallGridPositions = new();
@@ -468,23 +467,26 @@ public class BoardManager : MonoBehaviour
         FloodFill(new Vector2(startingPoint.x - 1, startingPoint.y));
     }
 
-    void LayoutEnemiesAtRandom(GameObject enemy)
+    void LayoutEnemiesAtRandom()
     {
         for (int i = 0; i < enemiesCount; i++)
         {
             Vector2 randomPosition = RandomPosition();
-            Instantiate(enemy, randomPosition, Quaternion.identity).GetComponent<Enemy>().target = player.gameObject;
+            Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, boardHolder).GetComponent<Enemy>().target = Player.Instance.gameObject;
         }
     }
 
     void LayoutPlayer()
     {
         Vector2 randomPosition = RandomPosition();
-        player = Instantiate(PrefabManager.Instance.player, randomPosition, Quaternion.identity);
+        if (!Player.Instantiated())
+            Instantiate(PrefabManager.Instance.player, randomPosition, Quaternion.identity);
+        else
+            Player.Instance.transform.position = randomPosition;
 
         //Set virtual camera to follow player
         var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
-        vcam.Follow = player.transform;
+        vcam.Follow = Player.Instance.transform;
     }
 
     void BuildNavMesh()
@@ -499,9 +501,9 @@ public class BoardManager : MonoBehaviour
         BoardSetup();
         LayoutWallAtRandom();
         LayoutPlayer();
-        // LayoutEnemiesAtRandom(enemy);
-        SetupCameraBoundaries();
         BuildNavMesh();
+        LayoutEnemiesAtRandom();
+        SetupCameraBoundaries();
     }
 
     // Start is called before the first frame update
@@ -515,14 +517,12 @@ public class BoardManager : MonoBehaviour
     {
         // Debug new wisp
         if (Input.GetKeyDown(KeyCode.T))
-            player.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), player.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
+            Player.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), Player.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
         // Reset level
         if (Input.GetKeyDown(KeyCode.M))
         {
             DestroyImmediate(GameObject.Find("Board"));
             boardHolder = null;
-            DestroyImmediate(player.gameObject);
-            player = null;
             gridPositions = new List<Vector2>();
             outerWallGridPositions = new List<Vector2>();
             innerWallGridPositions = new List<Vector2>();

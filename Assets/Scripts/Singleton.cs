@@ -22,4 +22,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
     }
+
+    public static bool Instantiated()
+    {
+        return Instance != null;
+    }
 }
