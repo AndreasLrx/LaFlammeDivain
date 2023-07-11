@@ -1,45 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class Dummy : MonoBehaviour
+public class Dummy : Enemy
 {
-    public float hp = 10;
-    public GameObject target;
-    private NavMeshAgent agent;
-
-    void Start()
+    protected override void OnTakeDamage()
     {
-        agent = GetComponent<NavMeshAgent>();
-    }
-
-    void Update()
-    {
-        agent.SetDestination(target.transform.position);
-    }
-
-    public void getDamage(float damage)
-    {
-        hp -= damage;
-        // change color to red when hit and return to pink after 0.1 seconds
         GetComponent<SpriteRenderer>().color = Color.red;
         Invoke("ResetColor", 0.1f);
-        // destroy the object when hp is 0
-        if (hp <= 0)
-        {
-            Destroy(gameObject);
-        }
     }
 
     void ResetColor()
     {
         GetComponent<SpriteRenderer>().color = Color.white;
-    }
-
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.tag == "Player")
-            other.GetComponent<Player>().GetDamage();
     }
 }

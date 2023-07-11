@@ -34,7 +34,7 @@ public class AttackWisp : Wisp
             switch (other.tag)
             {
                 case "Enemy":
-                    other.GetComponent<Dummy>().getDamage(wispDamage);
+                    other.GetComponent<Enemy>().TakeDamage(wispDamage);
                     return true;
                 case "Wall":
                     return true;

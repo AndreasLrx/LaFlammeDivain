@@ -93,7 +93,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < enemiesCount; i++)
         {
             Vector3 randomPosition = RandomPosition();
-            Instantiate(enemy, randomPosition, Quaternion.identity).GetComponent<Dummy>().target = player.gameObject;
+            Instantiate(enemy, randomPosition, Quaternion.identity).GetComponent<Enemy>().target = player.gameObject;
         }
     }
 
