@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Cinemachine;
-using Cinemachine;
 using NavMeshPlus.Components;
 using NavMeshPlus.Extensions;
 using UnityEditor.Build.Content;
@@ -57,6 +56,10 @@ public class BoardManager : MonoBehaviour
 
     private int depth = 0;
 
+    private List<Vector2> map;
+
+    private List<List<Vector2>> cameraBoundaries = new List<List<Vector2>>();
+
     private enum Direction
     {
         top = 0,
@@ -76,7 +79,7 @@ public class BoardManager : MonoBehaviour
         int x = 0;
         int y = 0;
         List<Direction> roomPosition = new List<Direction>();
-        List<Vector2> map = new List<Vector2>() { new Vector2(x, y) };
+        map = new List<Vector2>() { new Vector2(x, y) };
 
         //Calculate layout of other parts of the room
         for (int i = 0; i < numberOfRoom; i++)
@@ -200,6 +203,34 @@ public class BoardManager : MonoBehaviour
     void GenerateRoomPart(int xStart, int yStart, List<Vector2> map, int roomPos)
     {
         List<Direction> wallPositions = CheckWhereToInstantiateWall(map, roomPos);
+        if (wallPositions.Contains(Direction.left))
+        {
+            cameraBoundaries.Add(new List<Vector2> {
+                new Vector2(xStart, yStart),
+                new Vector2(xStart, yStart + rowsCount)
+            });
+        }
+        if (wallPositions.Contains(Direction.right))
+        {
+            cameraBoundaries.Add(new List<Vector2> {
+                new Vector2(xStart + columnsCount, yStart),
+                new Vector2(xStart + columnsCount, yStart + rowsCount)
+            });
+        }
+        if (wallPositions.Contains(Direction.top))
+        {
+            cameraBoundaries.Add(new List<Vector2> {
+                new Vector2(xStart, yStart + rowsCount),
+                new Vector2(xStart + columnsCount, yStart + rowsCount)
+            });
+        }
+        if (wallPositions.Contains(Direction.bottom))
+        {
+            cameraBoundaries.Add(new List<Vector2> {
+                new Vector2(xStart, yStart),
+                new Vector2(xStart + columnsCount, yStart)
+            });
+        }
 
         for (int x = xStart; x < columnsCount + xStart + 1; x++)
         {
@@ -269,12 +300,40 @@ public class BoardManager : MonoBehaviour
     void SetupCameraBoundaries()
     {
         // change polygon collider points to match the map boundaries
-        GameObject.Find("MapBoundary").GetComponent<PolygonCollider2D>().points = new Vector2[] {
-            new Vector2(-1, rowsCount+0.5f),
-            new Vector2(columnsCount, rowsCount+0.5f),
-            new Vector2(columnsCount, -1),
-            new Vector2(-1, -1)
-        };
+        List<Vector2> mapBoundaries = new List<Vector2> { };
+
+        mapBoundaries.Add(cameraBoundaries[0][0]);
+        mapBoundaries.Add(cameraBoundaries[0][1]);
+        cameraBoundaries.RemoveAt(0);
+        //Connect points to make a polygon
+
+        while (cameraBoundaries.Count != 0)
+        {
+            List<Vector2> temp = null;
+            foreach (var item in cameraBoundaries)
+            {
+                if (item[0] == mapBoundaries[mapBoundaries.Count - 1] || item[1] == mapBoundaries[mapBoundaries.Count - 1])
+                {
+                    temp = item;
+                    cameraBoundaries.Remove(item);
+                }
+                if (temp != null)
+                {
+                    break;
+                }
+            }
+
+            if (temp[0] == mapBoundaries[mapBoundaries.Count - 1])
+            {
+                mapBoundaries.Add(temp[1]);
+            }
+            else
+            {
+                mapBoundaries.Add(temp[0]);
+            }
+        }
+
+        GameObject.Find("MapBoundary").GetComponent<PolygonCollider2D>().points = mapBoundaries.ToArray();
     }
 
     Vector3 RandomPosition()
@@ -460,6 +519,7 @@ public class BoardManager : MonoBehaviour
                 gridPositions = new List<Vector3>();
                 outerWallGridPositions = new List<Vector2>();
                 innerWallGridPositions = new List<Vector2>();
+                cameraBoundaries = new List<List<Vector2>>();
                 DestroyImmediate(GameObject.Find("Board"));
                 boardHolder = null;
                 BoardSetup();
@@ -485,6 +545,7 @@ public class BoardManager : MonoBehaviour
                 gridPositions = new List<Vector3>();
                 outerWallGridPositions = new List<Vector2>();
                 innerWallGridPositions = new List<Vector2>();
+                cameraBoundaries = new List<List<Vector2>>();
                 DestroyImmediate(GameObject.Find("Board"));
                 boardHolder = null;
                 BoardSetup();
