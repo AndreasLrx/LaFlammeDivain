@@ -10,8 +10,8 @@ public abstract class Wisp : MovingObject
     public GameObject playerObject;
     protected TrailRenderer trailRenderer;
 
-    public float detachedTrailDuration = 0.05f;
-    public float attachedTrailDuration = 0.2f;
+    public float detachedTrailDuration;
+    public float attachedTrailDuration;
     public float trailChangeDuration = 0.5f;
 
     [SerializeField] private Color _color;

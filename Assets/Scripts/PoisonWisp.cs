@@ -9,8 +9,8 @@ public class PoisonWisp : Wisp
 
     public float range = 5;
     public float poisonDamage = 3.0f;
-    public float detachedTrailWidth = 0.3f;
-    public float attachedTrailWidth = 0.2f;
+    public float detachedTrailWidth;
+    public float attachedTrailWidth;
     public float poisonCoolDown = 0.5f;
 
     float poisonCurrentCoolDown = 0.0f;
