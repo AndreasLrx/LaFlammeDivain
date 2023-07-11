@@ -23,18 +23,18 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public Count columns = new Count(6, 15);
-    public Count rows = new Count(6, 15);
+    public Count columns = new(6, 15);
+    public Count rows = new(6, 15);
 
-    public Count numberOfRoomParts = new Count(1, 4);
+    public Count numberOfRoomParts = new(1, 4);
 
-    private int columnsCount;
-    private int rowsCount;
+    // Size of the room parts in format -> Vector2(columns, rows)
+    private Vector2 roomPartSize;
 
     public int enemiesCount = 1;
 
-    public Count innerWallCountRange = new Count(3, 7);
-    public Count innerWallLengthRange = new Count(4, 10);
+    public Count innerWallCountRange = new(3, 7);
+    public Count innerWallLengthRange = new(4, 10);
     private int innerWallCount = 3;
     private int innerWallLength = 5;
 
@@ -48,17 +48,15 @@ public class BoardManager : MonoBehaviour
 
     private Player player;
     private Transform boardHolder;
-    private List<Vector3> gridPositions = new List<Vector3>();
-    private List<Vector2> outerWallGridPositions = new List<Vector2>();
-    private List<Vector2> innerWallGridPositions = new List<Vector2>();
+    private List<Vector2> gridPositions = new();
+    private List<Vector2> outerWallGridPositions = new();
+    private List<Vector2> innerWallGridPositions = new();
 
     private int numberOfRoom = 1;
 
-    private int depth = 0;
-
-    private List<Vector2> map;
-
-    private List<List<Vector2>> cameraBoundaries = new List<List<Vector2>>();
+    // Contains the room parts positions
+    private List<Vector2> roomParts;
+    private List<List<Vector2>> cameraBoundaries = new();
 
     private enum Direction
     {
@@ -67,186 +65,115 @@ public class BoardManager : MonoBehaviour
         bottom = 2,
         left = 3
     }
+
+    Vector2 MoveInDirection(Vector2 position, Direction direction)
+    {
+        return direction switch
+        {
+            Direction.top => new Vector2(position.x, position.y + 1),
+            Direction.right => new Vector2(position.x + 1, position.y),
+            Direction.bottom => new Vector2(position.x, position.y - 1),
+            Direction.left => new Vector2(position.x - 1, position.y),
+            _ => position,
+        };
+    }
+
+
     void BoardSetup()
     {
-        columnsCount = Random.Range(columns.minimum, columns.maximum + 1);
-        rowsCount = Random.Range(rows.minimum, rows.maximum + 1);
-
+        roomPartSize = new Vector2(Random.Range(columns.minimum, columns.maximum + 1), Random.Range(rows.minimum, rows.maximum + 1));
         numberOfRoom = Random.Range(numberOfRoomParts.minimum, numberOfRoomParts.maximum + 1) - 1;
-
         boardHolder = new GameObject("Board").transform;
 
-        int x = 0;
-        int y = 0;
-        List<Direction> roomPosition = new List<Direction>();
-        map = new List<Vector2>() { new Vector2(x, y) };
+        Vector2 currentRoomPartPosition = Vector2.zero;
+        List<Direction> roomDirections = new List<Direction>();
+        roomParts = new List<Vector2>() { currentRoomPartPosition };
 
         //Calculate layout of other parts of the room
         for (int i = 0; i < numberOfRoom; i++)
         {
-            Direction dir = (Direction)Random.Range(0, 4);
-            depth = 0;
-            Direction? direction = CalculateValidPositions(map, dir);
+            Direction? direction = GetValidRoomPartDirection((Direction)Random.Range(0, 4));
             if (direction != null)
             {
-                if (direction == Direction.top)
-                {
-                    roomPosition.Add(Direction.top);
-                    y++;
-                    map.Add(new Vector2(x, y));
-                }
-                else if (direction == Direction.right)
-                {
-                    roomPosition.Add(Direction.right);
-                    x++;
-                    map.Add(new Vector2(x, y));
-                }
-                else if (direction == Direction.bottom)
-                {
-                    roomPosition.Add(Direction.bottom);
-                    y--;
-                    map.Add(new Vector2(x, y));
-                }
-                else if (direction == Direction.left)
-                {
-                    roomPosition.Add(Direction.left);
-                    x--;
-                    map.Add(new Vector2(x, y));
-                }
+                currentRoomPartPosition = MoveInDirection(currentRoomPartPosition, (Direction)direction);
+                roomDirections.Add((Direction)direction);
+                roomParts.Add(currentRoomPartPosition);
             }
         }
         //Generate first room part
-        GenerateRoomPart(x, y, map, 0);
+        currentRoomPartPosition = Vector2.zero;
+        GenerateRoomPart(currentRoomPartPosition, 0);
 
         //Generate other room parts
         int index = 1;
-        foreach (var pos in roomPosition)
+        foreach (Direction dir in roomDirections)
         {
-            if (pos == Direction.top)
-            {
-                y += rowsCount;
-                GenerateRoomPart(x, y, map, index); //top
-            }
-            else if (pos == Direction.right)
-            {
-                x += columnsCount;
-                GenerateRoomPart(x, y, map, index); //right
-            }
-            else if (pos == Direction.bottom)
-            {
-                y -= rowsCount;
-                GenerateRoomPart(x, y, map, index); //bottom
-            }
-            else if (pos == Direction.left)
-            {
-                x -= columnsCount;
-                GenerateRoomPart(x, y, map, index); //left
-            }
-            index++;
+            currentRoomPartPosition = MoveInDirection(currentRoomPartPosition, dir);
+            GenerateRoomPart(currentRoomPartPosition, index++);
         }
     }
 
     Direction NextDirection(Direction direction)
     {
         if (direction == Direction.left)
-        {
             return 0;
-        }
         else
-        {
             return direction + 1;
-        }
     }
 
-    Direction? CalculateValidPositions(List<Vector2> map, Direction direction)
+    Direction? GetValidRoomPartDirection(Direction direction, int depth = 0)
     {
-        depth++;
-        if (depth > 10)
-        {
+        // Avoid infinite recursive loop
+        if (depth > 4)
             return null;
-        }
-        if (map.Count == 0)
-        {
+        // Don't need to check first room 
+        if (roomParts.Count == 0)
             return direction;
-        }
-
-        Vector2 actualRoom = map[map.Count - 1];
-
-        //Check if there is a room on the left
-        if (map.Contains(new Vector2(actualRoom.x - 1, actualRoom.y)) && direction == Direction.left)
-        {
-            direction = NextDirection(direction);
-            return CalculateValidPositions(map, direction);
-        }
-        //Check if there is a room on the right
-        if (map.Contains(new Vector2(actualRoom.x + 1, actualRoom.y)) && direction == Direction.right)
-        {
-            direction = NextDirection(direction);
-            return CalculateValidPositions(map, direction);
-        }
-        //Check if there is a room on the top
-        if (map.Contains(new Vector2(actualRoom.x, actualRoom.y + 1)) && direction == Direction.top)
-        {
-            direction = NextDirection(direction);
-            return CalculateValidPositions(map, direction);
-        }
-        //Check if there is a room on the bottom
-        if (map.Contains(new Vector2(actualRoom.x, actualRoom.y - 1)) && direction == Direction.bottom)
-        {
-            direction = NextDirection(direction);
-            return CalculateValidPositions(map, direction);
-        }
-
+        // Test if the direction is available
+        if (roomParts.Contains(MoveInDirection(roomParts[^1], direction)))
+            return GetValidRoomPartDirection(NextDirection(direction), depth + 1);
         return direction;
     }
 
-    void GenerateRoomPart(int xStart, int yStart, List<Vector2> map, int roomPos)
+    void GenerateRoomPart(Vector2 position, int roomPartId)
     {
-        List<Direction> wallPositions = CheckWhereToInstantiateWall(map, roomPos);
+        List<Direction> wallPositions = CheckWhereToInstantiateWall(roomParts, roomPartId);
         if (wallPositions.Contains(Direction.left))
-        {
             cameraBoundaries.Add(new List<Vector2> {
-                new Vector2(xStart, yStart),
-                new Vector2(xStart, yStart + rowsCount)
+                position * roomPartSize,
+                new Vector2(position.x, position.y + 1) * roomPartSize
             });
-        }
         if (wallPositions.Contains(Direction.right))
-        {
             cameraBoundaries.Add(new List<Vector2> {
-                new Vector2(xStart + columnsCount, yStart),
-                new Vector2(xStart + columnsCount, yStart + rowsCount)
+                new Vector2(position.x + 1, position.y) * roomPartSize,
+                new Vector2(position.x + 1, position.y + 1) * roomPartSize
             });
-        }
         if (wallPositions.Contains(Direction.top))
-        {
             cameraBoundaries.Add(new List<Vector2> {
-                new Vector2(xStart, yStart + rowsCount),
-                new Vector2(xStart + columnsCount, yStart + rowsCount)
+                new Vector2(position.x, position.y + 1) * roomPartSize,
+                new Vector2(position.x + 1, position.y + 1) * roomPartSize
             });
-        }
         if (wallPositions.Contains(Direction.bottom))
-        {
             cameraBoundaries.Add(new List<Vector2> {
-                new Vector2(xStart, yStart),
-                new Vector2(xStart + columnsCount, yStart)
+                position * roomPartSize,
+                new Vector2(position.x + 1, position.y) * roomPartSize
             });
-        }
 
-        for (int x = xStart; x < columnsCount + xStart + 1; x++)
+        for (int x = 0; x < roomPartSize.x + 1; x++)
         {
-            for (int y = yStart; y < rowsCount + yStart + 1; y++)
+            for (int y = 0; y < roomPartSize.y + 1; y++)
             {
-                GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
+                Vector2 wallPos = new Vector2(x, y) + position * roomPartSize;
 
-                Vector2 wallPos = new Vector2(x, y);
-
-                if ((x == xStart && wallPositions.Contains(Direction.left)) || (x == (columnsCount + xStart) && wallPositions.Contains(Direction.right)) || (y == yStart && wallPositions.Contains(Direction.bottom)) || (y == (rowsCount + yStart) && wallPositions.Contains(Direction.top)))
+                if ((x == 0 && wallPositions.Contains(Direction.left)) ||
+                    (x == roomPartSize.x && wallPositions.Contains(Direction.right)) ||
+                    (y == 0 && wallPositions.Contains(Direction.bottom)) ||
+                    (y == roomPartSize.y && wallPositions.Contains(Direction.top)))
                 {
                     //Don't add a wall if there is already one
                     if (!outerWallGridPositions.Contains(wallPos) && !gridPositions.Contains(wallPos))
                     {
-                        toInstantiate = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
-                        Instantiate(toInstantiate, wallPos, Quaternion.identity, boardHolder);
+                        Instantiate(outerWallTiles[Random.Range(0, outerWallTiles.Length)], wallPos, Quaternion.identity, boardHolder);
                         outerWallGridPositions.Add(wallPos);
                     }
                 }
@@ -254,9 +181,7 @@ public class BoardManager : MonoBehaviour
                 {
                     //Don't add a floor tile if there is already one
                     if (!gridPositions.Contains(wallPos) && !outerWallGridPositions.Contains(wallPos))
-                    {
                         gridPositions.Add(wallPos);
-                    }
                 }
             }
         }
@@ -271,28 +196,20 @@ public class BoardManager : MonoBehaviour
         map.RemoveAt(roomPos);
         //Check if there is a room on the left
         if (!map.Contains(new Vector2(actualRoom.x - 1, actualRoom.y)))
-        {
             //Instantiate wall on the left
             wallPositions.Add(Direction.left);
-        }
         //Check if there is a room on the right
         if (!map.Contains(new Vector2(actualRoom.x + 1, actualRoom.y)))
-        {
             //Instantiate wall on the right
             wallPositions.Add(Direction.right);
-        }
         //Check if there is a room on the top
         if (!map.Contains(new Vector2(actualRoom.x, actualRoom.y + 1)))
-        {
             //Instantiate wall on the top
             wallPositions.Add(Direction.top);
-        }
         //Check if there is a room on the bottom
         if (!map.Contains(new Vector2(actualRoom.x, actualRoom.y - 1)))
-        {
             //Instantiate wall on the bottom
             wallPositions.Add(Direction.bottom);
-        }
         map.Insert(roomPos, actualRoom);
         return wallPositions;
     }
@@ -312,45 +229,36 @@ public class BoardManager : MonoBehaviour
             List<Vector2> temp = null;
             foreach (var item in cameraBoundaries)
             {
-                if (item[0] == mapBoundaries[mapBoundaries.Count - 1] || item[1] == mapBoundaries[mapBoundaries.Count - 1])
+                if (item[0] == mapBoundaries[^1] || item[1] == mapBoundaries[^1])
                 {
                     temp = item;
                     cameraBoundaries.Remove(item);
                 }
                 if (temp != null)
-                {
                     break;
-                }
             }
 
-            if (temp[0] == mapBoundaries[mapBoundaries.Count - 1])
-            {
+            if (temp[0] == mapBoundaries[^1])
                 mapBoundaries.Add(temp[1]);
-            }
             else
-            {
                 mapBoundaries.Add(temp[0]);
-            }
         }
 
         GameObject.Find("MapBoundary").GetComponent<PolygonCollider2D>().points = mapBoundaries.ToArray();
     }
 
-    Vector3 RandomPosition()
+    Vector2 RandomPosition()
     {
         int randomIndex = Random.Range(0, gridPositions.Count);
-        Vector3 RandomPosition = gridPositions[randomIndex];
+        Vector2 RandomPosition = gridPositions[randomIndex];
         gridPositions.RemoveAt(randomIndex);
         return RandomPosition;
     }
 
-    Vector2 RandomPositionNotCloseToInnerWall(List<Vector2> innerWallGridPositions)
+    Vector2 RandomPositionNotCloseToInnerWall(List<Vector2> innerWallGridPositions, int depth = 0)
     {
-        depth++;
         if (depth > 40)
-        {
             throw new Exception("Room is too small for the amount of inner walls");
-        }
 
         int randomIndex = Random.Range(0, gridPositions.Count);
         Vector2 randomPosition = gridPositions[randomIndex];
@@ -361,9 +269,7 @@ public class BoardManager : MonoBehaviour
             int diffY = (int)Math.Abs((float)(innerWall.y - randomPosition.y));
 
             if (diffX + diffY > 5)
-            {
                 break;
-            }
 
             randomIndex = Random.Range(0, gridPositions.Count);
             randomPosition = gridPositions[randomIndex];
@@ -374,10 +280,10 @@ public class BoardManager : MonoBehaviour
             gridPositions.RemoveAt(randomIndex);
             return randomPosition;
         }
-        return RandomPositionNotCloseToInnerWall(innerWallGridPositions);
+        return RandomPositionNotCloseToInnerWall(innerWallGridPositions, depth + 1);
     }
 
-    bool CheckIfPositionIsNextToPositions(Vector3 position, List<Vector2> positions)
+    bool CheckIfPositionIsNextToPositions(Vector2 position, List<Vector2> positions)
     {
         foreach (var pos in positions)
         {
@@ -399,7 +305,7 @@ public class BoardManager : MonoBehaviour
 
     void ChangeNumberOfWall()
     {
-        if ((columnsCount * rowsCount) * 0.8 < innerWallCount * innerWallLength)
+        if (roomPartSize.x * roomPartSize.y * 0.8 < innerWallCount * innerWallLength)
         {
             if (innerWallCount > 1)
                 innerWallCount--;
@@ -418,7 +324,6 @@ public class BoardManager : MonoBehaviour
         {
             List<Vector2> innerWalls = new List<Vector2>();
             bool isTouchingWall = false;
-            depth = 0;
             Vector2 startingPosition = RandomPositionNotCloseToInnerWall(innerWallGridPositions);
 
             GameObject tileChoice = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
@@ -428,9 +333,7 @@ public class BoardManager : MonoBehaviour
             innerWallGridPositions.Add(startingPosition);
             innerWalls.Add(startingPosition);
             if (CheckIfPositionIsNextToWall(startingPosition, innerWallGridPositions))
-            {
                 isTouchingWall = true;
-            }
 
             Vector2 randomPosition = startingPosition;
             bool shouldGenerateWall = true;
@@ -500,13 +403,13 @@ public class BoardManager : MonoBehaviour
             }
         }
         //Flood fill to lay floor tiles
-        Vector3 startingPoint = gridPositions[0];
-        List<Vector3> oldGridPositions = gridPositions;
-        gridPositions = new List<Vector3>();
+        Vector2 startingPoint = gridPositions[0];
+        List<Vector2> oldGridPositions = gridPositions;
+        gridPositions = new List<Vector2>();
         FloodFill(startingPoint);
 
         //Check if the room is big enough else remove the floor tiles and redo FloodFill
-        int totalSizeOfRoom = columnsCount * rowsCount * (numberOfRoom + 1);
+        int totalSizeOfRoom = (int)roomPartSize.x * (int)roomPartSize.y * (numberOfRoom + 1);
 
         if (gridPositions.Count < totalSizeOfRoom * 0.70)
         {
@@ -516,7 +419,7 @@ public class BoardManager : MonoBehaviour
             }
             if (oldGridPositions.Count == 0)
             {
-                gridPositions = new List<Vector3>();
+                gridPositions = new List<Vector2>();
                 outerWallGridPositions = new List<Vector2>();
                 innerWallGridPositions = new List<Vector2>();
                 cameraBoundaries = new List<List<Vector2>>();
@@ -536,13 +439,13 @@ public class BoardManager : MonoBehaviour
                     i--;
                 }
             }
-            gridPositions = new List<Vector3>();
+            gridPositions = new List<Vector2>();
             FloodFill(startingPoint);
 
             //check if the room is big enough else regenerate the room
             if (gridPositions.Count < totalSizeOfRoom * 0.70)
             {
-                gridPositions = new List<Vector3>();
+                gridPositions = new List<Vector2>();
                 outerWallGridPositions = new List<Vector2>();
                 innerWallGridPositions = new List<Vector2>();
                 cameraBoundaries = new List<List<Vector2>>();
@@ -555,7 +458,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    void FloodFill(Vector3 startingPoint)
+    void FloodFill(Vector2 startingPoint)
     {
         if (outerWallGridPositions.Contains(startingPoint) || innerWallGridPositions.Contains(startingPoint))
             return;
@@ -563,27 +466,27 @@ public class BoardManager : MonoBehaviour
             return;
 
         GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
-        GameObject instance = Instantiate(toInstantiate, startingPoint, Quaternion.identity, boardHolder);
+        Instantiate(toInstantiate, startingPoint, Quaternion.identity, boardHolder);
         gridPositions.Add(startingPoint);
 
-        FloodFill(new Vector3(startingPoint.x, startingPoint.y - 1, 0));
-        FloodFill(new Vector3(startingPoint.x + 1, startingPoint.y, 0));
-        FloodFill(new Vector3(startingPoint.x, startingPoint.y + 1, 0));
-        FloodFill(new Vector3(startingPoint.x - 1, startingPoint.y, 0));
+        FloodFill(new Vector2(startingPoint.x, startingPoint.y - 1));
+        FloodFill(new Vector2(startingPoint.x + 1, startingPoint.y));
+        FloodFill(new Vector2(startingPoint.x, startingPoint.y + 1));
+        FloodFill(new Vector2(startingPoint.x - 1, startingPoint.y));
     }
 
     void LayoutEnemiesAtRandom(GameObject enemy)
     {
         for (int i = 0; i < enemiesCount; i++)
         {
-            Vector3 randomPosition = RandomPosition();
+            Vector2 randomPosition = RandomPosition();
             Instantiate(enemy, randomPosition, Quaternion.identity).GetComponent<Enemy>().target = player.gameObject;
         }
     }
 
     void LayoutPlayer(Player playerPrefab)
     {
-        Vector3 randomPosition = RandomPosition();
+        Vector2 randomPosition = RandomPosition();
         player = Instantiate(playerPrefab, randomPosition, Quaternion.identity);
 
         //Set virtual camera to follow player
@@ -593,7 +496,7 @@ public class BoardManager : MonoBehaviour
 
     void BuildNavMesh()
     {
-        NavMeshSurface navMeshInstance = Instantiate(navMeshSurface);
+        NavMeshSurface navMeshInstance = Instantiate(navMeshSurface, boardHolder);
         navMeshInstance.GetComponent<RootSources2d>().RooySources.Add(boardHolder.gameObject);
         navMeshInstance.BuildNavMesh();
     }
@@ -602,9 +505,8 @@ public class BoardManager : MonoBehaviour
     {
         BoardSetup();
         LayoutWallAtRandom();
-        //LayoutEnemiesAtRandom(enemy);
         LayoutPlayer(playerPrefab);
-        LayoutEnemiesAtRandom(enemy);
+        // LayoutEnemiesAtRandom(enemy);
         SetupCameraBoundaries();
         BuildNavMesh();
     }
@@ -628,7 +530,7 @@ public class BoardManager : MonoBehaviour
             boardHolder = null;
             DestroyImmediate(player.gameObject);
             player = null;
-            gridPositions = new List<Vector3>();
+            gridPositions = new List<Vector2>();
             outerWallGridPositions = new List<Vector2>();
             innerWallGridPositions = new List<Vector2>();
             SetupScene();
