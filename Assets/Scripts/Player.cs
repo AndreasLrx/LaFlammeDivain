@@ -15,6 +15,7 @@ public class Player : Singleton<Player>
     public float invisibleCoolDown = 2.0f;
     float invisibleCurrentCoolDown = 0.0f;
     public GameObject wispsGroupPrefab;
+    private bool onlyWeaponAttack = false;
     private Weapon weapon;
 
     protected override void Awake()
@@ -34,6 +35,8 @@ public class Player : Singleton<Player>
 
         if (Input.GetButtonDown("Attack"))
             Attack();
+        if (Input.GetButtonDown("ToggleWeaponMode"))
+            ToggleWeaponMode();
 
         if (Input.GetButtonDown("SelectNextWisp"))
             GetWisps().SelectNextWisp();
@@ -42,6 +45,11 @@ public class Player : Singleton<Player>
 
         if (invisibleCurrentCoolDown >= float.Epsilon)
             invisibleCurrentCoolDown -= Time.deltaTime;
+    }
+
+    public void ToggleWeaponMode()
+    {
+        onlyWeaponAttack = !onlyWeaponAttack;
     }
 
     public WispsGroup GetWisps()
@@ -75,7 +83,7 @@ public class Player : Singleton<Player>
     private void Attack()
     {
         Wisp wisp = GetWisps().GetSelectedWisp();
-        if (wisp != null)
+        if (!onlyWeaponAttack && wisp != null && wisp.IsActivable())
             StartCoroutine(wisp.Activate());
         else
             gameObject.GetComponentInChildren<Weapon>().Attack();
