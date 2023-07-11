@@ -102,7 +102,7 @@ public class PoisonWisp : Wisp
                 case "Enemy":
                     if (poisonCurrentCoolDown > float.Epsilon)
                         break;
-                    other.GetComponent<Dummy>().getDamage(damage);
+                    other.GetComponent<Enemy>().TakeDamage(damage * trailRenderer.startWidth);
                     poisonCurrentCoolDown = poisonCoolDown;
                     return false;
                 case "Wall":
