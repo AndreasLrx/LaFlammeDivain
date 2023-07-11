@@ -37,13 +37,6 @@ public class BoardManager : MonoBehaviour
     public Count innerWallLengthRange = new(4, 10);
     private int innerWallCount = 3;
     private int innerWallLength = 5;
-
-    public GameObject[] outerWallTiles;
-    public GameObject[] floorTiles;
-    public GameObject[] wallTiles;
-    public GameObject enemy;
-    public GameObject[] wisps;
-    public Player playerPrefab;
     public NavMeshSurface navMeshSurface;
 
     private Player player;
@@ -173,7 +166,7 @@ public class BoardManager : MonoBehaviour
                     //Don't add a wall if there is already one
                     if (!outerWallGridPositions.Contains(wallPos) && !gridPositions.Contains(wallPos))
                     {
-                        Instantiate(outerWallTiles[Random.Range(0, outerWallTiles.Length)], wallPos, Quaternion.identity, boardHolder);
+                        Instantiate(PrefabManager.GetRandomOuterWall(), wallPos, Quaternion.identity, boardHolder);
                         outerWallGridPositions.Add(wallPos);
                     }
                 }
@@ -326,7 +319,7 @@ public class BoardManager : MonoBehaviour
             bool isTouchingWall = false;
             Vector2 startingPosition = RandomPositionNotCloseToInnerWall(innerWallGridPositions);
 
-            GameObject tileChoice = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
+            GameObject tileChoice = PrefabManager.GetRandomOuterWall();
             List<Vector2> wallPath = new List<Vector2>{
                 startingPosition
             };
@@ -465,7 +458,7 @@ public class BoardManager : MonoBehaviour
         if (gridPositions.Contains(startingPoint))
             return;
 
-        GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
+        GameObject toInstantiate = PrefabManager.GetRandomFloor();
         Instantiate(toInstantiate, startingPoint, Quaternion.identity, boardHolder);
         gridPositions.Add(startingPoint);
 
@@ -484,10 +477,10 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    void LayoutPlayer(Player playerPrefab)
+    void LayoutPlayer()
     {
         Vector2 randomPosition = RandomPosition();
-        player = Instantiate(playerPrefab, randomPosition, Quaternion.identity);
+        player = Instantiate(PrefabManager.Instance.player, randomPosition, Quaternion.identity);
 
         //Set virtual camera to follow player
         var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
@@ -505,7 +498,7 @@ public class BoardManager : MonoBehaviour
     {
         BoardSetup();
         LayoutWallAtRandom();
-        LayoutPlayer(playerPrefab);
+        LayoutPlayer();
         // LayoutEnemiesAtRandom(enemy);
         SetupCameraBoundaries();
         BuildNavMesh();
@@ -522,7 +515,7 @@ public class BoardManager : MonoBehaviour
     {
         // Debug new wisp
         if (Input.GetKeyDown(KeyCode.T))
-            player.AddWisp(Instantiate(wisps[Random.Range(0, wisps.Length)], player.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
+            player.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), player.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
         // Reset level
         if (Input.GetKeyDown(KeyCode.M))
         {
