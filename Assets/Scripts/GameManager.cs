@@ -8,6 +8,10 @@ public class GameManager : Singleton<GameManager>
     {
         base.Awake();
         boardScript = GetComponent<BoardManager>();
+    }
+
+    void Start()
+    {
         InitGame();
     }
 

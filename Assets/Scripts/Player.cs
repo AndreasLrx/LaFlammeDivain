@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Singleton<Player>
 {
     [SerializeField] private LayerMask enemyLayers;
     [SerializeField] private GameManager gameManager;
@@ -17,13 +17,10 @@ public class Player : MonoBehaviour
     public GameObject wispsGroupPrefab;
     private Weapon weapon;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         weapon = GetComponentInChildren<Weapon>();
-    }
-
-    void Start()
-    {
         body = GetComponent<Rigidbody2D>();
         Instantiate(wispsGroupPrefab, transform);
     }
