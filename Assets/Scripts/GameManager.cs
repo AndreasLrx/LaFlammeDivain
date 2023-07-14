@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    public BoardManager boardScript;
+    public RoomGenerator roomGenerator;
 
     protected override void Awake()
     {
         base.Awake();
-        boardScript = GetComponent<BoardManager>();
+        roomGenerator = GetComponent<RoomGenerator>();
     }
 
     void Start()
@@ -15,9 +15,17 @@ public class GameManager : Singleton<GameManager>
         InitGame();
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+            Player.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), Player.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
+        if (Input.GetKeyDown(KeyCode.M))
+            roomGenerator.Regenerate();
+    }
+
     void InitGame()
     {
-        boardScript.SetupScene();
+        roomGenerator.GenerateRoom();
     }
 
     public void GameOver()

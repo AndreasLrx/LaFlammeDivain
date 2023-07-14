@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 125534588035546999}
   - component: {fileID: -4710461828081950549}
   - component: {fileID: 6366123417487268299}
-  - component: {fileID: 6043396065577794104}
+  - component: {fileID: -6590489944768131976}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -60,6 +60,7 @@ MonoBehaviour:
   - {fileID: 9030161684494959953, guid: 33dde5e59ab92c7469c5d74b5f101738, type: 3}
   - {fileID: 6865338212822090350, guid: ffc40f52d391baf459575ea7ad0c17df, type: 3}
   player: {fileID: 4740647157137170677, guid: 2d0117e30a4e7ad499133c85ff18cef6, type: 3}
+  humanoidNavMesh: {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
 --- !u!114 &6366123417487268299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,7 +74,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardScript: {fileID: 0}
---- !u!114 &6043396065577794104
+--- !u!114 &-6590489944768131976
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,7 +83,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7537943329441611618}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 014ac53cc031e48eb8156ac1478da423, type: 3}
+  m_Script: {fileID: 11500000, guid: 9f568e4ff7cf3e148b5b2f1714b5c969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   columns:
@@ -91,14 +92,15 @@ MonoBehaviour:
   rows:
     minimum: 6
     maximum: 15
-  numberOfRoomParts:
+  numberOfParts:
     minimum: 2
     maximum: 7
-  enemiesCount: 10
   innerWallCountRange:
     minimum: 3
     maximum: 7
   innerWallLengthRange:
     minimum: 4
     maximum: 10
-  navMeshSurface: {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
+  enemiesCountRange:
+    minimum: 2
+    maximum: 4
