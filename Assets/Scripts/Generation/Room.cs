@@ -41,7 +41,6 @@ public class Room : MonoBehaviour
     // Associative double dimension array representing the cells
     private List<List<Cell>> grid;
 
-
     public Vector2Int RoomToGrid(Vector2 roomPos)
     {
         if (roomBoundingBox.xMin < 0)

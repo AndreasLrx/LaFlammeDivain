@@ -64,7 +64,7 @@ public class RoomGenerator : MonoBehaviour
     private Room room;
 
     // Helper methods
-    Vector2 MoveInDirection(Vector2 position, Direction direction)
+    private Vector2 MoveInDirection(Vector2 position, Direction direction)
     {
         return direction switch
         {
@@ -76,7 +76,7 @@ public class RoomGenerator : MonoBehaviour
         };
     }
 
-    Direction NextDirection(Direction direction)
+    private Direction NextDirection(Direction direction)
     {
         if (direction == Direction.left)
             return 0;
@@ -84,7 +84,7 @@ public class RoomGenerator : MonoBehaviour
             return direction + 1;
     }
 
-    Vertice BorderDirectionToVertice(Direction direction, Vector2 partPos)
+    private Vertice BorderDirectionToVertice(Direction direction, Vector2 partPos)
     {
         return direction switch
         {
@@ -141,7 +141,7 @@ public class RoomGenerator : MonoBehaviour
         return partsPositions;
     }
 
-    Direction? GetValidPartDirection(List<Vector2> partsPositions, Direction direction, int depth = 0)
+    private Direction? GetValidPartDirection(List<Vector2> partsPositions, Direction direction, int depth = 0)
     {
         // Avoid infinite recursive loop
         if (depth > 4)
@@ -186,7 +186,7 @@ public class RoomGenerator : MonoBehaviour
     }
 
     // Return the direction in which the part must have border (ie is not linked to another part)
-    List<Direction> GetPartBorderDirections(Vector2 partPos)
+    private List<Direction> GetPartBorderDirections(Vector2 partPos)
     {
         List<Direction> borderDirections = new();
 
@@ -268,7 +268,7 @@ public class RoomGenerator : MonoBehaviour
         }
     }
 
-    Vector2? GetInnerWallStartPosition(int depth = 0)
+    private Vector2? GetInnerWallStartPosition(int depth = 0)
     {
         if (depth > 40)
             return null;
@@ -331,7 +331,7 @@ public class RoomGenerator : MonoBehaviour
         return true;
     }
 
-    void SetupCameraBoundaries()
+    private void SetupCameraBoundaries()
     {
         // change polygon collider points to match the map boundaries
         List<Vector2> mapBoundaries = new List<Vector2> { };
@@ -367,7 +367,7 @@ public class RoomGenerator : MonoBehaviour
 
     }
 
-    Vector2 RandomPosition()
+    private Vector2 RandomPosition()
     {
         int randomIndex = Random.Range(0, emptyPositions.Count);
         Vector2 RandomPosition = emptyPositions[randomIndex];
