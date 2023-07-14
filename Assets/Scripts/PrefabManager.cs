@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using NavMeshPlus.Components;
 using UnityEngine;
 
 public class PrefabManager : Singleton<PrefabManager>
@@ -10,6 +11,7 @@ public class PrefabManager : Singleton<PrefabManager>
     public Enemy[] enemies;
     public Wisp[] wisps;
     public Player player;
+    public NavMeshSurface humanoidNavMesh;
 
     private static T GetRandomElement<T>(T[] array)
     {
