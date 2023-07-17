@@ -17,7 +17,7 @@ public abstract class EliteEnemy : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (enemyClass.hp <= 0)
+        if (enemyClass.health <= 0)
             StartCoroutine(Death());
     }
 

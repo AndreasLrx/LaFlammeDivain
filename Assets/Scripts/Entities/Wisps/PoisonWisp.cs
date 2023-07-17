@@ -7,13 +7,11 @@ public class PoisonWisp : Wisp
     EdgeCollider2D edgeCollider2D;
     static List<EdgeCollider2D> unusedColliders = new List<EdgeCollider2D>();
 
-    public float range = 5;
-    public float poisonDamage = 3.0f;
     public float detachedTrailWidth;
     public float attachedTrailWidth;
     public float poisonCoolDown = 0.5f;
 
-    float poisonCurrentCoolDown = 0.0f;
+    private float poisonCurrentCoolDown = 0.0f;
 
     protected override void Awake()
     {
@@ -26,7 +24,7 @@ public class PoisonWisp : Wisp
         SetColliderPointFromTrail(trailRenderer, edgeCollider2D);
         if (poisonCurrentCoolDown >= float.Epsilon)
             poisonCurrentCoolDown -= Time.deltaTime;
-        Attack(poisonDamage);
+        Attack();
 
         base.Update();
     }
@@ -61,8 +59,8 @@ public class PoisonWisp : Wisp
 
     protected override IEnumerator OnActivate()
     {
-        SetTarget((Vector2)playerObject.transform.position + Player().AimedDirection() * range);
-        while (MoveTowardsTarget() && !Attack(poisonDamage))
+        SetTarget((Vector2)owner.transform.position + Player.Instance.AimedDirection() * range);
+        while (MoveTowardsTarget() && !Attack())
             yield return null;
     }
 
@@ -73,7 +71,7 @@ public class PoisonWisp : Wisp
         yield break;
     }
 
-    protected override IEnumerator OnAttach()
+    public override IEnumerator OnAttach()
     {
         // Wait for the trail to disapear to validate the attach 
         // (quickfix for trail disappearing when wisp was attached back to the player)
@@ -91,7 +89,7 @@ public class PoisonWisp : Wisp
         }
     }
 
-    public bool Attack(float damage)
+    public bool Attack()
     {
         List<Collider2D> colliders = new();
         edgeCollider2D.GetContacts(colliders);
@@ -102,7 +100,7 @@ public class PoisonWisp : Wisp
                 case "Enemy":
                     if (poisonCurrentCoolDown > float.Epsilon)
                         break;
-                    other.GetComponent<Enemy>().TakeDamage(damage * trailRenderer.startWidth);
+                    other.GetComponent<Enemy>().TakeDamage(owner.damage * trailRenderer.startWidth);
                     poisonCurrentCoolDown = poisonCoolDown;
                     return false;
                 case "Wall":

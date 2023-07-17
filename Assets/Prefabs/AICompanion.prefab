@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -1624360911332544719}
   - component: {fileID: 3206609104498396570}
   - component: {fileID: 8580006818906180178}
+  - component: {fileID: 3902533294257358200}
   m_Layer: 0
   m_Name: AICompanion
   m_TagString: Untagged
@@ -190,7 +191,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4411840252245956147}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c0a49caa0bba7643990892560e11300, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a18e6fef1bc35140913e48feb5a57ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentParameters:
@@ -217,4 +218,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e420827fca1f4bd4c97a8b0c395a4b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
+--- !u!114 &3902533294257358200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4411840252245956147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 163ae95971d933a478ed665773f75894, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10
+  range: 5
+  attackSpeed: 1
+  shotSpeed: 1
+  damage: 5
+  health: 20

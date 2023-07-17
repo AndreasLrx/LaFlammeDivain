@@ -5,7 +5,6 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     public Vector2 PointerDirection { get; set; }
-    public float meleeDamage = 1;
 
     private void Update()
     {
@@ -27,6 +26,6 @@ public class Weapon : MonoBehaviour
 
         foreach (Collider2D other in colliders)
             if (other.tag == "Enemy")
-                other.GetComponent<Enemy>().TakeDamage(meleeDamage);
+                other.GetComponent<Enemy>().TakeDamage(Player.Instance.entity.damage);
     }
 }

@@ -150,16 +150,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05184236f5cc8ad4294653ed97733a54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
-  playerObject: {fileID: 0}
+  owner: {fileID: 0}
   detachedTrailDuration: 5
   attachedTrailDuration: 0.2
   trailChangeDuration: 0.5
   _color: {r: 0.15396993, g: 0.745283, b: 0.059060108, a: 1}
   disabledColor: {r: 0.6117647, g: 0.6117647, b: 0.6117647, a: 1}
+  rangeMultiplier: 1
+  speedMultiplier: 10
+  damageMultiplier: 0.5
   cooldownTime: 10
-  range: 10
-  poisonDamage: 0.5
   detachedTrailWidth: 1
   attachedTrailWidth: 0.2
   poisonCoolDown: 0.2

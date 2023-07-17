@@ -4,29 +4,30 @@ using UnityEngine;
 
 public class AttackWisp : Wisp
 {
-    public float range = 5;
-    public float wispDamage = 1.0f;
+    public float damageBoost = 0.3f;
 
     protected override IEnumerator OnActivate()
     {
-        SetTarget((Vector2)playerObject.transform.position + Player().AimedDirection() * range);
-        while (MoveTowardsTarget() && !Attack(wispDamage))
+        SetTarget((Vector2)owner.transform.position + Player.Instance.AimedDirection() * range);
+        while (MoveTowardsTarget() && !Attack())
             yield return null;
     }
 
     protected override IEnumerator OnDetach()
     {
         trailRenderer.time = detachedTrailDuration;
+        owner.damage -= damageBoost;
         yield break;
     }
 
-    protected override IEnumerator OnAttach()
+    public override IEnumerator OnAttach()
     {
+        owner.damage += damageBoost;
         StartCoroutine(SmoothlyChangeTrailDuration(attachedTrailDuration));
         yield break;
     }
 
-    public bool Attack(float wispDamage)
+    public bool Attack()
     {
         List<Collider2D> colliders = new();
         gameObject.GetComponent<CircleCollider2D>().GetContacts(colliders);
@@ -34,7 +35,7 @@ public class AttackWisp : Wisp
             switch (other.tag)
             {
                 case "Enemy":
-                    other.GetComponent<Enemy>().TakeDamage(wispDamage);
+                    other.GetComponent<Enemy>().TakeDamage(damage);
                     return true;
                 case "Wall":
                     return true;
