@@ -6,21 +6,29 @@ public class AttackWisp : Wisp
 {
     public float damageBoost = 0.3f;
 
-    protected override IEnumerator OnActivate()
+    protected override void Awake()
+    {
+        base.Awake();
+        onActivate += OnActivate;
+        onDeath += OnDetach;
+        onAttach += OnAttach;
+    }
+
+    private IEnumerator OnActivate()
     {
         SetTarget((Vector2)owner.transform.position + Player.Instance.AimedDirection() * range);
         while (MoveTowardsTarget() && !Attack())
             yield return null;
     }
 
-    protected override IEnumerator OnDetach()
+    private IEnumerator OnDetach()
     {
         trailRenderer.time = detachedTrailDuration;
         owner.damage -= damageBoost;
         yield break;
     }
 
-    public override IEnumerator OnAttach()
+    private IEnumerator OnAttach()
     {
         owner.damage += damageBoost;
         StartCoroutine(SmoothlyChangeTrailDuration(attachedTrailDuration));

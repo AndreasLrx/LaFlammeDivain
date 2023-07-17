@@ -15,8 +15,11 @@ public class PoisonWisp : Wisp
 
     protected override void Awake()
     {
-        edgeCollider2D = GetValidCollider();
         base.Awake();
+        edgeCollider2D = GetValidCollider();
+        onActivate += OnActivate;
+        onDetach += OnDetach;
+        onAttach += OnAttach;
     }
 
     protected override void Update()
@@ -57,21 +60,21 @@ public class PoisonWisp : Wisp
         collider.points = points.ToArray();
     }
 
-    protected override IEnumerator OnActivate()
+    private IEnumerator OnActivate()
     {
         SetTarget((Vector2)owner.transform.position + Player.Instance.AimedDirection() * range);
         while (MoveTowardsTarget() && !Attack())
             yield return null;
     }
 
-    protected override IEnumerator OnDetach()
+    private IEnumerator OnDetach()
     {
         StartCoroutine(SmoothlyChangeTrailDuration(detachedTrailDuration));
         StartCoroutine(SmoothlyChangeTrailWidth(detachedTrailWidth));
         yield break;
     }
 
-    public override IEnumerator OnAttach()
+    private IEnumerator OnAttach()
     {
         // Wait for the trail to disapear to validate the attach 
         // (quickfix for trail disappearing when wisp was attached back to the player)
