@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5970868291076065725}
   - component: {fileID: 6485223129038191119}
   - component: {fileID: 2441727123651177938}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -80,7 +80,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   gameManager: {fileID: 6366123417487268299, guid: 3eeac57e8d5aa4e2ebcf1d51456cf58d, type: 3}
-  playerHp: 10
   runSpeed: 10
   invisibleCoolDown: 1.5
   wispsGroupPrefab: {fileID: 1522740308722967485, guid: a9ec15806e6fc8f40bca3d60cfba797f, type: 3}

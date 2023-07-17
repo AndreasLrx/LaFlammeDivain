@@ -61,7 +61,7 @@ public class RoomGenerator : MonoBehaviour
     private List<Vector2> emptyPositions;
 
     // Generated room object
-    private Room room;
+    public Room room;
 
     // Helper methods
     private Vector2 MoveInDirection(Vector2 position, Direction direction)
@@ -367,7 +367,7 @@ public class RoomGenerator : MonoBehaviour
 
     }
 
-    private Vector2 RandomPosition()
+    public Vector2 RandomPosition()
     {
         int randomIndex = Random.Range(0, emptyPositions.Count);
         Vector2 RandomPosition = emptyPositions[randomIndex];
@@ -386,6 +386,12 @@ public class RoomGenerator : MonoBehaviour
         //Set virtual camera to follow player
         var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
         vcam.Follow = Player.Instance.transform;
+
+        if (AICompanion.instance == null)
+            Instantiate(PrefabManager.Instance.companion, randomPosition, Quaternion.identity);
+        else
+            AICompanion.instance.transform.position = randomPosition;
+        AICompanion.instance.roomGenerator = this;
     }
 
     private void PlaceEnemies()

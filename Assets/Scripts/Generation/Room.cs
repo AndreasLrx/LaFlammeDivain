@@ -26,7 +26,8 @@ public class Room : MonoBehaviour
         }
     }
 
-    private Vector2 partSize;
+    private Vector2 _partSize;
+    public Vector2 partSize { get { return _partSize; } }
 
     /// Generated room layout
     // Position of the room parts
@@ -34,7 +35,8 @@ public class Room : MonoBehaviour
     public List<Vector2> partsPositions { get { return _partsPositions; } }
 
     // Room bounding box (minimum box where all parts fits in)
-    private RectInt roomBoundingBox;
+    private RectInt _roomBoundingBox;
+    public RectInt roomBoundingBox { get { return _roomBoundingBox; } }
     // Boundaries of the camera (list of points)
     public List<Vector2> roomBoundaries;
 
@@ -109,20 +111,26 @@ public class Room : MonoBehaviour
         return cell != null && cell.type == expectedType;
     }
 
+    public Vector2Int GetPartPositionFromRoomPosition(Vector2 roomPosition)
+    {
+        Vector2 floatPos = roomPosition / partSize;
+        return new Vector2Int((int)(floatPos.x - ((floatPos.x < 0) ? 1 : 0)), (int)(floatPos.y - ((floatPos.y < 0) ? 1 : 0)));
+    }
+
     private void FillGrid()
     {
-        roomBoundingBox = new();
+        _roomBoundingBox = new();
         grid = new();
         foreach (Vector2 partPos in partsPositions)
         {
             if (partPos.x < roomBoundingBox.xMin)
-                roomBoundingBox.xMin = (int)partPos.x;
+                _roomBoundingBox.xMin = (int)partPos.x;
             if (partPos.x + 1 > roomBoundingBox.xMax)
-                roomBoundingBox.xMax = (int)partPos.x + 1;
+                _roomBoundingBox.xMax = (int)partPos.x + 1;
             if (partPos.y < roomBoundingBox.yMin)
-                roomBoundingBox.yMin = (int)partPos.y;
+                _roomBoundingBox.yMin = (int)partPos.y;
             if (partPos.y + 1 > roomBoundingBox.yMax)
-                roomBoundingBox.yMax = (int)partPos.y + 1;
+                _roomBoundingBox.yMax = (int)partPos.y + 1;
         }
 
 
@@ -164,7 +172,7 @@ public class Room : MonoBehaviour
 
     public void Initialize(Vector2 partSize, List<Vector2> partsPositions)
     {
-        this.partSize = partSize;
+        this._partSize = partSize;
         this._partsPositions = partsPositions;
 
         FillGrid();

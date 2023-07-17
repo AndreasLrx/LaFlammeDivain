@@ -77,3 +77,7 @@ crashlytics-build.properties
 
 # VsCode
 .vscode
+
+venv
+results
+__pycache__
