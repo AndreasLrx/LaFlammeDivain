@@ -17,11 +17,15 @@ public class Player : Singleton<Player>
     private bool onlyWeaponAttack = false;
     private Weapon weapon;
 
+    private Entity _entity;
+    public Entity entity { get { return _entity; } }
+
     protected override void Awake()
     {
         base.Awake();
         weapon = GetComponentInChildren<Weapon>();
         body = GetComponent<Rigidbody2D>();
+        _entity = GetComponent<Entity>();
         Instantiate(wispsGroupPrefab, transform);
     }
 
@@ -75,8 +79,9 @@ public class Player : Singleton<Player>
 
     public void AddWisp(Wisp wisp)
     {
-        wisp.playerObject = gameObject;
+        wisp.owner = entity;
         GetWisps().AddWisp(wisp);
+        StartCoroutine(wisp.OnAttach());
     }
 
     private void Attack()

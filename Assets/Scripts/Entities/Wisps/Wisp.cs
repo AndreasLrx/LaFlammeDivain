@@ -7,7 +7,7 @@ using UnityEngine.Rendering.Universal;
 
 public abstract class Wisp : MovingObject
 {
-    public GameObject playerObject;
+    public Entity owner;
     protected TrailRenderer trailRenderer;
 
     public float detachedTrailDuration;
@@ -28,12 +28,20 @@ public abstract class Wisp : MovingObject
     public Color disabledColor;
 
 
+    public float rangeMultiplier = 1;
+    public float range { get { return owner.range * rangeMultiplier; } }
+    public float speedMultiplier = 3;
+    public float speed { get { return owner.shotSpeed * speedMultiplier; } }
+    public float damageMultiplier = 1.0f;
+    public float damage { get { return owner.damage * damageMultiplier; } }
+
+
     // The cooldown time, in seconds
     public float cooldownTime = 1;
     // The time remaining before the wisp can be activated
     private float currentCooldown = 0;
 
-    protected WispsGroup owningWispsGroup = null;
+    public WispsGroup owningWispsGroup = null;
 
     // Start is called before the first frame update
     void Start()
@@ -59,9 +67,9 @@ public abstract class Wisp : MovingObject
         }
     }
 
-    protected Player Player()
+    protected override float GetSpeed()
     {
-        return playerObject.GetComponent<Player>();
+        return speed;
     }
 
     bool IsDetached()
@@ -104,7 +112,7 @@ public abstract class Wisp : MovingObject
         if (IsActivable())
         {
             // Activate the cooldown
-            currentCooldown = cooldownTime;
+            currentCooldown = cooldownTime / owner.attackSpeed;
             // Detach the wisp from the group
             yield return StartCoroutine(Detach());
             // Call the effective activation effect
@@ -122,16 +130,18 @@ public abstract class Wisp : MovingObject
 
     protected abstract IEnumerator OnDetach();
 
-    protected abstract IEnumerator OnAttach();
+    public abstract IEnumerator OnAttach();
 
     protected IEnumerator ReturnToPlayer()
     {
-        while (MoveTowardsTarget((Vector2)playerObject.transform.position - ((Vector2)(playerObject.transform.position - transform.position)).normalized * owningWispsGroup.GetComponent<WispsGroup>().orbitDistance))
+        while (MoveTowardsTarget((Vector2)owner.transform.position - ((Vector2)(owner.transform.position - transform.position)).normalized * owningWispsGroup.GetComponent<WispsGroup>().orbitDistance))
             yield return null;
     }
 
     private IEnumerator SmoothlyChangeTrailParameter(float newValue, Func<float> getter, Func<float, float> setter, bool waitCurrentDuration = false)
     {
+        if (trailRenderer == null)
+            yield break;
         if (waitCurrentDuration)
             yield return new WaitForSeconds(trailRenderer.time);
         float delta = (getter() - newValue) / trailChangeDuration;

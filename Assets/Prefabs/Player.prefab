@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5970868291076065725}
   - component: {fileID: 6485223129038191119}
   - component: {fileID: 2441727123651177938}
+  - component: {fileID: 5352243314548174174}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -79,7 +80,6 @@ MonoBehaviour:
   enemyLayers:
     serializedVersion: 2
     m_Bits: 512
-  gameManager: {fileID: 6366123417487268299, guid: 3eeac57e8d5aa4e2ebcf1d51456cf58d, type: 3}
   runSpeed: 10
   invisibleCoolDown: 1.5
   wispsGroupPrefab: {fileID: 1522740308722967485, guid: a9ec15806e6fc8f40bca3d60cfba797f, type: 3}
@@ -220,6 +220,24 @@ MonoBehaviour:
   - {x: 0.5, y: -0.5, z: 0}
   - {x: 0.5, y: 0.5, z: 0}
   - {x: -0.5, y: 0.5, z: 0}
+--- !u!114 &5352243314548174174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524187137907032234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 163ae95971d933a478ed665773f75894, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10
+  range: 5
+  attackSpeed: 1
+  shotSpeed: 1
+  damage: 5
+  health: 20
 --- !u!1 &3861967627621747483
 GameObject:
   m_ObjectHideFlags: 0

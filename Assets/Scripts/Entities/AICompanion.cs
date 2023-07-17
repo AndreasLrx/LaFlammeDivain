@@ -21,6 +21,8 @@ public class AICompanion : Agent
     private MovingObject moveComponent;
 
     public static AICompanion instance;
+    private Entity _entity;
+    public Entity entity { get { return _entity; } }
 
     protected virtual void Awake()
     {
@@ -29,6 +31,7 @@ public class AICompanion : Agent
         else if (instance != this)
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
+        _entity = GetComponent<Entity>();
     }
 
     private void Start()
@@ -165,7 +168,7 @@ public class AICompanion : Agent
 
         // Move the AI companion
         if (isTraining)
-            transform.Translate(movementDirection * moveComponent.moveSpeed * Time.deltaTime);
+            transform.Translate(movementDirection * entity.speed * Time.deltaTime);
         else
             moveComponent.SetTarget((Vector2)transform.position + movementDirection);
 

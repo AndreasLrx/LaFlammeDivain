@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public abstract class Enemy : MonoBehaviour
+public abstract class Enemy : Entity
 {
-    public float hp = 10;
     public GameObject target;
     private NavMeshAgent agent;
 
@@ -16,15 +15,16 @@ public abstract class Enemy : MonoBehaviour
 
     void Update()
     {
+        agent.speed = speed;
         agent.SetDestination(target.transform.position);
     }
 
     public void TakeDamage(float damage)
     {
-        hp -= damage;
+        health -= damage;
         OnTakeDamage();
         // destroy the object when hp is 0
-        if (hp <= 0)
+        if (health <= 0)
             StartCoroutine(Death());
     }
 

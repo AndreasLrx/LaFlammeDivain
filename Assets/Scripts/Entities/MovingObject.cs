@@ -16,17 +16,23 @@ public class MovingObject : MonoBehaviour
         }
     }
 
-    public float moveSpeed = 10;
     private List<Target> targets;
+    private Entity entity;
 
     protected virtual void Awake()
     {
         targets = new();
+        entity = GetComponent<Entity>();
     }
 
     protected virtual void Update()
     {
         MoveTowardsTarget();
+    }
+
+    protected virtual float GetSpeed()
+    {
+        return entity.speed;
     }
 
     public bool IsMoving()
@@ -82,9 +88,9 @@ public class MovingObject : MonoBehaviour
 
         // Move towards the target
         if (target.local)
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, target.position, moveSpeed * Time.deltaTime);
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, target.position, GetSpeed() * Time.deltaTime);
         else
-            transform.position = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, target.position, GetSpeed() * Time.deltaTime);
         return true;
     }
 
