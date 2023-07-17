@@ -5,7 +5,6 @@ using UnityEngine;
 public class Player : Singleton<Player>
 {
     [SerializeField] private LayerMask enemyLayers;
-    [SerializeField] private GameManager gameManager;
     Rigidbody2D body;
 
     float horizontal;
@@ -101,6 +100,6 @@ public class Player : Singleton<Player>
             Destroy(wisp.gameObject);
         }
         else
-            gameManager.GameOver();
+            GameManager.Instance.GameOver();
     }
 }

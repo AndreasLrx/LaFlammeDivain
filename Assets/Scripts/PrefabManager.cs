@@ -11,6 +11,7 @@ public class PrefabManager : Singleton<PrefabManager>
     public Enemy[] enemies;
     public Wisp[] wisps;
     public Player player;
+    public AICompanion companion;
     public NavMeshSurface humanoidNavMesh;
 
     private static T GetRandomElement<T>(T[] array)
