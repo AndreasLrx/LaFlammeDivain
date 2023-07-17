@@ -43,9 +43,17 @@ public abstract class Wisp : MovingObject
 
     public WispsGroup owningWispsGroup = null;
 
+    protected AsyncEventsProcessor eventsProcessor;
+    protected AsyncEventsProcessor.AsyncEvent onDetach;
+    protected AsyncEventsProcessor.AsyncEvent onActivate;
+    protected AsyncEventsProcessor.AsyncEvent onAttach;
+    protected AsyncEventsProcessor.AsyncEvent onDeath;
+
     // Start is called before the first frame update
-    void Start()
+    protected override void Awake()
     {
+        base.Awake();
+        eventsProcessor = gameObject.AddComponent<AsyncEventsProcessor>();
         trailRenderer = GetComponent<TrailRenderer>();
         // Triggers light/trail color update
         color = color;
@@ -97,14 +105,19 @@ public abstract class Wisp : MovingObject
     {
         owningWispsGroup = gameObject.transform.GetComponentInParent<Player>().GetWisps();
         owningWispsGroup.DetachWisp(this);
-        yield return StartCoroutine(OnDetach());
+        yield return StartCoroutine(eventsProcessor.StartAsyncEvents(onDetach));
     }
 
     private IEnumerator Attach()
     {
-        owningWispsGroup.AddWisp(this);
+        return Attach(owningWispsGroup);
+    }
+
+    public IEnumerator Attach(WispsGroup group)
+    {
+        group.AddWisp(this);
         owningWispsGroup = null;
-        yield return StartCoroutine(OnAttach());
+        yield return StartCoroutine(eventsProcessor.StartAsyncEvents(onAttach));
     }
 
     public IEnumerator Activate()
@@ -116,7 +129,7 @@ public abstract class Wisp : MovingObject
             // Detach the wisp from the group
             yield return StartCoroutine(Detach());
             // Call the effective activation effect
-            yield return StartCoroutine(OnActivate());
+            yield return StartCoroutine(eventsProcessor.StartAsyncEvents(onActivate));
             // Return the wisp to the player position
             yield return StartCoroutine(ReturnToPlayer());
             // Attach back the wisp to the group
@@ -125,12 +138,6 @@ public abstract class Wisp : MovingObject
             ResetColor();
         }
     }
-
-    protected abstract IEnumerator OnActivate();
-
-    protected abstract IEnumerator OnDetach();
-
-    public abstract IEnumerator OnAttach();
 
     protected IEnumerator ReturnToPlayer()
     {

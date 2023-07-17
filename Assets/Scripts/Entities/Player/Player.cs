@@ -80,8 +80,7 @@ public class Player : Singleton<Player>
     public void AddWisp(Wisp wisp)
     {
         wisp.owner = entity;
-        GetWisps().AddWisp(wisp);
-        StartCoroutine(wisp.OnAttach());
+        StartCoroutine(wisp.Attach(GetWisps()));
     }
 
     private void Attack()

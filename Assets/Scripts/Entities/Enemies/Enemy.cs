@@ -8,9 +8,15 @@ public abstract class Enemy : Entity
     public GameObject target;
     private NavMeshAgent agent;
 
-    void Start()
+    public delegate void OnTakeDamage();
+    public AsyncEventsProcessor.AsyncEvent onDeath = null;
+    public OnTakeDamage onTakeDamage = null;
+    private AsyncEventsProcessor eventsProcessor;
+
+    protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        eventsProcessor = gameObject.AddComponent<AsyncEventsProcessor>();
     }
 
     void Update()
@@ -22,26 +28,16 @@ public abstract class Enemy : Entity
     public void TakeDamage(float damage)
     {
         health -= damage;
-        OnTakeDamage();
+        onTakeDamage?.Invoke();
         // destroy the object when hp is 0
         if (health <= 0)
             StartCoroutine(Death());
     }
 
-    protected virtual void OnTakeDamage()
-    {
-
-    }
-
     private IEnumerator Death()
     {
-        yield return StartCoroutine(OnDeath());
+        yield return StartCoroutine(eventsProcessor.StartAsyncEvents(onDeath));
         Destroy(gameObject);
-    }
-
-    protected virtual IEnumerator OnDeath()
-    {
-        yield break;
     }
 
     private void OnTriggerStay2D(Collider2D other)

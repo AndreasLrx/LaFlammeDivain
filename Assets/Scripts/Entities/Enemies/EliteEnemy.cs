@@ -13,21 +13,10 @@ public abstract class EliteEnemy : MonoBehaviour
     protected virtual void Awake()
     {
         enemyClass = gameObject.GetComponent<Enemy>();
+        enemyClass.onDeath += OnDeath;
     }
 
-    protected virtual void Update()
-    {
-        if (enemyClass.health <= 0)
-            StartCoroutine(Death());
-    }
-
-    private IEnumerator Death()
-    {
-        yield return StartCoroutine(OnDeath());
-        Destroy(gameObject);
-    }
-
-    protected virtual IEnumerator OnDeath()
+    private IEnumerator OnDeath()
     {
         Player.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), Player.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
         yield break;

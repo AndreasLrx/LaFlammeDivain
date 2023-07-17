@@ -10,12 +10,10 @@ public class FireEliteEnemy : EliteEnemy
 
     public float fireDuration = 2;
 
-    protected override void Update()
+    protected void Update()
     {
         SetColliderPointFromTrail(trailRenderer, edgeCollider2D);
         Attack();
-
-        base.Update();
     }
 
     protected override void Awake()
