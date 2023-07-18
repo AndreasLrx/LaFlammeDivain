@@ -80,7 +80,7 @@ public abstract class Wisp : MovingObject
         return speed;
     }
 
-    bool IsDetached()
+    public bool IsDetached()
     {
         return owningWispsGroup != null;
     }
