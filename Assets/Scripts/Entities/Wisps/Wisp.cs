@@ -43,11 +43,15 @@ public abstract class Wisp : MovingObject
 
     public WispsGroup owningWispsGroup = null;
 
+    public delegate bool OnDamage(bool absorbed);
     protected AsyncEventsProcessor eventsProcessor;
     protected AsyncEventsProcessor.AsyncEvent onDetach;
     protected AsyncEventsProcessor.AsyncEvent onActivate;
     protected AsyncEventsProcessor.AsyncEvent onAttach;
     protected AsyncEventsProcessor.AsyncEvent onDeath;
+    protected OnDamage _onDamage;
+
+    public OnDamage onDamage { get { return _onDamage; } }
 
     // Start is called before the first frame update
     protected override void Awake()

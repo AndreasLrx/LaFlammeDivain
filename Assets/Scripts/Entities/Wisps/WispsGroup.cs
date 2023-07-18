@@ -207,10 +207,26 @@ public class WispsGroup : MonoBehaviour
         }
     }
 
+    private bool CallWispOnDamage()
+    {
+        if (selectedStack == null)
+            return false;
+        bool absorbed = selectedStack.AbsorbDamage(false);
+
+        foreach (WispStack stack in stacks)
+            absorbed = stack.AbsorbDamage(absorbed) | absorbed;
+        return absorbed;
+    }
+
     public bool AbsorbDamage()
     {
         if (selectedStack == null)
             return false;
+        // Trigger wisps OnDamage (they may absorb the damage)
+        if (CallWispOnDamage())
+            return true;
+
+        // Absorb the damage at a cost of 1 wisp
         Destroy(selectedStack.PopWisp());
         if (selectedStack.WispsCount() == 0)
             DeleteStack(selectedStack);
