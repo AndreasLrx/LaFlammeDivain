@@ -35,7 +35,7 @@ public class WispsGroup : MonoBehaviour
         if (selectedWisp)
         {
             Player player = GetComponentInParent<Player>();
-            selectedWisp.SetTarget((Vector2)player.transform.position + player.AimedDirection() * selectedOrbitDistance);
+            selectedWisp.SetTarget((Vector2)player.transform.position + player.aimedDirection * selectedOrbitDistance);
         }
     }
 

@@ -26,6 +26,6 @@ public class Weapon : MonoBehaviour
 
         foreach (Collider2D other in colliders)
             if (other.tag == "Enemy")
-                other.GetComponent<Enemy>().TakeDamage(Player.Instance.entity.damage);
+                other.GetComponent<Enemy>().TakeDamage(PlayerController.Instance.entity.damage);
     }
 }

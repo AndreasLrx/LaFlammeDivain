@@ -378,14 +378,14 @@ public class RoomGenerator : MonoBehaviour
     private void PlacePlayer()
     {
         Vector2 randomPosition = RandomPosition();
-        if (!Player.Instantiated())
+        if (!PlayerController.Instantiated())
             Instantiate(PrefabManager.Instance.player, randomPosition, Quaternion.identity);
         else
-            Player.Instance.transform.position = randomPosition;
+            PlayerController.Instance.transform.position = randomPosition;
 
         //Set virtual camera to follow player
         var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
-        vcam.Follow = Player.Instance.transform;
+        vcam.Follow = PlayerController.Instance.transform;
 
         if (AICompanion.instance == null)
             Instantiate(PrefabManager.Instance.companion, randomPosition, Quaternion.identity);
@@ -401,7 +401,7 @@ public class RoomGenerator : MonoBehaviour
         for (int i = 0; i < enemiesCount; i++)
         {
             Vector2 randomPosition = RandomPosition();
-            Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, room.transform).GetComponent<Enemy>().target = Player.Instance.gameObject;
+            Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, room.transform).GetComponent<Enemy>().target = PlayerController.Instance.gameObject;
         }
     }
 

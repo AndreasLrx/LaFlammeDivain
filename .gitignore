@@ -78,6 +78,8 @@ crashlytics-build.properties
 # VsCode
 .vscode
 
+# AI training
 venv
 results
 __pycache__
+ML-Agents

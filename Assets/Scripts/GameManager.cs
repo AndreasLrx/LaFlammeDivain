@@ -18,7 +18,7 @@ public class GameManager : Singleton<GameManager>
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))
-            Player.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), Player.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
+            PlayerController.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), PlayerController.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
         if (Input.GetKeyDown(KeyCode.M))
             roomGenerator.Regenerate();
     }

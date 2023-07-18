@@ -16,7 +16,7 @@ public class AttackWisp : Wisp
 
     private IEnumerator OnActivate()
     {
-        SetTarget((Vector2)owner.transform.position + Player.Instance.AimedDirection() * range);
+        SetTarget((Vector2)owner.transform.position + owner.aimedDirection * range);
         while (MoveTowardsTarget() && !Attack())
             yield return null;
     }
@@ -24,13 +24,13 @@ public class AttackWisp : Wisp
     private IEnumerator OnDetach()
     {
         trailRenderer.time = detachedTrailDuration;
-        owner.damage -= damageBoost;
+        owner.entity.damage -= damageBoost;
         yield break;
     }
 
     private IEnumerator OnAttach()
     {
-        owner.damage += damageBoost;
+        owner.entity.damage += damageBoost;
         StartCoroutine(SmoothlyChangeTrailDuration(attachedTrailDuration));
         yield break;
     }
