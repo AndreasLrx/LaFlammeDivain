@@ -77,6 +77,12 @@ public class Player : MonoBehaviour
             weapon?.Attack();
     }
 
+    public void SecondaryAttack()
+    {
+        if (onlyWeaponAttack || !wisps.ActivateSelectedStack())
+            weapon?.Attack();
+    }
+
     public void TakeDamage()
     {
         if (invicibleCurrentCoolDown > float.Epsilon)

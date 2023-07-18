@@ -20,6 +20,8 @@ public class PlayerController : Singleton<Player>
 
         if (Input.GetButtonDown("Attack"))
             player.Attack();
+        if (Input.GetButtonDown("SecondaryAttack"))
+            player.SecondaryAttack();
         if (Input.GetButtonDown("ToggleWeaponMode"))
             player.ToggleWeaponMode();
         if (Input.GetButtonDown("SelectNextWisp"))
