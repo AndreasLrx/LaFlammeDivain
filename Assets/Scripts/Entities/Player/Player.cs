@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     private Entity _entity;
     private Weapon weapon;
     private bool onlyWeaponAttack = false;
+    public int hitNumber = 0;
 
 
     public WispsGroup wisps { get { return _wisps; } }
@@ -84,6 +85,12 @@ public class Player : MonoBehaviour
     {
         if (invicibleCurrentCoolDown > float.Epsilon)
             return;
+        if (hitNumber > 0)
+        {
+            hitNumber -= 1;
+            invicibleCurrentCoolDown = invicibleCoolDown;
+            return;
+        }
         Wisp wisp = wisps.GetSelectedWisp();
         invicibleCurrentCoolDown = invicibleCoolDown;
         if (wisp != null)
