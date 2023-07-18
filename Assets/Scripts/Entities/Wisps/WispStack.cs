@@ -14,7 +14,6 @@ public class WispStack : MovingObject
     {
         transform.position = wisp.transform.position;
         wisps.Clear();
-        wisps.Add(wisp);
         _wispsType = wisp.GetType();
         gameObject.name = "WispStack (" + _wispsType + ")";
         return this;
@@ -79,8 +78,17 @@ public class WispStack : MovingObject
         return wisps.Count;
     }
 
+    public bool AbsorbDamage(bool absorbed)
+    {
+        foreach (Wisp wisp in wisps)
+            absorbed = (wisp.onDamage?.Invoke(absorbed) == true) | absorbed;
+        return absorbed;
+    }
+
     protected override float GetSpeed()
     {
+        if (wisps.Count == 0)
+            return 1;
         return wisps[0].speed;
     }
 }
