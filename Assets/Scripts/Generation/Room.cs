@@ -1,7 +1,11 @@
+using System;
 using System.Collections.Generic;
 using NavMeshPlus.Components;
 using NavMeshPlus.Extensions;
 using UnityEngine;
+using Cinemachine;
+using Random = UnityEngine.Random;
+using static RoomGenerator;
 
 public class Room : MonoBehaviour
 {
@@ -11,7 +15,8 @@ public class Room : MonoBehaviour
         Empty = 0,      // Nothing on the cell
         Floor = 1,      // Floor
         Border = 2,     // Border wall
-        Wall = 3        // Inner wall
+        Wall = 3,       // Inner wall
+        Door = 4        // Door
     }
 
     public class Cell
@@ -43,6 +48,65 @@ public class Room : MonoBehaviour
     // Associative double dimension array representing the cells
     private GameObject tiles;
     private List<List<Cell>> grid;
+
+    // Possible doors positions
+    public List<Vector2> doorsPossiblePositions;
+
+    // Room offset
+    public Vector2 offset;
+
+    //bounding box of the room base on parts
+    public List<RectInt> partSizeBoundingBox = new();
+    // List of empty positions
+    public List<Vector2> emptyPositions;
+
+    public List<Door> doors = new();
+
+    private int enemiesCount;
+
+    public RoomGenerator.Range enemiesCountRange = new(2, 4);
+    public float eliteProbability = 0.2f;
+    public Vector2 RandomPosition()
+    {
+        int randomIndex = Random.Range(0, emptyPositions.Count);
+        Vector2 RandomPosition = emptyPositions[randomIndex];
+        emptyPositions.RemoveAt(randomIndex);
+        return RandomPosition;
+    }
+
+    public void PlaceEnemies()
+    {
+        enemiesCount = Random.Range(enemiesCountRange.minimum, enemiesCountRange.maximum + 1);
+
+        for (int i = 0; i < enemiesCount; i++)
+        {
+            Vector2 randomPosition = RandomPosition();
+            Enemy enemy = Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, this.transform).GetComponent<Enemy>();
+            enemy.InitTarget();
+
+            if (Random.Range(0f, 1f) < eliteProbability)
+                enemy.gameObject.AddComponent(PrefabManager.GetRandomEliteType());
+        }
+    }
+
+    public void PlacePlayer()
+    {
+        Vector2 randomPosition = RandomPosition();
+        if (!PlayerController.Instantiated())
+            Instantiate(PrefabManager.Instance.player, randomPosition, Quaternion.identity);
+        else
+            PlayerController.Instance.transform.position = randomPosition;
+
+        //Set virtual camera to follow player
+        var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
+        vcam.Follow = PlayerController.Instance.transform;
+
+        if (AICompanion.Instance == null)
+            Instantiate(PrefabManager.Instance.companion, randomPosition, Quaternion.identity);
+        else
+            AICompanion.Instance.transform.position = randomPosition;
+        //AICompanion.Instance.roomGenerator = this;
+    }
 
     public Vector2Int RoomToGrid(Vector2 roomPos)
     {
@@ -186,5 +250,105 @@ public class Room : MonoBehaviour
         this._partsPositions = partsPositions;
 
         FillGrid();
+    }
+
+    public Direction? getFreeDirectionFromDoor(Vector2 door)
+    {
+        foreach (Direction direction in (Direction[])Enum.GetValues(typeof(Direction)))
+        {
+
+            Cell cell = GetCellAt(MoveInDirection(door, direction));
+            if (cell == null || cell.type == CellType.Empty)
+                return direction;
+        }
+        return null;
+    }
+    public List<DoorsDiff> getPossibleConnections(List<Room> otherRooms, int randomIndex)
+    {
+        List<DoorsDiff> possibleConnections = new();
+
+        foreach (Vector2 doorPossiblePos in doorsPossiblePositions)
+        {
+            foreach (Vector2 otherRoomDoor in otherRooms[randomIndex].doorsPossiblePositions)
+            {
+                offset = doorPossiblePos - otherRoomDoor;
+                if (offset == Vector2.zero)
+                    break;
+
+                bool isValid = true;
+
+                // Get free direction from door else it's not valid
+                Direction? doorPossibleDir = getFreeDirectionFromDoor(doorPossiblePos);
+                if (doorPossibleDir == null)
+                    isValid = false;
+
+                // Get free direction from otherDoor else it's not valid
+                Direction? otherRoomDoorDir = otherRooms[randomIndex].getFreeDirectionFromDoor(otherRoomDoor);
+                if (otherRoomDoorDir == null)
+                    isValid = false;
+
+                // If they are not facing each other it's not valid
+                if (isValid && ((Direction)(((int)doorPossibleDir + 2) % 4) != otherRoomDoorDir))
+                    isValid = false;
+
+                List<RectInt> partSizeBoundingBox = new List<RectInt>();
+                List<RectInt> otherPartSizeBoundingBox = new List<RectInt>();
+                if (isValid)
+                {
+                    //Calculate bounding box of the room base on parts
+                    foreach (Vector2 partPos in partsPositions)
+                    {
+                        RectInt boundingBox = new();
+                        boundingBox.x = (int)(partPos.x * partSize.x);
+                        boundingBox.y = (int)(partPos.y * partSize.y);
+                        boundingBox.width = (int)(partSize.x);
+                        boundingBox.height = (int)(partSize.y);
+                        boundingBox.x += -(int)(offset.x - otherRooms[randomIndex].offset.x);
+                        boundingBox.y += -(int)(offset.y - otherRooms[randomIndex].offset.y);
+
+                        partSizeBoundingBox.Add(boundingBox);
+                    }
+
+                    //Check if they are colliding
+                    foreach (RectInt boundingBox in partSizeBoundingBox)
+                    {
+                        foreach (Room room in otherRooms)
+                        {
+                            foreach (RectInt otherBoundingBox in room.partSizeBoundingBox)
+                            {
+                                if (boundingBox.Overlaps(otherBoundingBox))
+                                {
+                                    isValid = false;
+                                    break;
+                                }
+                            }
+                            if (!isValid)
+                                break;
+                        }
+                        if (!isValid)
+                            break;
+                    }
+                }
+
+                if (isValid)
+                    possibleConnections.Add(new() { offset = -offset, doorPossiblePos = doorPossiblePos, otherRoomDoor = otherRoomDoor, partSizeBoundingBox = partSizeBoundingBox });
+            }
+        }
+
+        return possibleConnections;
+    }
+
+
+    public struct DoorsDiff
+    {
+        //the diff between 2 doors
+        public Vector2 offset;
+        //door of this room 
+        public Vector2 doorPossiblePos;
+        //door of last otherRooms
+        public Vector2 otherRoomDoor;
+
+        //bounding box of the room base on parts
+        public List<RectInt> partSizeBoundingBox;
     }
 }

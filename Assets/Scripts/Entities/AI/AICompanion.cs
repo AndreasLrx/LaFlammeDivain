@@ -5,6 +5,7 @@ using UnityEngine;
 public class AICompanion : Singleton<AICompanion>
 {
     public RoomGenerator roomGenerator;
+    public Room room;
     public Transform target;
     public Behavior movement;
 

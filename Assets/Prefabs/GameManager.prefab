@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 125534588035546999}
   - component: {fileID: -4710461828081950549}
   - component: {fileID: 6366123417487268299}
+  - component: {fileID: -7188745768154552247}
   - component: {fileID: -6590489944768131976}
   m_Layer: 0
   m_Name: GameManager
@@ -82,6 +83,8 @@ MonoBehaviour:
   - {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
   lightPoint: {fileID: 7649469973289764995, guid: f2bec35a2403b3f459e02bde45f61d8a, type: 3}
   fireTrail: {fileID: 7649469973289764995, guid: d33347bb42554854bb1d8ed088f10374, type: 3}
+  humanoidNavMesh: {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
+  doorTiles: {fileID: 6765124784350681279, guid: 3a0d96d852acd4c5bbfe43b43d0286f0, type: 3}
 --- !u!114 &6366123417487268299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,7 +97,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 138513f5a9cb54279a875ebbcd5fe5e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomGenerator: {fileID: 0}
+  floorGenerator: {fileID: -7188745768154552247}
+--- !u!114 &-7188745768154552247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7537943329441611618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2753b91911d34727ad7e0bff0452c04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numberOfRoom:
+    minimum: 5
+    maximum: 10
+  roomGenerator: {fileID: -6590489944768131976}
 --- !u!114 &-6590489944768131976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,20 +127,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   columns:
-    minimum: 6
-    maximum: 15
+    minimum: 10
+    maximum: 25
   rows:
-    minimum: 6
-    maximum: 15
+    minimum: 10
+    maximum: 25
   numberOfParts:
-    minimum: 2
-    maximum: 7
-  innerWallCountRange:
-    minimum: 3
-    maximum: 7
-  innerWallLengthRange:
-    minimum: 4
+    minimum: 10
     maximum: 10
+  innerWallCountRange:
+    minimum: 1
+    maximum: 1
+  innerWallLengthRange:
+    minimum: 1
+    maximum: 1
   enemiesCountRange:
     minimum: 2
     maximum: 4

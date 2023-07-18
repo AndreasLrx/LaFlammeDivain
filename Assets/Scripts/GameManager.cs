@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    public RoomGenerator roomGenerator;
     private bool _isPaused = false;
     public bool isPaused { get { return _isPaused; } }
+    public FloorGenerator floorGenerator;
 
     protected override void Awake()
     {
         base.Awake();
-        roomGenerator = GetComponent<RoomGenerator>();
+        floorGenerator = GetComponent<FloorGenerator>();
     }
 
     void Start()
@@ -22,12 +22,16 @@ public class GameManager : Singleton<GameManager>
         if (Input.GetKeyDown(KeyCode.T))
             PlayerController.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), PlayerController.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
         if (Input.GetKeyDown(KeyCode.M))
-            roomGenerator.Regenerate();
+            floorGenerator.RegenerateFloor();
+
     }
 
     void InitGame()
     {
-        roomGenerator.GenerateRoom();
+        floorGenerator.GenerateFloor();
+        floorGenerator.rooms[0].PlacePlayer();
+        PlayerController.Instance.currentRoom = floorGenerator.rooms[0];
+        //floorGenerator.rooms[0].PlaceEnemies();
     }
 
     public void GameOver()
