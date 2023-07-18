@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - Wall
   - EnemyProjectile
+  - Door
   layers:
   - Default
   - TransparentFX
@@ -49,6 +50,9 @@ TagManager:
     locked: 0
   - name: Wall
     uniqueID: 395491039
+    locked: 0
+  - name: Door
+    uniqueID: 3746757085
     locked: 0
   - name: Entities
     uniqueID: 424877953

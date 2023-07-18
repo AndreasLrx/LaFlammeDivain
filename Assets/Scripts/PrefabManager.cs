@@ -38,6 +38,8 @@ public class PrefabManager : Singleton<PrefabManager>
             typeof(RegenElite)
         };
     }
+    public NavMeshSurface humanoidNavMesh;
+    public GameObject doorTiles;
 
     private static T GetRandomElement<T>(T[] array)
     {
@@ -48,6 +50,11 @@ public class PrefabManager : Singleton<PrefabManager>
     {
         gameObject.GetComponent<SpriteRenderer>().sprite = GetRandomElement(tiles);
         return gameObject;
+    }
+
+    public static GameObject GetDoor()
+    {
+        return Instance.doorTiles;
     }
 
     public static GameObject GetRandomOuterWall()

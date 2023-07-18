@@ -70,8 +70,8 @@ public class Behavior : Agent
         if (isTraining)
         {
             aiCompanion.roomGenerator.Regenerate();
-            PlayerController.Instance.transform.position = aiCompanion.roomGenerator.RandomPosition();
-            transform.position = aiCompanion.roomGenerator.RandomPosition();
+            PlayerController.Instance.transform.position = aiCompanion.room.RandomPosition();
+            transform.position = aiCompanion.room.RandomPosition();
         }
         AICompanion.Instance.target = null;
     }

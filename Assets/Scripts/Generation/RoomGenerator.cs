@@ -1,13 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Cinemachine;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class RoomGenerator : MonoBehaviour
 {
-    private enum Direction
+    public enum Direction
     {
         top = 0,
         right = 1,
@@ -46,26 +45,21 @@ public class RoomGenerator : MonoBehaviour
     public Range numberOfParts = new(1, 4);
     public Range innerWallCountRange = new(3, 7);
     public Range innerWallLengthRange = new(4, 10);
-    public Range enemiesCountRange = new(2, 4);
-    public float eliteProbability = 0.2f;
 
     /// Generated room caracteristics
     private Vector2 partSize;
     private int innerWallCount;
     private int innerWallLength;
-    private int enemiesCount;
 
     /// Generated room layout
     // Boundaries of the camera (list of vertices)
     private List<Vertice> cameraBoundaries;
-    // List of empty positions
-    private List<Vector2> emptyPositions;
 
     // Generated room object
     public Room room;
 
     // Helper methods
-    private Vector2 MoveInDirection(Vector2 position, Direction direction)
+    public static Vector2 MoveInDirection(Vector2 position, Direction direction)
     {
         return direction switch
         {
@@ -110,7 +104,7 @@ public class RoomGenerator : MonoBehaviour
         room = new GameObject("Room", typeof(Room)).GetComponent<Room>();
         partSize = new Vector2(Random.Range(columns.minimum, columns.maximum + 1), Random.Range(rows.minimum, rows.maximum + 1));
         List<Vector2> partsPositions = GeneratePartsPositions();
-        emptyPositions = new();
+        room.emptyPositions = new();
 
         // Define where we'll place our parts
         room.Initialize(partSize, partsPositions);
@@ -180,7 +174,7 @@ public class RoomGenerator : MonoBehaviour
                 else
                 {
                     cell.type = Room.CellType.Empty;
-                    emptyPositions.Add(cellPos);
+                    room.emptyPositions.Add(cellPos);
                 }
             }
         }
@@ -252,7 +246,7 @@ public class RoomGenerator : MonoBehaviour
         if (isWallValid)
             foreach (Vector2 position in wallPositions)
             {
-                emptyPositions.Remove(position);
+                room.emptyPositions.Remove(position);
                 room.GetCellAt(position).type = Room.CellType.Wall;
             }
         return isWallValid;
@@ -274,8 +268,8 @@ public class RoomGenerator : MonoBehaviour
         if (depth > 40)
             return null;
 
-        int randomIndex = Random.Range(0, emptyPositions.Count);
-        Vector2 randomPosition = emptyPositions[randomIndex];
+        int randomIndex = Random.Range(0, room.emptyPositions.Count);
+        Vector2 randomPosition = room.emptyPositions[randomIndex];
 
         if (!room.IsCellTypeAroundPosition(randomPosition, new Room.CellType[] { Room.CellType.Wall }))
             return randomPosition;
@@ -285,7 +279,7 @@ public class RoomGenerator : MonoBehaviour
     private bool FloodFill()
     {
         int totalSizeOfRoom = (int)partSize.x * (int)partSize.y * room.partsPositions.Count;
-        Vector2 startingPoint = emptyPositions[0];
+        Vector2 startingPoint = room.emptyPositions[0];
         List<Vector2> visitedPositions = new();
 
         FloodFill(startingPoint, visitedPositions);
@@ -293,11 +287,11 @@ public class RoomGenerator : MonoBehaviour
         {
             // We may have flood filled a small part of the room
             foreach (Vector2 visitedPosition in visitedPositions)
-                emptyPositions.Remove(visitedPosition);
-            if (emptyPositions.Count == 0)
+                room.emptyPositions.Remove(visitedPosition);
+            if (room.emptyPositions.Count == 0)
                 return false;
 
-            startingPoint = emptyPositions[0];
+            startingPoint = room.emptyPositions[0];
             visitedPositions = new();
             FloodFill(startingPoint, visitedPositions);
 
@@ -306,7 +300,7 @@ public class RoomGenerator : MonoBehaviour
                 return false;
         }
 
-        emptyPositions = visitedPositions;
+        room.emptyPositions = visitedPositions;
         foreach (Vector2 floor in visitedPositions)
             room.GetCellAt(floor).type = Room.CellType.Floor;
         return true;
@@ -322,6 +316,49 @@ public class RoomGenerator : MonoBehaviour
             FloodFill(MoveInDirection(evaluatedPos, dir), visited);
     }
 
+    private Vector2 getDoorPosFromDirection(Vector2 partPos, Direction direction)
+    {
+        Vector2 partOffset = partPos * partSize;
+        return direction switch
+        {
+            Direction.top => new Vector2((int)(room.partSize.x / 2) + (int)(partOffset.x), room.partSize.y + (int)partOffset.y),
+            Direction.right => new Vector2(room.partSize.x + (int)(partOffset.x), (int)(room.partSize.y / 2) + (int)partOffset.y),
+            Direction.bottom => new Vector2((int)(room.partSize.x / 2) + (int)(partOffset.x), (int)partOffset.y),
+            Direction.left => new Vector2((int)(partOffset.x), (int)(room.partSize.y / 2) + (int)partOffset.y),
+            _ => partPos,
+        };
+    }
+
+    private bool IsValidDoorPosition(Vector2 cellPos, Vector2 connectedCellPos)
+    {
+        Room.Cell cell = room.GetCellAt(cellPos);
+        Room.Cell connectedCell = room.GetCellAt(connectedCellPos);
+        if (cell.type == Room.CellType.Border && cell.type != Room.CellType.Door
+        && connectedCell.type == Room.CellType.Floor)
+            return true;
+
+        return false;
+    }
+
+    private void SavePossibleDoorsPositions()
+    {
+        room.doorsPossiblePositions = new();
+        for (int i = 0; i < room.partsPositions.Count; i++)
+        {
+            Vector2 partPos = room.partsPositions[i];
+            Vector2 partOffset = partPos * partSize;
+
+            foreach (Direction direction in (Direction[])Enum.GetValues(typeof(Direction)))
+            {
+                Vector2 doorPos = getDoorPosFromDirection(partPos, direction);
+                Vector2 connectedCellPos = MoveInDirection(doorPos, (Direction)(((int)direction + 2) % 4));
+
+                if (IsValidDoorPosition(doorPos, connectedCellPos))
+                    room.doorsPossiblePositions.Add(doorPos);
+            }
+        }
+    }
+
     private bool GenerateRoomTiles()
     {
         RoomSetup();
@@ -329,6 +366,7 @@ public class RoomGenerator : MonoBehaviour
         if (!GenerateInnerWalls())
             return false;
         room.InstantiateTiles();
+        SavePossibleDoorsPositions();
         return true;
     }
 
@@ -368,60 +406,17 @@ public class RoomGenerator : MonoBehaviour
 
     }
 
-    public Vector2 RandomPosition()
+    public void GenerateRoomEntities()
     {
-        int randomIndex = Random.Range(0, emptyPositions.Count);
-        Vector2 RandomPosition = emptyPositions[randomIndex];
-        emptyPositions.RemoveAt(randomIndex);
-        return RandomPosition;
-    }
-
-    private void PlacePlayer()
-    {
-        Vector2 randomPosition = RandomPosition();
-        if (!PlayerController.Instantiated())
-            Instantiate(PrefabManager.Instance.player, randomPosition, Quaternion.identity);
-        else
-            PlayerController.Instance.transform.position = randomPosition;
-
-        //Set virtual camera to follow player
-        var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
-        vcam.Follow = PlayerController.Instance.transform;
-
-        if (AICompanion.Instance == null)
-            Instantiate(PrefabManager.Instance.companion, randomPosition, Quaternion.identity);
-        else
-            AICompanion.Instance.transform.position = randomPosition;
-        AICompanion.Instance.roomGenerator = this;
-    }
-
-    private void PlaceEnemies()
-    {
-        enemiesCount = Random.Range(enemiesCountRange.minimum, enemiesCountRange.maximum + 1);
-
-        for (int i = 0; i < enemiesCount; i++)
-        {
-            Vector2 randomPosition = RandomPosition();
-            Enemy enemy = Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, room.transform).GetComponent<Enemy>();
-            enemy.InitTarget();
-
-            if (Random.Range(0f, 1f) < eliteProbability)
-                enemy.gameObject.AddComponent(PrefabManager.GetRandomEliteType());
-        }
-    }
-
-    private void GenerateRoomEntities()
-    {
-        PlacePlayer();
-        PlaceEnemies();
+        room.PlaceEnemies();
     }
 
     public Room GenerateRoom()
     {
         if (!GenerateRoomTiles())
             return Regenerate();
-        GenerateRoomEntities();
-        SetupCameraBoundaries();
+        //GenerateRoomEntities();
+        //SetupCameraBoundaries();
         return room;
     }
 
