@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,24 +8,28 @@ public class WispsGroup : MonoBehaviour
     public float orbitSpeed = 10;
     public float orbitDistance = 1.5f;
     public float selectedOrbitDistance = 0.8f;
-    private List<Wisp> wisps;
-    private Wisp _selectedWisp;
-    private Wisp selectedWisp
+    // private List<Wisp> wisps;
+    private List<WispStack> stacks;
+    private WispStack _selectedStack;
+    private WispStack selectedStack
     {
-        get { return _selectedWisp; }
+        get { return _selectedStack; }
         set
         {
-            _selectedWisp = value;
+            _selectedStack = value;
             if (value != null)
-                _selectedWisp.transform.SetParent(GetComponentInParent<Player>().transform);
+            {
+                _selectedStack.transform.SetParent(GetComponentInParent<Player>().transform);
+                stacks.Remove(value);
+            }
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        wisps = new();
-        EqualizeWisps();
+        stacks = new();
+        EqualizeStacks();
     }
 
     // Update is called once per frame
@@ -32,148 +37,183 @@ public class WispsGroup : MonoBehaviour
     {
         transform.Rotate(new Vector3(0, 0, orbitSpeed) * Time.deltaTime);
 
-        if (selectedWisp)
+        if (selectedStack)
         {
             Player player = GetComponentInParent<Player>();
-            selectedWisp.SetTarget((Vector2)player.transform.position + player.aimedDirection * selectedOrbitDistance);
+            selectedStack.SetTarget((Vector2)player.transform.position + player.aimedDirection * selectedOrbitDistance);
         }
     }
 
-    private void EqualizeWisps(int wispIndex = 0)
+    private void EqualizeStacks(int wispIndex = 0)
     {
         // Avoid division by zero
-        if (wisps.Count == 0)
+        if (stacks.Count == 0)
             return;
 
-        float gap = 360.0f / wisps.Count;
+        float gap = 360.0f / stacks.Count;
 
-        float startingAngle = Vector2.SignedAngle(Vector2.down, wisps[wispIndex].transform.localPosition);
+        float startingAngle = Vector2.SignedAngle(Vector2.down, stacks[wispIndex].transform.localPosition);
         for (int i = wispIndex; i >= 0; i--)
-            wisps[i].SetTarget(Quaternion.AngleAxis(startingAngle - gap * (wispIndex - i), Vector3.forward) * Vector2.down * orbitDistance, true);
-        for (int i = wispIndex + 1; i < wisps.Count; i++)
-            wisps[i].SetTarget(Quaternion.AngleAxis(startingAngle + gap * (i - wispIndex), Vector3.forward) * Vector2.down * orbitDistance, true);
+            stacks[i].SetTarget(Quaternion.AngleAxis(startingAngle - gap * (wispIndex - i), Vector3.forward) * Vector2.down * orbitDistance, true);
+        for (int i = wispIndex + 1; i < stacks.Count; i++)
+            stacks[i].SetTarget(Quaternion.AngleAxis(startingAngle + gap * (i - wispIndex), Vector3.forward) * Vector2.down * orbitDistance, true);
     }
 
-    private float GetWispAngle(Wisp wisp)
+    private float GetObjectAngle(Transform transform)
     {
-        float res = Vector2.SignedAngle(Vector2.down, wisp.transform.localPosition);
+        float res = Vector2.SignedAngle(Vector2.down, transform.localPosition);
         if (res < 0)
             return res + 360;
         return res;
     }
 
-    private void InsertWispNaturally(Wisp wisp)
+    private void InsertStackNaturally(WispStack stack)
     {
-        int wispIndex;
+
+        int stackIndex;
         // Avoid division by zero
-        if (wisps.Count == 0)
-            wispIndex = wisps.Count;
+        if (stacks.Count == 0)
+            stackIndex = stacks.Count;
         else
         {
-            float angle = GetWispAngle(wisp) - GetWispAngle(wisps[0]);
+            float angle = GetObjectAngle(stack.transform) - GetObjectAngle(stacks[0].transform);
             if (angle < 0)
                 angle += 360;
-            wispIndex = (int)(angle / (360f / wisps.Count)) + 1;
+            stackIndex = (int)(angle / (360f / stacks.Count)) + 1;
         }
 
-        // Append wisp at the end
-        if (wispIndex == wisps.Count)
-            wisps.Add(wisp);
-        // Insert wisp between others
+        // Append stack at the end
+        if (stackIndex == stacks.Count)
+            stacks.Add(stack);
+        // Insert stack between others
         else
-            wisps.Insert(wispIndex, wisp);
-        EqualizeWisps(wispIndex);
+            stacks.Insert(stackIndex, stack);
+        EqualizeStacks(stackIndex);
+    }
+
+    private WispStack GetAssociatedStack(Wisp wisp, bool createIfNotExisting = true)
+    {
+        if (selectedStack != null && selectedStack.IsWispTypeCompatible(wisp))
+            return selectedStack;
+        foreach (WispStack stack in stacks)
+            if (stack.IsWispTypeCompatible(wisp))
+                return stack;
+        if (createIfNotExisting)
+        {
+            WispStack newStack = new GameObject("Room", typeof(WispStack)).GetComponent<WispStack>().Setup(wisp);
+            newStack.transform.SetParent(transform);
+            InsertStackNaturally(newStack);
+            return newStack;
+        }
+        return null;
     }
 
     public void AddWisp(Wisp wisp)
     {
-        wisp.transform.SetParent(transform);
-        if (selectedWisp == null)
-            selectedWisp = wisp;
-        else
-            InsertWispNaturally(wisp);
+        WispStack stack = GetAssociatedStack(wisp);
+        stack.AddWisp(wisp);
+        if (selectedStack == null)
+            selectedStack = stack;
     }
 
-    private int GetNextActivableWispIndex(int defaultIndex = -1)
+    private int GetNextActivableStackIndex(int defaultIndex = -1)
     {
-        for (int i = 0; i < wisps.Count; i++)
-            if (wisps[i].IsActivable())
+        for (int i = 0; i < stacks.Count; i++)
+            if (stacks[i].IsActivable())
                 return i;
         return defaultIndex;
     }
 
-    private int GetPreviousActivableWispIndex(int defaultIndex = -1)
+    private int GetPreviousActivableStackIndex(int defaultIndex = -1)
     {
-        for (int i = wisps.Count - 1; i >= 0; i--)
-            if (wisps[i].IsActivable())
+        for (int i = stacks.Count - 1; i >= 0; i--)
+            if (stacks[i].IsActivable())
                 return i;
         return defaultIndex;
     }
 
-    public void DetachSelectedWisp()
+    private void DeleteStack(WispStack stack)
     {
-        if (wisps.Count == 0)
-            selectedWisp = null;
-        else
+        if (stack == selectedStack)
         {
-            // Get the next activable wisp if any, or the next one if they are all in cooldown
-            int wispIndex = GetNextActivableWispIndex(0);
-            selectedWisp = wisps[wispIndex];
-            wisps.RemoveAt(wispIndex);
+            if (stacks.Count == 0)
+                selectedStack = null;
+            else
+                SelectNextStack();
         }
+        stacks.Remove(stack);
+        Destroy(stack);
+        EqualizeStacks();
     }
 
     public void DetachWisp(Wisp wisp)
     {
-        if (wisp == selectedWisp)
-            DetachSelectedWisp();
-        else
-            wisps.Remove(wisp);
-        wisp.transform.SetParent(null);
-        EqualizeWisps();
-    }
+        WispStack stack = GetAssociatedStack(wisp, false);
 
-    public Wisp GetSelectedWisp()
-    {
-        return selectedWisp;
-    }
-
-    public void SelectNextWisp()
-    {
-        if (selectedWisp == null || wisps.Count == 0)
+        if (stack == null)
             return;
-        int wispIndex = GetNextActivableWispIndex(0);
+        stack.DetachWisp(wisp);
+        if (stack.WispsCount() == 0)
+            DeleteStack(stack);
+        wisp.transform.SetParent(null);
+    }
+
+    public bool ActivateSelectedWisp()
+    {
+        return selectedStack != null && selectedStack.ActivateSingle();
+    }
+
+    public bool ActivateSelectedStack()
+    {
+        if (selectedStack == null || !selectedStack.IsActivable())
+            return false;
+        return false;
+    }
+
+    public void SelectNextStack()
+    {
+        if (selectedStack == null || stacks.Count == 0)
+            return;
+        int wispIndex = GetNextActivableStackIndex(0);
 
         for (int i = 0; i < wispIndex + 1; i++)
         {
             // Get the selected wisp back into the group
-            selectedWisp.transform.SetParent(transform);
-            wisps.Add(selectedWisp);
+            selectedStack.transform.SetParent(transform);
+            stacks.Add(selectedStack);
             // Select the next wisp
-            selectedWisp = wisps[0];
-            wisps.RemoveAt(0);
+            selectedStack = stacks[0];
 
             // Equalize the orbiting wisps positions
-            EqualizeWisps(wisps.Count - 1);
+            EqualizeStacks(stacks.Count - 1);
         }
     }
 
-    public void SelectPreviousWisp()
+    public void SelectPreviousStack()
     {
-        if (selectedWisp == null || wisps.Count == 0)
+        if (selectedStack == null || stacks.Count == 0)
             return;
-        int wispIndex = GetPreviousActivableWispIndex(wisps.Count - 1);
+        int wispIndex = GetPreviousActivableStackIndex(stacks.Count - 1);
 
-        for (int i = wisps.Count - 1; i >= wispIndex; i--)
+        for (int i = stacks.Count - 1; i >= wispIndex; i--)
         {
             // Get the selected wisp back into the group
-            selectedWisp.transform.SetParent(transform);
-            wisps.Insert(0, selectedWisp);
+            selectedStack.transform.SetParent(transform);
+            stacks.Insert(0, selectedStack);
             // Select the previous wisp
-            selectedWisp = wisps[^1];
-            wisps.RemoveAt(wisps.Count - 1);
+            selectedStack = stacks[^1];
             // Equalize the orbiting wisps positions
-            EqualizeWisps(0);
+            EqualizeStacks(0);
         }
+    }
+
+    public bool AbsorbDamage()
+    {
+        if (selectedStack == null)
+            return false;
+        Destroy(selectedStack.PopWisp());
+        if (selectedStack.WispsCount() == 0)
+            DeleteStack(selectedStack);
+        return true;
     }
 }
