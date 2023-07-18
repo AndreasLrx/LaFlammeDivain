@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 424877953
   m_SortingLayer: 3
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d35dbd4324b9ea646b18d5dc81d57e14, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -160,9 +160,11 @@ MonoBehaviour:
   speedMultiplier: 10
   damageMultiplier: 0.5
   cooldownTime: 10
+  owningWispsGroup: {fileID: 0}
   detachedTrailWidth: 1
   attachedTrailWidth: 0.2
   poisonCoolDown: 0.2
+  stackedAngleSpace: 10
 --- !u!96 &4106393977854036229
 TrailRenderer:
   serializedVersion: 3

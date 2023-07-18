@@ -100,7 +100,7 @@ public class WispsGroup : MonoBehaviour
                 return stack;
         if (createIfNotExisting)
         {
-            WispStack newStack = new GameObject("Room", typeof(WispStack)).GetComponent<WispStack>().Setup(wisp);
+            WispStack newStack = new GameObject("WispStack", typeof(WispStack)).GetComponent<WispStack>().Setup(wisp);
             newStack.transform.SetParent(transform);
             InsertStackNaturally(newStack);
             return newStack;

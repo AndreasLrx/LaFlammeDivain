@@ -10,6 +10,22 @@ public class WispStack : MovingObject
 
     public Type wispsType { get { return _wispsType; } }
 
+    protected override void Update()
+    {
+        base.Update();
+        int activable = GetFirstActivableIndex();
+
+        if (activable == -1)
+            return;
+        SpriteRenderer renderer = wisps[activable].GetComponent<SpriteRenderer>();
+        if (renderer.sortingOrder != 1)
+        {
+            foreach (Wisp wisp in wisps)
+                wisp.GetComponent<SpriteRenderer>().sortingOrder = 0;
+            renderer.sortingOrder = 1;
+        }
+    }
+
     public WispStack Setup(Wisp wisp)
     {
         transform.position = wisp.transform.position;
@@ -34,12 +50,20 @@ public class WispStack : MovingObject
         // Update size
     }
 
+    private int GetFirstActivableIndex()
+    {
+        for (int i = 0; i < wisps.Count; i++)
+            if (wisps[i].IsActivable())
+                return i;
+        return -1;
+    }
+
     public Wisp GetFirstActivable()
     {
-        foreach (Wisp wisp in wisps)
-            if (wisp.IsActivable())
-                return wisp;
-        return null;
+        int index = GetFirstActivableIndex();
+        if (index == -1)
+            return null;
+        return wisps[index];
     }
 
     public bool ActivateSingle()
