@@ -83,3 +83,7 @@ venv
 results
 __pycache__
 ML-Agents
+
+# Unity TextMeshPro
+/[Aa]ssets/TextMesh*Pro/
+Assets/TextMesh Pro.meta
