@@ -58,12 +58,12 @@ public class Player : MonoBehaviour
 
     public void SelectNextWisp()
     {
-        wisps.SelectNextWisp();
+        wisps.SelectNextStack();
     }
 
     public void SelectPreviousWisp()
     {
-        wisps.SelectPreviousWisp();
+        wisps.SelectPreviousStack();
     }
 
     public void AddWisp(Wisp wisp)
@@ -74,10 +74,7 @@ public class Player : MonoBehaviour
 
     public void Attack()
     {
-        Wisp wisp = wisps.GetSelectedWisp();
-        if (!onlyWeaponAttack && wisp != null && wisp.IsActivable())
-            StartCoroutine(wisp.Activate());
-        else
+        if (onlyWeaponAttack || !wisps.ActivateSelectedWisp())
             weapon?.Attack();
     }
 
@@ -91,14 +88,8 @@ public class Player : MonoBehaviour
             invicibleCurrentCoolDown = invicibleCoolDown;
             return;
         }
-        Wisp wisp = wisps.GetSelectedWisp();
         invicibleCurrentCoolDown = invicibleCoolDown;
-        if (wisp != null)
-        {
-            wisps.DetachWisp(wisp);
-            Destroy(wisp.gameObject);
-        }
-        else
+        if (!wisps.AbsorbDamage())
             GameManager.Instance.GameOver();
     }
 }
