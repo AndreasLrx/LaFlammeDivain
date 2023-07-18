@@ -58,6 +58,7 @@ MonoBehaviour:
   speedMultiplier: 20
   damageMultiplier: 1
   cooldownTime: 0.5
+  owningWispsGroup: {fileID: 0}
   damageBoost: 0.3
 --- !u!58 &6151515475814858440
 CircleCollider2D:
