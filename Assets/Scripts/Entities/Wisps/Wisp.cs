@@ -7,7 +7,7 @@ using UnityEngine.Rendering.Universal;
 
 public abstract class Wisp : MovingObject
 {
-    public Entity owner;
+    public Player owner;
     protected TrailRenderer trailRenderer;
 
     public float detachedTrailDuration;
@@ -29,11 +29,11 @@ public abstract class Wisp : MovingObject
 
 
     public float rangeMultiplier = 1;
-    public float range { get { return owner.range * rangeMultiplier; } }
+    public float range { get { return owner.entity.range * rangeMultiplier; } }
     public float speedMultiplier = 3;
-    public float speed { get { return owner.shotSpeed * speedMultiplier; } }
+    public float speed { get { return owner.entity.shotSpeed * speedMultiplier; } }
     public float damageMultiplier = 1.0f;
-    public float damage { get { return owner.damage * damageMultiplier; } }
+    public float damage { get { return owner.entity.damage * damageMultiplier; } }
 
 
     // The cooldown time, in seconds
@@ -103,7 +103,7 @@ public abstract class Wisp : MovingObject
 
     private IEnumerator Detach()
     {
-        owningWispsGroup = gameObject.transform.GetComponentInParent<Player>().GetWisps();
+        owningWispsGroup = owner.wisps;
         owningWispsGroup.DetachWisp(this);
         yield return StartCoroutine(eventsProcessor.StartAsyncEvents(onDetach));
     }
@@ -125,7 +125,7 @@ public abstract class Wisp : MovingObject
         if (IsActivable())
         {
             // Activate the cooldown
-            currentCooldown = cooldownTime / owner.attackSpeed;
+            currentCooldown = cooldownTime / owner.entity.attackSpeed;
             // Detach the wisp from the group
             yield return StartCoroutine(Detach());
             // Call the effective activation effect

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6485223129038191119}
   - component: {fileID: 2441727123651177938}
   - component: {fileID: 5352243314548174174}
+  - component: {fileID: -5036427762464969684}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -77,12 +78,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa82f83dec1234c4389217ac17b19002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyLayers:
-    serializedVersion: 2
-    m_Bits: 512
-  runSpeed: 10
-  invisibleCoolDown: 1.5
-  wispsGroupPrefab: {fileID: 1522740308722967485, guid: a9ec15806e6fc8f40bca3d60cfba797f, type: 3}
 --- !u!212 &5970868291076065725
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -238,6 +233,18 @@ MonoBehaviour:
   shotSpeed: 1
   damage: 5
   health: 20
+--- !u!114 &-5036427762464969684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524187137907032234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a9387667bab8614f9c1b5c3a21953a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3861967627621747483
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +290,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c651a654d65250548b65de08b53ed8b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 1
 --- !u!1 &6441863095529048724
 GameObject:
   m_ObjectHideFlags: 0

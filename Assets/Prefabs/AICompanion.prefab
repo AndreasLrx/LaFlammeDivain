@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: -954866054393023798}
   - component: {fileID: -1624360911332544719}
   - component: {fileID: 3206609104498396570}
-  - component: {fileID: 8580006818906180178}
   - component: {fileID: 3902533294257358200}
+  - component: {fileID: -425883497913312740}
   m_Layer: 0
   m_Name: AICompanion
   m_TagString: Untagged
@@ -206,18 +206,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   target: {fileID: 0}
---- !u!114 &8580006818906180178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4411840252245956147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e420827fca1f4bd4c97a8b0c395a4b78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3902533294257358200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,3 +224,15 @@ MonoBehaviour:
   shotSpeed: 1
   damage: 5
   health: 20
+--- !u!114 &-425883497913312740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4411840252245956147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa82f83dec1234c4389217ac17b19002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

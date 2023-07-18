@@ -18,7 +18,7 @@ public abstract class EliteEnemy : MonoBehaviour
 
     private IEnumerator OnDeath()
     {
-        Player.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), Player.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
+        PlayerController.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), PlayerController.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
         yield break;
     }
 }

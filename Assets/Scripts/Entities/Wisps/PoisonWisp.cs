@@ -62,7 +62,7 @@ public class PoisonWisp : Wisp
 
     private IEnumerator OnActivate()
     {
-        SetTarget((Vector2)owner.transform.position + Player.Instance.AimedDirection() * range);
+        SetTarget((Vector2)owner.transform.position + owner.aimedDirection * range);
         while (MoveTowardsTarget() && !Attack())
             yield return null;
     }
@@ -103,7 +103,7 @@ public class PoisonWisp : Wisp
                 case "Enemy":
                     if (poisonCurrentCoolDown > float.Epsilon)
                         break;
-                    other.GetComponent<Enemy>().TakeDamage(owner.damage * trailRenderer.startWidth);
+                    other.GetComponent<Enemy>().TakeDamage(owner.entity.damage * trailRenderer.startWidth);
                     poisonCurrentCoolDown = poisonCoolDown;
                     return false;
                 case "Wall":

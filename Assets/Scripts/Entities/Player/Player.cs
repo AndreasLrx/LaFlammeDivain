@@ -2,52 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : Singleton<Player>
+public class Player : MonoBehaviour
 {
-    [SerializeField] private LayerMask enemyLayers;
-    Rigidbody2D body;
-
-    float horizontal;
-    float vertical;
-    float moveLimiter = 0.7f;
-    public float runSpeed = 10.0f;
-    public float invisibleCoolDown = 2.0f;
-    float invisibleCurrentCoolDown = 0.0f;
-    public GameObject wispsGroupPrefab;
-    private bool onlyWeaponAttack = false;
-    private Weapon weapon;
-
+    private Rigidbody2D body;
+    private float invicibleCoolDown = 2.0f;
+    private float invicibleCurrentCoolDown = 0.0f;
+    private WispsGroup _wisps;
+    private Vector2 _aimedDirection;
+    private Vector2 _moveDirection;
     private Entity _entity;
+    private Weapon weapon;
+    private bool onlyWeaponAttack = false;
+
+
+    public WispsGroup wisps { get { return _wisps; } }
+    public Vector2 aimedDirection
+    {
+        get { return _aimedDirection; }
+        set
+        {
+            _aimedDirection = value.normalized;
+            weapon.PointerDirection = aimedDirection;
+        }
+    }
+    public Vector2 moveDirection
+    {
+        get { return _moveDirection; }
+        set
+        {
+            _moveDirection = value.normalized;
+        }
+    }
     public Entity entity { get { return _entity; } }
 
-    protected override void Awake()
+    void Awake()
     {
-        base.Awake();
-        weapon = GetComponentInChildren<Weapon>();
         body = GetComponent<Rigidbody2D>();
+        weapon = GetComponentInChildren<Weapon>();
         _entity = GetComponent<Entity>();
-        Instantiate(wispsGroupPrefab, transform);
+        _wisps = Instantiate(PrefabManager.Instance.wispsGroup, transform).GetComponent<WispsGroup>();
     }
 
     void Update()
     {
-        weapon.PointerDirection = AimedDirection();
-        // Gives a value between -1 and 1
-        horizontal = Input.GetAxisRaw("Horizontal"); // -1 is left
-        vertical = Input.GetAxisRaw("Vertical"); // -1 is down
-
-        if (Input.GetButtonDown("Attack"))
-            Attack();
-        if (Input.GetButtonDown("ToggleWeaponMode"))
-            ToggleWeaponMode();
-
-        if (Input.GetButtonDown("SelectNextWisp"))
-            GetWisps().SelectNextWisp();
-        if (Input.GetButtonDown("SelectPreviousWisp"))
-            GetWisps().SelectPreviousWisp();
-
-        if (invisibleCurrentCoolDown >= float.Epsilon)
-            invisibleCurrentCoolDown -= Time.deltaTime;
+        if (invicibleCurrentCoolDown > float.Epsilon)
+            invicibleCurrentCoolDown -= Time.deltaTime;
+        body.velocity = moveDirection * entity.speed;
     }
 
     public void ToggleWeaponMode()
@@ -55,52 +55,40 @@ public class Player : Singleton<Player>
         onlyWeaponAttack = !onlyWeaponAttack;
     }
 
-    public WispsGroup GetWisps()
+    public void SelectNextWisp()
     {
-        return gameObject.GetComponentInChildren<WispsGroup>();
+        wisps.SelectNextWisp();
     }
 
-    void FixedUpdate()
+    public void SelectPreviousWisp()
     {
-        if (horizontal != 0 && vertical != 0) // Check for diagonal movement
-        {
-            // limit movement speed diagonally, so you move at 70% speed
-            horizontal *= moveLimiter;
-            vertical *= moveLimiter;
-        }
-
-        body.velocity = new Vector2(horizontal * runSpeed, vertical * runSpeed);
-    }
-
-    public Vector2 AimedDirection()
-    {
-        return ((Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - (Vector2)transform.position).normalized;
+        wisps.SelectPreviousWisp();
     }
 
     public void AddWisp(Wisp wisp)
     {
-        wisp.owner = entity;
-        StartCoroutine(wisp.Attach(GetWisps()));
+        wisp.owner = this;
+        StartCoroutine(wisp.Attach(wisps));
     }
 
-    private void Attack()
+    public void Attack()
     {
-        Wisp wisp = GetWisps().GetSelectedWisp();
+        Wisp wisp = wisps.GetSelectedWisp();
         if (!onlyWeaponAttack && wisp != null && wisp.IsActivable())
             StartCoroutine(wisp.Activate());
         else
-            gameObject.GetComponentInChildren<Weapon>().Attack();
+            weapon?.Attack();
     }
 
     public void TakeDamage()
     {
-        if (invisibleCurrentCoolDown > float.Epsilon)
+        if (invicibleCurrentCoolDown > float.Epsilon)
             return;
-        Wisp wisp = GetWisps().GetSelectedWisp();
-        invisibleCurrentCoolDown = invisibleCoolDown;
+        Wisp wisp = wisps.GetSelectedWisp();
+        invicibleCurrentCoolDown = invicibleCoolDown;
         if (wisp != null)
         {
-            GetWisps().DetachWisp(wisp);
+            wisps.DetachWisp(wisp);
             Destroy(wisp.gameObject);
         }
         else
