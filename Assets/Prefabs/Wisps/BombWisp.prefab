@@ -59,10 +59,11 @@ MonoBehaviour:
   damageMultiplier: 1
   cooldownTime: 1
   owningWispsGroup: {fileID: 0}
+  explosionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   explosionDamage: 10
-  radiusExplosion: 15
-  explosionDuration: 0.1
-  currentExplosionDuration: 0
+  explosionRadius: 2
 --- !u!58 &7561967548908028700
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -88,7 +89,7 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 768
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295

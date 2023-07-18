@@ -4,65 +4,62 @@ using UnityEngine;
 
 public class BombWisp : Wisp
 {
+    public LayerMask explosionMask;
     public float explosionDamage = 10.0f;
     public float explosionRadius = 5.0f;
-    private CircleCollider2D circleCollider;
-    private float defaultRadius = 0.0f;
+    private CircleCollider2D explosionCollider;
+    private bool hasExploded;
 
     protected override void Awake()
     {
         base.Awake();
         onActivate += OnActivate;
-    }
-
-    private void Start()
-    {
-        gameObject.GetComponent<CircleCollider2D>();
-        circleCollider = gameObject.AddComponent<CircleCollider2D>();
-        circleCollider.excludeLayers = LayerMask.GetMask("BlockingLayer");
-        circleCollider.isTrigger = true;
+        explosionCollider = new GameObject("ExplosionCollider", typeof(CircleCollider2D)).GetComponent<CircleCollider2D>();
+        explosionCollider.transform.SetParent(transform);
+        explosionCollider.transform.localPosition = Vector3.zero;
+        explosionCollider.isTrigger = true;
+        explosionCollider.radius = explosionRadius;
+        explosionCollider.contactCaptureLayers = explosionMask;
     }
 
     private IEnumerator OnActivate()
     {
+        hasExploded = false;
         SetTarget((Vector2)owner.transform.position + owner.aimedDirection * range);
-        while (MoveTowardsTarget() && !Attack())
+        while (MoveTowardsTarget() && !hasExploded)
             yield return null;
+        if (!hasExploded)
+            Explode();
+        hasExploded = true;
+        yield break;
     }
 
-    public bool Attack()
+    public void Explode()
     {
         List<Collider2D> colliders = new();
-        gameObject.GetComponent<CircleCollider2D>().GetContacts(colliders);
+        explosionCollider.GetContacts(colliders);
+
         foreach (Collider2D other in colliders)
         {
             switch (other.tag)
             {
                 case "Enemy":
-                    circleCollider.radius = explosionRadius;
-                    return true;
-                case "Wall":
-                    circleCollider.radius = explosionRadius;
-                    return true;
+                    other.GetComponent<Enemy>().TakeDamage(explosionDamage);
+                    break;
+                case "Player":
+                    other.GetComponent<Player>().TakeDamage();
+                    break;
                 default:
                     break;
             }
         }
-        return false;
     }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Enemy")
-        {
-            other.GetComponent<Enemy>().TakeDamage(explosionDamage);
-            circleCollider.radius = defaultRadius;
-        }
-        if (other.tag == "Player")
-        {
-            other.GetComponent<Player>().TakeDamage();
-            circleCollider.radius = defaultRadius;
-        }
-        if (other.tag == "Wall")
-            circleCollider.radius = defaultRadius;
+        if (!IsDetached() || hasExploded)
+            return;
+        Explode();
+        hasExploded = true;
     }
 }
