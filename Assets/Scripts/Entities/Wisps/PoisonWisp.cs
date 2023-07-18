@@ -10,6 +10,7 @@ public class PoisonWisp : Wisp
     public float detachedTrailWidth;
     public float attachedTrailWidth;
     public float poisonCoolDown = 0.5f;
+    public float stackedAngleSpace = 10;
 
     private float poisonCurrentCoolDown = 0.0f;
 
@@ -62,7 +63,10 @@ public class PoisonWisp : Wisp
 
     private IEnumerator OnActivate()
     {
-        SetTarget((Vector2)owner.transform.position + owner.aimedDirection * range);
+        int index = stackInfos.index - stackInfos.size / 2;
+        Vector2 wispDirection = Quaternion.Euler(0f, 0f, index * stackedAngleSpace) * owner.aimedDirection;
+
+        SetTarget((Vector2)owner.transform.position + wispDirection * range);
         while (MoveTowardsTarget() && !Attack())
             yield return null;
     }

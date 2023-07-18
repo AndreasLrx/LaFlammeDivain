@@ -27,6 +27,13 @@ public abstract class Wisp : MovingObject
     }
     public Color disabledColor;
 
+    protected class StackInformations
+    {
+        public int index;
+        public int size;
+    }
+    protected StackInformations stackInfos = new();
+
 
     public float rangeMultiplier = 1;
     public float range { get { return owner.entity.range * rangeMultiplier; } }
@@ -124,10 +131,12 @@ public abstract class Wisp : MovingObject
         yield return StartCoroutine(eventsProcessor.StartAsyncEvents(onAttach));
     }
 
-    public IEnumerator Activate()
+    public IEnumerator Activate(int stackIndex = 0, int stackSize = 1)
     {
         if (IsActivable())
         {
+            stackInfos.index = stackIndex;
+            stackInfos.size = stackSize;
             // Activate the cooldown
             currentCooldown = cooldownTime / owner.entity.attackSpeed;
             // Detach the wisp from the group

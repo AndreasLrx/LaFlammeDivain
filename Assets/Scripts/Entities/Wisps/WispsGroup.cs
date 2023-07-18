@@ -164,9 +164,7 @@ public class WispsGroup : MonoBehaviour
 
     public bool ActivateSelectedStack()
     {
-        if (selectedStack == null || !selectedStack.IsActivable())
-            return false;
-        return false;
+        return selectedStack != null && selectedStack.ActivateStack();
     }
 
     public void SelectNextStack()

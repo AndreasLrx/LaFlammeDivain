@@ -51,6 +51,19 @@ public class WispStack : MovingObject
         return true;
     }
 
+    public bool ActivateStack()
+    {
+        List<Wisp> activableWisps = new();
+
+        foreach (Wisp wisp in wisps)
+            if (wisp.IsActivable())
+                activableWisps.Add(wisp);
+
+        for (int i = 0; i < activableWisps.Count; i++)
+            activableWisps[i].owner.StartCoroutine(activableWisps[i].Activate(i, activableWisps.Count));
+        return activableWisps.Count > 0;
+    }
+
     public bool IsActivable()
     {
         foreach (Wisp wisp in wisps)
