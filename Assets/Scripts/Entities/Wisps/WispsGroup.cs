@@ -142,7 +142,7 @@ public class WispsGroup : MonoBehaviour
                 SelectNextStack();
         }
         stacks.Remove(stack);
-        Destroy(stack);
+        Destroy(stack.gameObject);
         EqualizeStacks();
     }
 
@@ -155,7 +155,6 @@ public class WispsGroup : MonoBehaviour
         stack.DetachWisp(wisp);
         if (stack.WispsCount() == 0)
             DeleteStack(stack);
-        wisp.transform.SetParent(null);
     }
 
     public bool ActivateSelectedWisp()
@@ -227,7 +226,7 @@ public class WispsGroup : MonoBehaviour
             return true;
 
         // Absorb the damage at a cost of 1 wisp
-        Destroy(selectedStack.PopWisp());
+        Destroy(selectedStack.PopWisp().gameObject);
         if (selectedStack.WispsCount() == 0)
             DeleteStack(selectedStack);
         return true;

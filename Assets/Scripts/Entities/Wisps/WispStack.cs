@@ -47,7 +47,7 @@ public class WispStack : MovingObject
         Wisp wisp = GetFirstActivable();
         if (wisp == null)
             return false;
-        StartCoroutine(wisp.Activate());
+        wisp.owner.StartCoroutine(wisp.Activate());
         return true;
     }
 
