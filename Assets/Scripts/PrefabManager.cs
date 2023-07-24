@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NavMeshPlus.Components;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PrefabManager : Singleton<PrefabManager>
 {
@@ -14,6 +16,21 @@ public class PrefabManager : Singleton<PrefabManager>
     public AICompanion companion;
     public WispsGroup wispsGroup;
     public NavMeshSurface humanoidNavMesh;
+
+    public List<Type> EliteTypes;
+
+    public GameObject lightPoint;
+    public GameObject fireTrail;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        EliteTypes = new()
+        {
+            typeof(FireElite),
+            typeof(HealthElite)
+        };
+    }
 
     private static T GetRandomElement<T>(T[] array)
     {
@@ -43,5 +60,10 @@ public class PrefabManager : Singleton<PrefabManager>
     public static Wisp GetRandomWisp()
     {
         return GetRandomElement(Instance.wisps);
+    }
+
+    public static Type GetRandomEliteType()
+    {
+        return GetRandomElement(Instance.EliteTypes.ToArray());
     }
 }
