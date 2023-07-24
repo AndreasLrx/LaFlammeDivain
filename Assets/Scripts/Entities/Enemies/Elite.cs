@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.Rendering.Universal;
 using Random = UnityEngine.Random;
 
-public abstract class EliteEnemy : MonoBehaviour
+public abstract class Elite : MonoBehaviour
 {
 
     protected Enemy enemyClass;
@@ -14,6 +14,7 @@ public abstract class EliteEnemy : MonoBehaviour
     {
         enemyClass = gameObject.GetComponent<Enemy>();
         enemyClass.onDeath += OnDeath;
+        Instantiate(PrefabManager.Instance.lightPoint, transform).transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
     }
 
     private IEnumerator OnDeath()

@@ -47,6 +47,7 @@ public class RoomGenerator : MonoBehaviour
     public Range innerWallCountRange = new(3, 7);
     public Range innerWallLengthRange = new(4, 10);
     public Range enemiesCountRange = new(2, 4);
+    public float eliteProbability = 0.2f;
 
     /// Generated room caracteristics
     private Vector2 partSize;
@@ -401,7 +402,11 @@ public class RoomGenerator : MonoBehaviour
         for (int i = 0; i < enemiesCount; i++)
         {
             Vector2 randomPosition = RandomPosition();
-            Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, room.transform).GetComponent<Enemy>().target = PlayerController.Instance.gameObject;
+            Enemy enemy = Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, room.transform).GetComponent<Enemy>();
+            enemy.target = PlayerController.Instance.gameObject;
+
+            if (Random.Range(0f, 1f) < eliteProbability)
+                enemy.gameObject.AddComponent(PrefabManager.GetRandomEliteType());
         }
     }
 
