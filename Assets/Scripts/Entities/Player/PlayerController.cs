@@ -6,7 +6,6 @@ public class PlayerController : Singleton<Player>
 {
     private Player _player;
     public Player player { get { return _player; } }
-    public static bool isPaused = false;
 
     protected override void Awake()
     {

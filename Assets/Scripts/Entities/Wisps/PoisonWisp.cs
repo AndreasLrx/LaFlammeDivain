@@ -37,7 +37,8 @@ public class PoisonWisp : Wisp
         EdgeCollider2D validCollider;
         validCollider = new GameObject("TrailCollider", typeof(EdgeCollider2D)).GetComponentInParent<EdgeCollider2D>();
         validCollider.GetComponent<EdgeCollider2D>().isTrigger = true;
-        
+        validCollider.transform.SetParent(transform);
+
         return validCollider;
     }
 

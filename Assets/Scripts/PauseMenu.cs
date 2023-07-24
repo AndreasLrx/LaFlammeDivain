@@ -26,16 +26,14 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
         GameManager.Destroy();
         PlayerController.Destroy();
-        var DontdestroyOnLoadDestroyer = new GameObject("DontdestroyOnLoadDestroyer");
+        GameObject DontdestroyOnLoadDestroyer = new GameObject("DontdestroyOnLoadDestroyer");
         DontDestroyOnLoad(DontdestroyOnLoadDestroyer);
-        foreach(var root in DontdestroyOnLoadDestroyer.scene.GetRootGameObjects())
+        foreach(GameObject root in DontdestroyOnLoadDestroyer.scene.GetRootGameObjects())
             Destroy(root);
         
         Destroy(FindObjectOfType<Canvas>().gameObject);
         Destroy(FindObjectOfType<Player>().gameObject);        
-        Destroy(FindObjectOfType<RoomGenerator>().gameObject);
         Destroy(FindObjectOfType<AICompanion>().gameObject);
-        Destroy(GameObject.Find("PoisonWisp"));
         SceneManager.LoadScene("Menu");
     }
 

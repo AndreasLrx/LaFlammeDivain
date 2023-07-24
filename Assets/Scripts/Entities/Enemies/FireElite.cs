@@ -43,6 +43,7 @@ public class FireElite : Elite
         else
             for (int position = 0; position < trail.positionCount; position++)
                 points.Add(trail.GetPosition(position));
+                
         collider.points = points.ToArray();
     }
 
