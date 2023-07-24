@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public abstract class Enemy : Entity
 {
+    public float targetUpdateCooldown = 2;
     public GameObject target;
     private NavMeshAgent agent;
 
@@ -12,6 +13,7 @@ public abstract class Enemy : Entity
     public AsyncEventsProcessor.AsyncEvent onDeath = null;
     public OnTakeDamage onTakeDamage = null;
     private AsyncEventsProcessor eventsProcessor;
+    private float currentTargetUpdateCooldown = 0f;
 
     protected virtual void Awake()
     {
@@ -21,8 +23,18 @@ public abstract class Enemy : Entity
 
     void Update()
     {
+        currentTargetUpdateCooldown += Time.deltaTime;
+        if (currentTargetUpdateCooldown > targetUpdateCooldown)
+        {
+            UpdateTarget();
+            currentTargetUpdateCooldown = 0f;
+        }
         agent.speed = speed;
         agent.SetDestination(target.transform.position);
+    }
+
+    protected virtual void UpdateTarget()
+    {
     }
 
     public void TakeDamage(float damage)
