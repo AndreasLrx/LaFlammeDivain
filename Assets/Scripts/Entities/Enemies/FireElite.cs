@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireEliteEnemy : EliteEnemy
+public class FireElite : Elite
 {
     protected TrailRenderer trailRenderer;
     EdgeCollider2D edgeCollider2D;
@@ -19,7 +19,8 @@ public class FireEliteEnemy : EliteEnemy
     {
         base.Awake();
 
-        trailRenderer = GetComponent<TrailRenderer>();
+        Instantiate(PrefabManager.Instance.fireTrail, transform).transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        trailRenderer = gameObject.GetComponentInChildren<TrailRenderer>();
         trailRenderer.time = fireDuration;
         edgeCollider2D = GetValidCollider();
     }

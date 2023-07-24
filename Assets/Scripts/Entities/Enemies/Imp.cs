@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dummy : Enemy
+public class Imp : Enemy
 {
     protected override void Awake()
     {
