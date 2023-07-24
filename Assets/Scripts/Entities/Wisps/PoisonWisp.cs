@@ -5,7 +5,6 @@ using UnityEngine;
 public class PoisonWisp : Wisp
 {
     EdgeCollider2D edgeCollider2D;
-    static List<EdgeCollider2D> unusedColliders = new List<EdgeCollider2D>();
 
     public float detachedTrailWidth;
     public float attachedTrailWidth;
@@ -36,17 +35,9 @@ public class PoisonWisp : Wisp
     EdgeCollider2D GetValidCollider()
     {
         EdgeCollider2D validCollider;
-        if (unusedColliders.Count > 0)
-        {
-            validCollider = unusedColliders[0];
-            validCollider.enabled = true;
-            unusedColliders.RemoveAt(0);
-        }
-        else
-        {
-            validCollider = new GameObject("TrailCollider", typeof(EdgeCollider2D)).GetComponentInParent<EdgeCollider2D>();
-            validCollider.GetComponent<EdgeCollider2D>().isTrigger = true;
-        }
+        validCollider = new GameObject("TrailCollider", typeof(EdgeCollider2D)).GetComponentInParent<EdgeCollider2D>();
+        validCollider.GetComponent<EdgeCollider2D>().isTrigger = true;
+        
         return validCollider;
     }
 
@@ -92,7 +83,6 @@ public class PoisonWisp : Wisp
         if (edgeCollider2D != null)
         {
             edgeCollider2D.enabled = false;
-            unusedColliders.Add(edgeCollider2D);
         }
     }
 

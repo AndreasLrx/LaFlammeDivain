@@ -6,7 +6,6 @@ public class FireEliteEnemy : EliteEnemy
 {
     protected TrailRenderer trailRenderer;
     EdgeCollider2D edgeCollider2D;
-    static List<EdgeCollider2D> unusedColliders = new List<EdgeCollider2D>();
 
     public float fireDuration = 2;
 
@@ -28,17 +27,10 @@ public class FireEliteEnemy : EliteEnemy
     EdgeCollider2D GetValidCollider()
     {
         EdgeCollider2D validCollider;
-        if (unusedColliders.Count > 0)
-        {
-            validCollider = unusedColliders[0];
-            validCollider.enabled = true;
-            unusedColliders.RemoveAt(0);
-        }
-        else
-        {
-            validCollider = new GameObject("TrailCollider", typeof(EdgeCollider2D)).GetComponentInParent<EdgeCollider2D>();
-            validCollider.GetComponent<EdgeCollider2D>().isTrigger = true;
-        }
+        validCollider = new GameObject("TrailCollider", typeof(EdgeCollider2D)).GetComponentInParent<EdgeCollider2D>();
+        validCollider.GetComponent<EdgeCollider2D>().isTrigger = true;
+        validCollider.transform.SetParent(transform);
+
         return validCollider;
     }
 
@@ -58,7 +50,6 @@ public class FireEliteEnemy : EliteEnemy
         if (edgeCollider2D != null)
         {
             edgeCollider2D.enabled = false;
-            unusedColliders.Add(edgeCollider2D);
         }
     }
 

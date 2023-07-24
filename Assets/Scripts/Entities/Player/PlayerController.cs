@@ -16,7 +16,7 @@ public class PlayerController : Singleton<Player>
 
     void Update()
     {
-        if (isPaused)
+        if (GameManager.Instance.isPaused)
             return;
         player.aimedDirection = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) - (Vector2)transform.position;
         player.moveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
