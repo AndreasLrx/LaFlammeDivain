@@ -32,4 +32,16 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("Game Over");
     }
+
+    public void Pause()
+    {
+        Time.timeScale = 0f;
+        PlayerController.isPaused = true;
+    }
+
+    public void Resume()
+    {
+        Time.timeScale = 1f;
+        PlayerController.isPaused = false;
+    }
 }
