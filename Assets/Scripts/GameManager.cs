@@ -12,7 +12,7 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        InitGame();
+        Invoke("InitGame", 0.1f);
     }
 
     void Update()
