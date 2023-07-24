@@ -41,6 +41,7 @@ public class Room : MonoBehaviour
     public List<Vector2> roomBoundaries;
 
     // Associative double dimension array representing the cells
+    private GameObject tiles;
     private List<List<Cell>> grid;
 
     public Vector2Int RoomToGrid(Vector2 roomPos)
@@ -150,18 +151,21 @@ public class Room : MonoBehaviour
             {
                 Cell cell = grid[x][y];
                 Vector2 pos = GridToRoom(new Vector2Int(x, y));
+                GameObject prefab = null;
                 switch (cell.type)
                 {
                     case CellType.Floor:
-                        cell.gameObject = Instantiate(PrefabManager.GetRandomFloor(), pos, Quaternion.identity, transform);
+                        prefab = PrefabManager.GetRandomFloor();
                         break;
                     case CellType.Wall:
-                        cell.gameObject = Instantiate(PrefabManager.GetRandomWall(), pos, Quaternion.identity, transform);
+                        prefab = PrefabManager.GetRandomWall();
                         break;
                     case CellType.Border:
-                        cell.gameObject = Instantiate(PrefabManager.GetRandomOuterWall(), pos, Quaternion.identity, transform);
+                        prefab = PrefabManager.GetRandomOuterWall();
                         break;
                 }
+                if (prefab != null)
+                    cell.gameObject = Instantiate(prefab, pos, Quaternion.identity, tiles.transform);
             }
         }
 
@@ -172,6 +176,9 @@ public class Room : MonoBehaviour
 
     public void Initialize(Vector2 partSize, List<Vector2> partsPositions)
     {
+        tiles = new GameObject("Tiles");
+        tiles.transform.SetParent(transform);
+
         this._partSize = partSize;
         this._partsPositions = partsPositions;
 
