@@ -3,6 +3,8 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     public RoomGenerator roomGenerator;
+    private bool _isPaused = false;
+    public bool isPaused { get { return _isPaused; } }
 
     protected override void Awake()
     {
@@ -31,5 +33,17 @@ public class GameManager : Singleton<GameManager>
     public void GameOver()
     {
         Debug.Log("Game Over");
+    }
+
+    public void Pause()
+    {
+        Time.timeScale = 0f;
+        _isPaused = true;
+    }
+
+    public void Resume()
+    {
+        Time.timeScale = 1f;
+        _isPaused = false;
     }
 }
