@@ -41,7 +41,7 @@ public abstract class Enemy : Entity
         if (Random.Range(0, 2) == 0)
             target = PlayerController.Instance.gameObject;
         else
-            target = AICompanion.instance.gameObject;
+            target = AICompanion.Instance.gameObject;
     }
 
     protected virtual void UpdateTarget()

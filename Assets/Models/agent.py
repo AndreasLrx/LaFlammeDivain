@@ -5,11 +5,11 @@ from typing import List
 
 # Define the neural network architecture
 class NeuralNetwork(nn.Module):
-    def __init__(self):
+    def __init__(self, inputs, outputs):
         super(NeuralNetwork, self).__init__()
-        self.fc1 = nn.Linear(12, 64)
+        self.fc1 = nn.Linear(inputs, 64)
         self.fc2 = nn.Linear(64, 64)
-        self.fc3 = nn.Linear(64, 2)
+        self.fc3 = nn.Linear(64, outputs)
         self.tanh = nn.Tanh()
 
     def forward(self, x):
@@ -19,8 +19,10 @@ class NeuralNetwork(nn.Module):
         return x
     
 class Agent:
-    def __init__(self):
-        self.model = NeuralNetwork()
+    def __init__(self, inputs, outputs):
+        self.inputs = inputs
+        self.outputs = outputs
+        self.model = NeuralNetwork(inputs, outputs)
         self.criterion = nn.MSELoss()
         self.optimizer = optim.Adam(self.model.parameters())
 
@@ -38,3 +40,9 @@ class Agent:
 
     def get_actions(self, observations: List[float]) -> torch.Tensor:
         return self.model(self._float_list_to_tensor(observations))
+    
+    def split_observations(self, observations):
+        agent_observations = observations[:self.inputs]
+        expert_observations = observations[self.inputs:self.inputs * 2]
+        expert_actions = observations[self.inputs * 2:self.inputs * 2 + self.outputs]
+        return agent_observations, expert_observations, expert_actions

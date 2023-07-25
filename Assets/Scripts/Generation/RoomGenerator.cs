@@ -388,11 +388,11 @@ public class RoomGenerator : MonoBehaviour
         var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
         vcam.Follow = PlayerController.Instance.transform;
 
-        if (AICompanion.instance == null)
+        if (AICompanion.Instance == null)
             Instantiate(PrefabManager.Instance.companion, randomPosition, Quaternion.identity);
         else
-            AICompanion.instance.transform.position = randomPosition;
-        AICompanion.instance.roomGenerator = this;
+            AICompanion.Instance.transform.position = randomPosition;
+        AICompanion.Instance.roomGenerator = this;
     }
 
     private void PlaceEnemies()
