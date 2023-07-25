@@ -16,6 +16,7 @@ public abstract class Enemy : Entity
     public OnTakeDamage onTakeDamage = null;
     private AsyncEventsProcessor eventsProcessor;
     private float currentTargetUpdateCooldown = 0f;
+    private float attackCooldown = 0f;
 
     protected virtual void Awake()
     {
@@ -25,12 +26,20 @@ public abstract class Enemy : Entity
 
     protected virtual void Update()
     {
+        // Target update
         currentTargetUpdateCooldown -= Time.deltaTime;
         if (currentTargetUpdateCooldown <= float.Epsilon)
         {
             UpdateTarget();
             currentTargetUpdateCooldown = targetUpdateCooldown;
         }
+
+        // Attack
+        attackCooldown = Mathf.Max(attackCooldown - Time.deltaTime, 0);
+        if (attackCooldown <= 0 && Attack())
+            attackCooldown = 1 / attackSpeed;
+
+        // Destination
         agent.speed = speed;
         if (!customMove && target != null)
             agent.SetDestination(target.transform.position);
@@ -44,9 +53,8 @@ public abstract class Enemy : Entity
             target = AICompanion.Instance.gameObject;
     }
 
-    protected virtual void UpdateTarget()
-    {
-    }
+    protected virtual void UpdateTarget() { }
+    protected virtual bool Attack() { return false; }
 
     public void TakeDamage(float damage)
     {

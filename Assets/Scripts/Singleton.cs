@@ -33,4 +33,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         Destroy(Instance.gameObject);
         instance = null;
     }
+
+    private void OnDestroy()
+    {
+        instance = null;
+    }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 499762982294491160}
   - component: {fileID: 1809504864903698768}
   - component: {fileID: 1983931388142943928}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Movement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,9 +100,9 @@ GameObject:
   - component: {fileID: 6831147713691683710}
   - component: {fileID: 3233266415605251180}
   - component: {fileID: 106488336034121645}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AICompanion
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -209,10 +209,10 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0

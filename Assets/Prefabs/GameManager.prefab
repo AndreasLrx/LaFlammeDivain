@@ -55,6 +55,8 @@ MonoBehaviour:
   enemies:
   - {fileID: 4557188609176430170, guid: 9a84eccaf3b222c459b7ce3ac560cc13, type: 3}
   - {fileID: 1338902929213844915, guid: ab5efd412608a63429432b1e50efcd62, type: 3}
+  - {fileID: -7519320220199685756, guid: 893798f24dd9edc488a73c514ea7615c, type: 3}
+  boneProjectile: {fileID: -4536405010988655752, guid: 926b7a03647d238469d669982b3625a8, type: 3}
   wisps:
   - {fileID: 9030161684494959953, guid: 33dde5e59ab92c7469c5d74b5f101738, type: 3}
   - {fileID: 6865338212822090350, guid: ffc40f52d391baf459575ea7ad0c17df, type: 3}

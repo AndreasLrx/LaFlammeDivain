@@ -11,6 +11,7 @@ public class PrefabManager : Singleton<PrefabManager>
     public GameObject[] wallTiles;
     public GameObject[] floorTiles;
     public Enemy[] enemies;
+    public Projectile boneProjectile;
     public Wisp[] wisps;
     public Player player;
     public AICompanion companion;
