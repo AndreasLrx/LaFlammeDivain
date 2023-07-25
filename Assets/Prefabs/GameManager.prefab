@@ -54,6 +54,7 @@ MonoBehaviour:
   - {fileID: 457957571952232914, guid: 7f12890b0dee84ff59e09c4d8a289fb7, type: 3}
   enemies:
   - {fileID: 4557188609176430170, guid: 9a84eccaf3b222c459b7ce3ac560cc13, type: 3}
+  - {fileID: 1338902929213844915, guid: ab5efd412608a63429432b1e50efcd62, type: 3}
   wisps:
   - {fileID: 9030161684494959953, guid: 33dde5e59ab92c7469c5d74b5f101738, type: 3}
   - {fileID: 6865338212822090350, guid: ffc40f52d391baf459575ea7ad0c17df, type: 3}
@@ -62,7 +63,9 @@ MonoBehaviour:
   player: {fileID: 4740647157137170677, guid: 2d0117e30a4e7ad499133c85ff18cef6, type: 3}
   companion: {fileID: 3206609104498396570, guid: 5315728c7a4ae3e4c9a9af85af6bb4db, type: 3}
   wispsGroup: {fileID: 2556091340606255187, guid: a9ec15806e6fc8f40bca3d60cfba797f, type: 3}
-  humanoidNavMesh: {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
+  navMeshSurfaces:
+  - {fileID: 7496402137135331960, guid: e94d02a16dd8e184cbe48377e7b40eaa, type: 3}
+  - {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
   lightPoint: {fileID: 7649469973289764995, guid: f2bec35a2403b3f459e02bde45f61d8a, type: 3}
   fireTrail: {fileID: 7649469973289764995, guid: d33347bb42554854bb1d8ed088f10374, type: 3}
 --- !u!114 &6366123417487268299
@@ -108,4 +111,5 @@ MonoBehaviour:
   enemiesCountRange:
     minimum: 2
     maximum: 4
+  eliteProbability: 0.2
   room: {fileID: 0}

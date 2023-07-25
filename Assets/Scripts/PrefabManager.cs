@@ -15,7 +15,8 @@ public class PrefabManager : Singleton<PrefabManager>
     public Player player;
     public AICompanion companion;
     public WispsGroup wispsGroup;
-    public NavMeshSurface humanoidNavMesh;
+
+    public NavMeshSurface[] navMeshSurfaces;
 
     public List<Type> EliteTypes;
 

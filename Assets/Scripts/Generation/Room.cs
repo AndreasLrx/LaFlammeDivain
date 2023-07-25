@@ -169,9 +169,12 @@ public class Room : MonoBehaviour
             }
         }
 
-        NavMeshSurface navMeshInstance = Instantiate(PrefabManager.Instance.humanoidNavMesh, transform);
-        navMeshInstance.GetComponent<RootSources2d>().RooySources.Add(gameObject);
-        navMeshInstance.BuildNavMesh();
+        foreach (NavMeshSurface surface in PrefabManager.Instance.navMeshSurfaces)
+        {
+            NavMeshSurface s = Instantiate(surface, transform).GetComponent<NavMeshSurface>();
+            s.GetComponent<RootSources2d>().RooySources.Add(gameObject);
+            s.BuildNavMesh();
+        }
     }
 
     public void Initialize(Vector2 partSize, List<Vector2> partsPositions)
