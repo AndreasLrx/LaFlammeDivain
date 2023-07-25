@@ -6,8 +6,10 @@ using UnityEngine.AI;
 public abstract class Enemy : Entity
 {
     public float targetUpdateCooldown = 2;
-    public GameObject target;
-    private NavMeshAgent agent;
+    public GameObject target = null;
+    private NavMeshAgent _agent;
+    public NavMeshAgent agent { get { return _agent; } }
+    protected bool customMove = false;
 
     public delegate void OnTakeDamage();
     public AsyncEventsProcessor.AsyncEvent onDeath = null;
@@ -17,20 +19,29 @@ public abstract class Enemy : Entity
 
     protected virtual void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        _agent = GetComponent<NavMeshAgent>();
         eventsProcessor = gameObject.AddComponent<AsyncEventsProcessor>();
     }
 
-    void Update()
+    protected virtual void Update()
     {
-        currentTargetUpdateCooldown += Time.deltaTime;
-        if (currentTargetUpdateCooldown > targetUpdateCooldown)
+        currentTargetUpdateCooldown -= Time.deltaTime;
+        if (currentTargetUpdateCooldown <= float.Epsilon)
         {
             UpdateTarget();
-            currentTargetUpdateCooldown = 0f;
+            currentTargetUpdateCooldown = targetUpdateCooldown;
         }
         agent.speed = speed;
-        agent.SetDestination(target.transform.position);
+        if (!customMove && target != null)
+            agent.SetDestination(target.transform.position);
+    }
+
+    public virtual void InitTarget()
+    {
+        if (Random.Range(0, 2) == 0)
+            target = PlayerController.Instance.gameObject;
+        else
+            target = AICompanion.instance.gameObject;
     }
 
     protected virtual void UpdateTarget()
