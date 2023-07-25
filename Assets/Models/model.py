@@ -3,7 +3,7 @@ from mlagents_envs.environment import UnityEnvironment, ActionTuple
 from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
 from agent import Agent
 
-agent = Agent()
+agent = Agent(23, 2)
 
 # Create the Unity environment
 engine_configuration_channel = EngineConfigurationChannel()
@@ -16,18 +16,12 @@ env.reset()
 behavior_name = list(env.behavior_specs)[0]
 spec = env.behavior_specs[behavior_name]
 
-def split_observations(observations):
-   agent_observations = observations[:12]
-   expert_observations = observations[12:24]
-   expert_actions = observations[24:26]
-   return agent_observations, expert_observations, expert_actions
-
 # Run the main loop
 try:
     while True:
         # Get observations from Unity
         decision_steps, terminal_steps = env.get_steps(behavior_name)
-        agent_observations, expert_observations, expert_actions = split_observations(decision_steps.obs[0][0])
+        agent_observations, expert_observations, expert_actions = agent.split_observations(decision_steps.obs[0][0])
         print("Agent observations: %s\nExpert observations: %s\nExpert actions: %s" % (agent_observations, expert_observations, expert_actions))
 
         agent.learn_from_expert(expert_observations, expert_actions)

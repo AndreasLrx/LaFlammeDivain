@@ -82,6 +82,7 @@ crashlytics-build.properties
 venv
 results
 __pycache__
+__pycache__.meta
 ML-Agents
 
 # Unity TextMeshPro

@@ -6,33 +6,19 @@ using Unity.MLAgents.Sensors;
 using UnityEngine;
 
 
-public class AICompanion : Agent
+public class Movement : Behavior
 {
-    public bool isTraining;
-    public RoomGenerator roomGenerator;
     public int numRaycasts;
     public float raycastMaxLength = 5;
     public LayerMask obstacleLayer;
-    public Transform target;
 
     private Vector3[] raycastDirections;
-    private Player _player;
 
-    public static AICompanion instance;
-    public Player player { get { return _player; } }
 
-    protected virtual void Awake()
+
+    protected override void Start()
     {
-        if (instance == null)
-            instance = this;
-        else if (instance != this)
-            Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
-        _player = GetComponent<Player>();
-    }
-
-    private void Start()
-    {
+        base.Start();
         // Calculate the angles for raycast directions
         raycastDirections = new Vector3[numRaycasts];
         float angleIncrement = 360f / numRaycasts;
@@ -41,59 +27,20 @@ public class AICompanion : Agent
             float angle = i * angleIncrement;
             raycastDirections[i] = Quaternion.Euler(0f, angle, 0f) * Vector3.forward;
         }
-
-        // Verify if the agent should be trained or play
-        if (isTraining)
-        {
-            // If training, call the StartTraining() method
-            StartTraining();
-        }
     }
 
-    private void Update()
-    {
-        if (!isTraining)
-            RequestDecision();
-    }
 
-    private void StartTraining()
-    {
-        // Begin the training loop
-        StartCoroutine(TrainingLoop());
-    }
-
-    private IEnumerator TrainingLoop()
-    {
-        while (PlayerController.Instance != null)
-        {
-            RequestDecision();
-
-            // Wait for the decisions to be made
-            yield return new WaitForSeconds(0.5f);
-
-            bool shouldEndEpisode = CheckEndEpisodeCondition();
-
-            if (shouldEndEpisode)
-            {
-                EndEpisode();
-            }
-        }
-    }
 
     public override void OnEpisodeBegin()
     {
-        if (isTraining)
-        {
-            roomGenerator.Regenerate();
-            PlayerController.Instance.transform.position = roomGenerator.RandomPosition();
-            transform.position = roomGenerator.RandomPosition();
-        }
-        target = PlayerController.Instance.transform;
+        base.OnEpisodeBegin();
+        // if (isTraining)
+        aiCompanion.target = PlayerController.Instance.transform;
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        Vector2 targetDirection = target.position - transform.position;
+        Vector2 targetDirection = aiCompanion.target.position - transform.position;
         // Direction to target (2 observations)
         sensor.AddObservation(targetDirection.normalized);
         // Distance to target (1 observation)
@@ -110,6 +57,7 @@ public class AICompanion : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         // Map the maxActionIndex to movement
+
         Vector2 movementDirection;
 
         if (!actionBuffers.DiscreteActions.IsEmpty())
@@ -138,9 +86,9 @@ public class AICompanion : Agent
             movementDirection = new Vector2(actionBuffers.ContinuousActions.Array[0], actionBuffers.ContinuousActions.Array[1]);
 
         // Move the AI companion
-        player.moveDirection = movementDirection;
+        aiCompanion.player.moveDirection = movementDirection;
 
-        float directionReward = Vector2.Dot((target.position - transform.position).normalized, movementDirection);
+        float directionReward = Vector2.Dot((aiCompanion.target.position - transform.position).normalized, movementDirection);
         bool movingTowardObstacle = Physics2D.Raycast((Vector2)transform.position, movementDirection, 0.5f, obstacleLayer);
 
         // Penalize the AI for moving into obstacles
@@ -154,9 +102,9 @@ public class AICompanion : Agent
         AddReward(-0.01f);
     }
 
-    private bool CheckEndEpisodeCondition()
+    protected override bool CheckEndEpisodeCondition()
     {
-        bool reachedTarget = (target.position - transform.position).sqrMagnitude < 1;
+        bool reachedTarget = (aiCompanion.target.position - transform.position).sqrMagnitude < 1;
 
         // Reward the AI for reaching the target
         if (reachedTarget)

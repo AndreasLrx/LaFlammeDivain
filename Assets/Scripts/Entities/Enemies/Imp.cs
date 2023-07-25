@@ -12,8 +12,8 @@ public class Imp : Enemy
 
     protected override void UpdateTarget()
     {
-        if ((AICompanion.instance.transform.position - transform.position).sqrMagnitude < (PlayerController.Instance.transform.position - transform.position).sqrMagnitude)
-            target = AICompanion.instance.gameObject;
+        if ((AICompanion.Instance.transform.position - transform.position).sqrMagnitude < (PlayerController.Instance.transform.position - transform.position).sqrMagnitude)
+            target = AICompanion.Instance.gameObject;
         else
             target = PlayerController.Instance.gameObject;
     }
