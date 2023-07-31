@@ -32,7 +32,8 @@ public class PrefabManager : Singleton<PrefabManager>
         {
             typeof(FireElite),
             typeof(HealthElite),
-            typeof(SpeedElite)
+            typeof(SpeedElite),
+            typeof(RegenElite)
         };
     }
 
