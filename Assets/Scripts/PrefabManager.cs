@@ -31,7 +31,8 @@ public class PrefabManager : Singleton<PrefabManager>
         EliteTypes = new()
         {
             typeof(FireElite),
-            typeof(HealthElite)
+            typeof(HealthElite),
+            typeof(SpeedElite)
         };
     }
 
