@@ -9,6 +9,7 @@ public abstract class Enemy : Entity
     public GameObject target = null;
     private NavMeshAgent _agent;
     public NavMeshAgent agent { get { return _agent; } }
+    public bool dealsContactDamage = true;
     protected bool customMove = false;
 
     public delegate void OnTakeDamage();
@@ -56,8 +57,12 @@ public abstract class Enemy : Entity
     protected virtual void UpdateTarget() { }
     protected virtual bool Attack() { return false; }
 
+    protected virtual bool CanTakeDamage() { return true; }
+
     public void TakeDamage(float damage)
     {
+        if (!CanTakeDamage())
+            return;
         health -= damage;
         onTakeDamage?.Invoke();
         // destroy the object when hp is 0
@@ -73,6 +78,8 @@ public abstract class Enemy : Entity
 
     private void OnTriggerStay2D(Collider2D other)
     {
+        if (!dealsContactDamage)
+            return;
         if (other.tag == "Player")
             other.GetComponent<Player>().TakeDamage();
     }
