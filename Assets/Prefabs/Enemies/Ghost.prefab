@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 2906092090025682062}
   - component: {fileID: 2023089955221526479}
   - component: {fileID: 4850594674959984824}
-  - component: {fileID: -7519320220199685756}
+  - component: {fileID: -1836509899023496673}
   m_Layer: 9
-  m_Name: Skeleton
+  m_Name: Ghost
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d35dbd4324b9ea646b18d5dc81d57e14, type: 3}
-  m_Color: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
+  m_Color: {r: 0.30980393, g: 0.4664864, b: 0.52156866, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -193,9 +193,9 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 1
   m_BaseOffset: 0.5
-  m_WalkableMask: 1
+  m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &-7519320220199685756
+--- !u!114 &-1836509899023496673
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -204,18 +204,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 6285399730554940182}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cc2c702198e3dd4db2f1ffd4a88fdc7, type: 3}
+  m_Script: {fileID: 11500000, guid: a0f0edd372f573d43816e9e2d64a7bb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  range: 6
-  attackSpeed: 1
-  shotSpeed: 7
+  range: 3
+  attackSpeed: 0.5
+  shotSpeed: 1
   damage: 3
   health: 20
   targetUpdateCooldown: 2
   target: {fileID: 0}
+  dealsContactDamage: 0
   layerMask:
     serializedVersion: 2
     m_Bits: 384
-  healthPerBone: 1
+  moveTransparency: 0.5
