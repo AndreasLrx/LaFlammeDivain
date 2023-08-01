@@ -73,6 +73,6 @@ public class Behavior : Agent
             PlayerController.Instance.transform.position = aiCompanion.roomGenerator.RandomPosition();
             transform.position = aiCompanion.roomGenerator.RandomPosition();
         }
-        AICompanion.Instance.target = null;
+        // AICompanion.Instance.target = null;
     }
 }

@@ -407,6 +407,7 @@ public class RoomGenerator : MonoBehaviour
 
             if (Random.Range(0f, 1f) < eliteProbability)
                 enemy.gameObject.AddComponent(PrefabManager.GetRandomEliteType());
+            room.enemies.Add(enemy);
         }
     }
 

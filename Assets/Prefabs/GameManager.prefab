@@ -65,7 +65,7 @@ MonoBehaviour:
   - {fileID: 211061251685254441, guid: f23e9920d57873a4082c775ff8f0daed, type: 3}
   - {fileID: 4472103200368369339, guid: 725140852f888f84d81d4a58cbfc2ce4, type: 3}
   player: {fileID: 4740647157137170677, guid: 2d0117e30a4e7ad499133c85ff18cef6, type: 3}
-  companion: {fileID: 856129496540417927, guid: 0bddabdf486110843a9f1eefaf8b0661, type: 3}
+  companion: {fileID: 8684614624654962317, guid: 0bddabdf486110843a9f1eefaf8b0661, type: 3}
   wispsGroup: {fileID: 2556091340606255187, guid: a9ec15806e6fc8f40bca3d60cfba797f, type: 3}
   navMeshSurfaces:
   - {fileID: 7496402137135331960, guid: e94d02a16dd8e184cbe48377e7b40eaa, type: 3}

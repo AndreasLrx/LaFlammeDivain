@@ -83,4 +83,9 @@ public abstract class Enemy : Entity
         if (other.tag == "Player")
             other.GetComponent<Player>().TakeDamage();
     }
+
+    void OnDestroy()
+    {
+        GameManager.Instance.roomGenerator.room.enemies.Remove(this);
+    }
 }

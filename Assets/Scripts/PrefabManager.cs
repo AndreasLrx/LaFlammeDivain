@@ -71,4 +71,13 @@ public class PrefabManager : Singleton<PrefabManager>
     {
         return GetRandomElement(Instance.EliteTypes.ToArray());
     }
+
+    public static int GetEnemyTypeId(Enemy enemy)
+    {
+        Type type = enemy.GetType();
+        for (int i = 0; i < Instance.enemies.Length; i++)
+            if (Instance.enemies[i].GetType() == type)
+                return i;
+        return -1;
+    }
 }

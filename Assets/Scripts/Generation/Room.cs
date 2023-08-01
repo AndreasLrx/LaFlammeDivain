@@ -43,6 +43,8 @@ public class Room : MonoBehaviour
     // Associative double dimension array representing the cells
     private GameObject tiles;
     private List<List<Cell>> grid;
+    private List<Enemy> _enemies = new();
+    public List<Enemy> enemies { get { return _enemies; } }
 
     public Vector2Int RoomToGrid(Vector2 roomPos)
     {
