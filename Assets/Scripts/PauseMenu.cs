@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 
 public class PauseMenu : MonoBehaviour
 {
@@ -15,14 +18,28 @@ public class PauseMenu : MonoBehaviour
     {
         GameManager.Instance.Resume();
     }
+
     public void Options()
     {
         Debug.Log("Options");
     }
+
     public void Exit()
+    {   
+        SaveGame();
+        Destroy();
+        SceneManager.LoadScene("Menu");
+    }
+
+    private void SaveGame()
+    {
+        GameManager.Instance.Save();
+    }
+
+    private void Destroy()
     {
         Time.timeScale = 1f;
-        GameManager.Destroy();
+        GameManager.Instance._isGameLaunched = false;
         PlayerController.Destroy();
         GameObject DontdestroyOnLoadDestroyer = new GameObject("DontdestroyOnLoadDestroyer");
         DontDestroyOnLoad(DontdestroyOnLoadDestroyer);
@@ -32,8 +49,8 @@ public class PauseMenu : MonoBehaviour
         Destroy(FindObjectOfType<Canvas>().gameObject);
         Destroy(FindObjectOfType<Player>().gameObject);
         Destroy(FindObjectOfType<AICompanion>().gameObject);
-        SceneManager.LoadScene("Menu");
     }
+
     public void PauseButton()
     {
         GameManager.Instance.Pause();

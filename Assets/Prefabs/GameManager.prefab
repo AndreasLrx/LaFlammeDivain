@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -4710461828081950549}
   - component: {fileID: 6366123417487268299}
   - component: {fileID: -6590489944768131976}
+  - component: {fileID: -2050591951079239249}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -85,6 +86,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomGenerator: {fileID: 0}
+  playerSave: {fileID: 0}
 --- !u!114 &-6590489944768131976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,3 +119,15 @@ MonoBehaviour:
     maximum: 4
   eliteProbability: 0.2
   room: {fileID: 0}
+--- !u!114 &-2050591951079239249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7537943329441611618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d4bc00669947c74fb91128f1bebecbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
