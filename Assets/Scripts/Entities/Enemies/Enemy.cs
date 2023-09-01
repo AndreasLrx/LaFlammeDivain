@@ -90,7 +90,8 @@ public abstract class Enemy : Entity
     {
         if (!dealsContactDamage)
             return;
-        if (other.tag == "Player")
+            
+        if (other.CompareTag("Player"))
             other.GetComponent<Player>().TakeDamage();
     }
 }

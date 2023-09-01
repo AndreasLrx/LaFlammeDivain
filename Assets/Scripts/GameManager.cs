@@ -1,10 +1,14 @@
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class GameManager : Singleton<GameManager>
 {
     public RoomGenerator roomGenerator;
     private bool _isPaused = false;
     public bool isPaused { get { return _isPaused; } }
+    public GameObject gameOverUI;
 
     protected override void Awake()
     {
@@ -22,7 +26,7 @@ public class GameManager : Singleton<GameManager>
         if (Input.GetKeyDown(KeyCode.T))
             PlayerController.Instance.AddWisp(Instantiate(PrefabManager.GetRandomWisp(), PlayerController.Instance.transform.position, Quaternion.identity, null).GetComponent<Wisp>());
         if (Input.GetKeyDown(KeyCode.M))
-            roomGenerator.Regenerate();
+            roomGenerator.Regenerate(); 
     }
 
     void InitGame()
@@ -32,7 +36,8 @@ public class GameManager : Singleton<GameManager>
 
     public void GameOver()
     {
-        Debug.Log("Game Over");
+        gameOverUI.SetActive(true);
+        
     }
 
     public void Pause()
@@ -46,4 +51,28 @@ public class GameManager : Singleton<GameManager>
         Time.timeScale = 1f;
         _isPaused = false;
     }
+
+
+    public void Restart(){
+         roomGenerator.Regenerate();
+         gameOverUI.SetActive(false);
+         PlayerController.instance.setIsDead(false);
+    }
+
+    public void MainMenu()
+    {
+        Time.timeScale = 1f;
+        Destroy();
+        PlayerController.Destroy();
+        GameObject DontdestroyOnLoadDestroyer = new GameObject("DontdestroyOnLoadDestroyer");
+        DontDestroyOnLoad(DontdestroyOnLoadDestroyer);
+        foreach (GameObject root in DontdestroyOnLoadDestroyer.scene.GetRootGameObjects())
+            Destroy(root);
+
+        Destroy(FindObjectOfType<Canvas>().gameObject);
+        Destroy(FindObjectOfType<Player>().gameObject);
+        Destroy(FindObjectOfType<AICompanion>().gameObject);
+        SceneManager.LoadScene("Menu");
+    }
+
 }

@@ -19,21 +19,7 @@ public class PauseMenu : MonoBehaviour
     {
         Debug.Log("Options");
     }
-    public void Exit()
-    {
-        Time.timeScale = 1f;
-        GameManager.Destroy();
-        PlayerController.Destroy();
-        GameObject DontdestroyOnLoadDestroyer = new GameObject("DontdestroyOnLoadDestroyer");
-        DontDestroyOnLoad(DontdestroyOnLoadDestroyer);
-        foreach (GameObject root in DontdestroyOnLoadDestroyer.scene.GetRootGameObjects())
-            Destroy(root);
-
-        Destroy(FindObjectOfType<Canvas>().gameObject);
-        Destroy(FindObjectOfType<Player>().gameObject);
-        Destroy(FindObjectOfType<AICompanion>().gameObject);
-        SceneManager.LoadScene("Menu");
-    }
+   
     public void PauseButton()
     {
         GameManager.Instance.Pause();

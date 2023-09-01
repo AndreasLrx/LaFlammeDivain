@@ -15,6 +15,7 @@ public class AICompanion : Singleton<AICompanion>
     private void Start()
     {
         _player = GetComponent<Player>();
+        _player.setNpc();
         movement = GetComponentInChildren<Behavior>();
     }
 }

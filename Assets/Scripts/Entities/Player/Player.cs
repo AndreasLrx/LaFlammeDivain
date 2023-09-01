@@ -5,8 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D body;
-    private float invicibleCoolDown = 2.0f;
-    private float invicibleCurrentCoolDown = 0.0f;
+    private float invincibleCoolDown = 2.0f;
+    private float invincibleCurrentCoolDown = 0.0f;
     private WispsGroup _wisps;
     private Vector2 _aimedDirection;
     private Vector2 _moveDirection;
@@ -14,6 +14,12 @@ public class Player : MonoBehaviour
     private Weapon weapon;
     private Animator animator;
     private bool onlyWeaponAttack = false;
+
+    private bool isDead;
+
+    private bool isNpc = false;
+
+    public void setNpc() { isNpc = true; }
 
 
     public WispsGroup wisps { get { return _wisps; } }
@@ -57,8 +63,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (invicibleCurrentCoolDown > float.Epsilon)
-            invicibleCurrentCoolDown -= Time.deltaTime;
+        if (invincibleCurrentCoolDown > float.Epsilon)
+            invincibleCurrentCoolDown -= Time.deltaTime;
         body.velocity = moveDirection * entity.speed;
     }
 
@@ -96,14 +102,27 @@ public class Player : MonoBehaviour
     }
 
     public void TakeDamage()
-    {
-        if (invicibleCurrentCoolDown > float.Epsilon)
+    {        
+        if (isDead) return;
+
+        if (invincibleCurrentCoolDown > float.Epsilon)
             return;
-        invicibleCurrentCoolDown = invicibleCoolDown;
-        GetComponent<SpriteRenderer>().color = Color.red;
-        Invoke("ResetColor", 0.1f);
-        if (!wisps.AbsorbDamage())
-            GameManager.Instance.GameOver();
+
+        invincibleCurrentCoolDown = invincibleCoolDown;
+        if (!wisps.AbsorbDamage()) {
+            isDead = true;
+            if (isNpc) {
+                // need to adapt wiht the DVD pathern
+                // don't forget to reset at the restart of the game
+                GetComponent<SpriteRenderer>().color = Color.red;
+            } else {
+                GameManager.Instance.GameOver();
+            }
+        }
+    }
+
+    public void setIsDead(bool _isDead) {
+        isDead = _isDead;
     }
 
     void ResetColor()

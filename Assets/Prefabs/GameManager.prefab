@@ -95,6 +95,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomGenerator: {fileID: 0}
+  gameOverUI: {fileID: 7537943329441611618}
 --- !u!114 &-6590489944768131976
 MonoBehaviour:
   m_ObjectHideFlags: 0
