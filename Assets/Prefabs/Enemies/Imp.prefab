@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2906092090025682062}
   - component: {fileID: 2023089955221526479}
   - component: {fileID: 4850594674959984824}
+  - component: {fileID: -1688053200062555287}
   m_Layer: 9
   m_Name: Imp
   m_TagString: Enemy
@@ -98,8 +99,8 @@ SpriteRenderer:
   m_SortingLayerID: 424877953
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d35dbd4324b9ea646b18d5dc81d57e14, type: 3}
-  m_Color: {r: 0.46383864, g: 0, b: 0.81960785, a: 1}
+  m_Sprite: {fileID: 21300000, guid: d4d7c4931ca1ff24998e5b60d0dcf71e, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -145,7 +146,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -215,3 +216,24 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
+--- !u!95 &-1688053200062555287
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6285399730554940182}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2c4ea0480a0ff764eadb0f91b234d57c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     private Vector2 _moveDirection;
     private Entity _entity;
     private Weapon weapon;
+    private Animator animator;
     private bool onlyWeaponAttack = false;
 
 
@@ -31,6 +32,16 @@ public class Player : MonoBehaviour
         set
         {
             _moveDirection = value.normalized;
+            if (Mathf.Abs(moveDirection.x) < float.Epsilon && Mathf.Abs(moveDirection.y) < float.Epsilon)
+            {
+                animator.SetBool("Walking", false);
+            }
+            else
+            {
+                animator.SetBool("Walking", true);
+                animator.SetFloat("DirectionX", moveDirection.x);
+                animator.SetFloat("DirectionY", moveDirection.y);
+            }
         }
     }
     public Entity entity { get { return _entity; } }
@@ -41,6 +52,7 @@ public class Player : MonoBehaviour
         weapon = GetComponentInChildren<Weapon>();
         _entity = GetComponent<Entity>();
         _wisps = Instantiate(PrefabManager.Instance.wispsGroup, transform).GetComponent<WispsGroup>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -88,7 +100,14 @@ public class Player : MonoBehaviour
         if (invicibleCurrentCoolDown > float.Epsilon)
             return;
         invicibleCurrentCoolDown = invicibleCoolDown;
+        GetComponent<SpriteRenderer>().color = Color.red;
+        Invoke("ResetColor", 0.1f);
         if (!wisps.AbsorbDamage())
             GameManager.Instance.GameOver();
+    }
+
+    void ResetColor()
+    {
+        GetComponent<SpriteRenderer>().color = Color.white;
     }
 }
