@@ -8,6 +8,7 @@ public abstract class Enemy : Entity
     public float targetUpdateCooldown = 2;
     public GameObject target = null;
     private NavMeshAgent _agent;
+    private Animator animator;
     public NavMeshAgent agent { get { return _agent; } }
     public bool dealsContactDamage = true;
     protected bool customMove = false;
@@ -22,6 +23,7 @@ public abstract class Enemy : Entity
     protected virtual void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
         eventsProcessor = gameObject.AddComponent<AsyncEventsProcessor>();
     }
 
@@ -44,6 +46,14 @@ public abstract class Enemy : Entity
         agent.speed = speed;
         if (!customMove && target != null)
             agent.SetDestination(target.transform.position);
+
+        // Update animation
+        if (animator != null)
+        {
+            Vector2 vel = agent.velocity.normalized;
+            animator.SetFloat("DirectionX", vel.x);
+            animator.SetFloat("DirectionY", vel.y);
+        }
     }
 
     public virtual void InitTarget()

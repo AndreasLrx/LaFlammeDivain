@@ -7,9 +7,11 @@ using Random = UnityEngine.Random;
 
 public class PrefabManager : Singleton<PrefabManager>
 {
-    public GameObject[] outerWallTiles;
-    public GameObject[] wallTiles;
-    public GameObject[] floorTiles;
+    public GameObject outerWallPrefab;
+    public GameObject wallPrefab;
+    public GameObject floorPrefab;
+    public Sprite[] wallTiles;
+    public Sprite[] floorTiles;
     public Enemy[] enemies;
     public Projectile boneProjectile;
     public Projectile ectoplasmProjectile;
@@ -42,19 +44,25 @@ public class PrefabManager : Singleton<PrefabManager>
         return array[Random.Range(0, array.Length)];
     }
 
+    private static GameObject GetRandomeTiledElement(GameObject gameObject, Sprite[] tiles)
+    {
+        gameObject.GetComponent<SpriteRenderer>().sprite = GetRandomElement(tiles);
+        return gameObject;
+    }
+
     public static GameObject GetRandomOuterWall()
     {
-        return GetRandomElement(Instance.outerWallTiles);
+        return GetRandomeTiledElement(Instance.outerWallPrefab, Instance.wallTiles);
     }
 
     public static GameObject GetRandomWall()
     {
-        return GetRandomElement(Instance.wallTiles);
+        return GetRandomeTiledElement(Instance.wallPrefab, Instance.wallTiles);
     }
 
     public static GameObject GetRandomFloor()
     {
-        return GetRandomElement(Instance.floorTiles);
+        return GetRandomeTiledElement(Instance.floorPrefab, Instance.floorTiles);
     }
 
     public static Enemy GetRandomEnemy()

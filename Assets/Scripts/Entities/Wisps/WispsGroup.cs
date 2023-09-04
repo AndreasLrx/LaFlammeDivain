@@ -37,6 +37,9 @@ public class WispsGroup : MonoBehaviour
     {
         transform.Rotate(new Vector3(0, 0, orbitSpeed) * Time.deltaTime);
 
+        foreach (WispStack stack in stacks)
+            stack.transform.localRotation = Quaternion.Euler(0f, 0f, -transform.rotation.eulerAngles.z);
+
         if (selectedStack)
         {
             Player player = GetComponentInParent<Player>();
