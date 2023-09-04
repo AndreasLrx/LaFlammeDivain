@@ -116,6 +116,7 @@ public class Player : MonoBehaviour
                 // don't forget to reset at the restart of the game
                 GetComponent<SpriteRenderer>().color = Color.red;
             } else {
+                // Game over
                 GameManager.Instance.GameOver();
             }
         }

@@ -553,9 +553,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1275730438}
-        m_TargetAssemblyTypeName: OptionMenu, Assembly-CSharp
-        m_MethodName: Audio
+      - m_Target: {fileID: 3760848759629252973, guid: 4b90290b0c8cdda52a7f2af3f2aef17c, type: 3}
+        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
+        m_MethodName: Options
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1035,7 +1035,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 704621137}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e506a4987fecfd45b7585e9ea58a4ce, type: 3}
+  m_Script: {fileID: 11500000, guid: 51b8c042aeab557cb9babfec6d398756, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &704621139
@@ -1937,9 +1937,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1275730439}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
-        m_MethodName: Exit
+      - m_Target: {fileID: 3760848759629252973, guid: 4b90290b0c8cdda52a7f2af3f2aef17c, type: 3}
+        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
+        m_MethodName: MainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2185,7 +2185,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1275730436}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e506a4987fecfd45b7585e9ea58a4ce, type: 3}
+  m_Script: {fileID: 11500000, guid: 51b8c042aeab557cb9babfec6d398756, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1694794761
@@ -2457,8 +2457,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1275730439}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+      - m_Target: {fileID: 3760848759629252973, guid: 4b90290b0c8cdda52a7f2af3f2aef17c, type: 3}
+        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
         m_MethodName: Resume
         m_Mode: 1
         m_Arguments:
@@ -2822,6 +2822,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1904758173
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1904758174}
+  m_Layer: 0
+  m_Name: Menu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1904758174
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904758173}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1955853393
 GameObject:

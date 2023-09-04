@@ -26,6 +26,7 @@ public class PrefabManager : Singleton<PrefabManager>
 
     public GameObject lightPoint;
     public GameObject fireTrail;
+    public GameObject gameOverUI;
 
     protected override void Awake()
     {
@@ -78,5 +79,10 @@ public class PrefabManager : Singleton<PrefabManager>
     public static Type GetRandomEliteType()
     {
         return GetRandomElement(Instance.EliteTypes.ToArray());
+    }
+
+    public static GameObject GetGameOverUI()
+    {
+        return Instance.gameOverUI;
     }
 }

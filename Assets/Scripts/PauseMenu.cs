@@ -1,27 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class PauseMenu : MonoBehaviour
-{
-    private void Start()
+public class PauseMenu : Menu
+{ 
+
+ 
+    public void Pause()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Time.timeScale = 0f;
+        GameManager.Instance._isPaused = true;
     }
 
     public void Resume()
     {
-        GameManager.Instance.Resume();
+        Time.timeScale = 1f;
+        GameManager.Instance._isPaused = false;
     }
+
     public void Options()
     {
         Debug.Log("Options");
-    }
-   
-    public void PauseButton()
-    {
-        GameManager.Instance.Pause();
     }
 }
