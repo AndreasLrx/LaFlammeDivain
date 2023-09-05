@@ -53,7 +53,6 @@ public class Ghost : Enemy
             spriteRenderer.color = moveColor;
             customMove = false;
             agent.isStopped = false;
-            Debug.Log("Set to not custom Move");
         }
         return false;
     }
@@ -66,7 +65,6 @@ public class Ghost : Enemy
             spriteRenderer.color = baseColor;
             customMove = true;
             agent.isStopped = true;
-            Debug.Log("Set to custom Move");
         }
     }
 }

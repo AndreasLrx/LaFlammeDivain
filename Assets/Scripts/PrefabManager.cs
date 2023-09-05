@@ -38,7 +38,6 @@ public class PrefabManager : Singleton<PrefabManager>
             typeof(RegenElite)
         };
     }
-    public NavMeshSurface humanoidNavMesh;
     public GameObject doorTiles;
 
     private static T GetRandomElement<T>(T[] array)

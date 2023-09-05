@@ -83,6 +83,7 @@ public abstract class Enemy : Entity
     private IEnumerator Death()
     {
         yield return StartCoroutine(eventsProcessor.StartAsyncEvents(onDeath));
+        PlayerController.Instance.GetComponent<PlayerController>().currentRoom.remainingEnemies--;
         Destroy(gameObject);
     }
 
