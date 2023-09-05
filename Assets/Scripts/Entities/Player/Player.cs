@@ -15,6 +15,11 @@ public class Player : MonoBehaviour
     private Animator animator;
     private bool onlyWeaponAttack = false;
     [SerializeField] private AudioSource attackSound;
+    // [SerializeField] private AudioSource runningSound;
+    [SerializeField] private AudioSource SwitchNextWispSound;
+    [SerializeField] private AudioSource SwitchPreviousWispSound;
+    [SerializeField] private AudioSource DeathSound;
+    [SerializeField] private AudioSource WispAbsorbSound;
 
     public WispsGroup wisps { get { return _wisps; } }
     public Vector2 aimedDirection
@@ -69,11 +74,13 @@ public class Player : MonoBehaviour
 
     public void SelectNextWisp()
     {
+        SwitchNextWispSound.Play();
         wisps.SelectNextStack();
     }
 
     public void SelectPreviousWisp()
     {
+        SwitchPreviousWispSound.Play();
         wisps.SelectPreviousStack();
     }
 
@@ -106,11 +113,19 @@ public class Player : MonoBehaviour
         GetComponent<SpriteRenderer>().color = Color.red;
         Invoke("ResetColor", 0.1f);
         if (!wisps.AbsorbDamage())
+        {
             GameManager.Instance.GameOver();
+            DeathSound.Play();
+        }
+        else
+            WispAbsorbSound.Play();
+            
     }
 
     void ResetColor()
     {
         GetComponent<SpriteRenderer>().color = Color.white;
     }
+
+    // TODO: DeathSound when player dies
 }

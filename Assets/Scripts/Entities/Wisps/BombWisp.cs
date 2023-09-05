@@ -9,6 +9,8 @@ public class BombWisp : Wisp
     public float explosionRadius = 5.0f;
     private CircleCollider2D explosionCollider;
     private bool hasExploded;
+    [SerializeField] private AudioSource WispAttackSound;
+
 
     protected override void Awake()
     {
@@ -36,6 +38,8 @@ public class BombWisp : Wisp
 
     public void Explode()
     {
+        WispAttackSound.Play();
+
         List<Collider2D> colliders = new();
         explosionCollider.GetContacts(colliders);
 

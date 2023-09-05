@@ -6,6 +6,8 @@ public class AttackWisp : Wisp
 {
     public float damageBoost = 0.3f;
 
+    [SerializeField] private AudioSource WispAttackSound;
+
     protected override void Awake()
     {
         base.Awake();
@@ -38,6 +40,7 @@ public class AttackWisp : Wisp
     public bool Attack()
     {
         List<Collider2D> colliders = new();
+        WispAttackSound.Play();
         gameObject.GetComponent<CircleCollider2D>().GetContacts(colliders);
         foreach (Collider2D other in colliders)
             switch (other.tag)
