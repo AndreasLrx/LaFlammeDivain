@@ -12,6 +12,8 @@ public class PoisonWisp : Wisp
     public float stackedAngleSpace = 10;
 
     private float poisonCurrentCoolDown = 0.0f;
+    [SerializeField] private AudioSource WispAttackSound;
+
 
     protected override void Awake()
     {
@@ -65,6 +67,7 @@ public class PoisonWisp : Wisp
 
     private IEnumerator OnDetach()
     {
+        WispAttackSound.Play();
         StartCoroutine(SmoothlyChangeTrailDuration(detachedTrailDuration));
         StartCoroutine(SmoothlyChangeTrailWidth(detachedTrailWidth));
         yield break;

@@ -57,7 +57,6 @@ public abstract class Wisp : MovingObject
     protected AsyncEventsProcessor.AsyncEvent onAttach;
     protected AsyncEventsProcessor.AsyncEvent onDeath;
     protected OnDamage _onDamage;
-
     public OnDamage onDamage { get { return _onDamage; } }
 
     // Start is called before the first frame update

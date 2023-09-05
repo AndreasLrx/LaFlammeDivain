@@ -5,6 +5,8 @@ using UnityEngine;
 public class DefenseWisp : Wisp
 {
     private bool loaded;
+    [SerializeField] private AudioSource WispAttackSound;
+
 
     protected override void Awake()
     {
@@ -16,6 +18,7 @@ public class DefenseWisp : Wisp
 
     private IEnumerator OnActivate()
     {
+        WispAttackSound.Play();
         loaded = true;
         yield break;
     }
