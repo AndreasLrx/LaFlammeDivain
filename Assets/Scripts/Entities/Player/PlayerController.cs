@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : Singleton<Player>
 {
     private Player _player;
+    public Room currentRoom;
     public Player player { get { return _player; } }
 
     protected override void Awake()

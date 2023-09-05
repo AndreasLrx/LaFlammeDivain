@@ -29,14 +29,17 @@ public class GameManager : Singleton<GameManager>
     void InitGame()
     {
         floorGenerator.GenerateFloor();
-        floorGenerator.rooms[0].PlacePlayer();
-        PlayerController.Instance.currentRoom = floorGenerator.rooms[0];
-        //floorGenerator.rooms[0].PlaceEnemies();
     }
 
     public void GameOver()
     {
         Debug.Log("Game Over");
+    }
+
+    public void ChangeRoom(Room newRoom, Vector2? position = null)
+    {
+        floorGenerator.roomGenerator.PlacePlayer(newRoom, position);
+        floorGenerator.roomGenerator.PlaceEnemies(newRoom);
     }
 
     public void Pause()

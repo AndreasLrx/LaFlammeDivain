@@ -15,9 +15,6 @@ public class Player : MonoBehaviour
     private Animator animator;
     private bool onlyWeaponAttack = false;
 
-    public Room currentRoom;
-
-
     public WispsGroup wisps { get { return _wisps; } }
     public Vector2 aimedDirection
     {

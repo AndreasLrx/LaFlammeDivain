@@ -15,113 +15,88 @@ public class FloorGenerator : MonoBehaviour
     {
         GameObject floor = new GameObject("Floor");
         int numberOfRooms = Random.Range(numberOfRoom.minimum, numberOfRoom.maximum + 1);
+
+        // Generate first room
         Room lastRoom = roomGenerator.GenerateRoom();
+        lastRoom.ComputePartSizeBoundingBox();
         lastRoom.transform.parent = floor.transform;
-        // Generate bounding box for each part for the first room
-        foreach (Vector2 partPos in lastRoom.partsPositions)
-        {
-            RectInt boundingBox = new();
-            boundingBox.x = (int)(partPos.x * lastRoom.partSize.x);
-            boundingBox.y = (int)(partPos.y * lastRoom.partSize.y);
-            boundingBox.width = (int)(lastRoom.partSize.x);
-            boundingBox.height = (int)(lastRoom.partSize.y);
+        rooms.Add(lastRoom);
 
-            lastRoom.partSizeBoundingBox.Add(boundingBox);
-        }
-
-        Vector3 offset = Vector3.zero;
 
         for (int i = 0; i < numberOfRooms - 1; i++)
         {
-            print("room " + (i + 1));
-            rooms.Add(lastRoom);
-
             Room room = null;
             List<DoorsDiff> possibleConnections = null;
-            int randomIndex = -1;
-            //Retry 15 times to find a room that can atleast connect to one other room
-            for (int depth = 0; depth < 15; depth++)
+            Room matchingRoom = null;
+            List<int> roomIndexes = new(rooms.Count);
+            for (int j = 0; j < rooms.Count; j++)
+                roomIndexes.Add(j);
+
+            // Generate a room and try to place it up to four times on the floor
+            for (int depth = 0; depth < 4; depth++)
             {
-                randomIndex = UnityEngine.Random.Range(0, rooms.Count - 1);
+                List<int> roomIndexesCopy = new(roomIndexes);
                 room = roomGenerator.GenerateRoom();
-                possibleConnections = room.getPossibleConnections(rooms, randomIndex);
+
+                // Try every room for a matching door
+                while (roomIndexesCopy.Count > 0)
+                {
+                    int idxIndex = Random.Range(0, roomIndexesCopy.Count - 1);
+                    matchingRoom = rooms[roomIndexesCopy[idxIndex]];
+
+                    possibleConnections = room.getPossibleConnections(rooms, matchingRoom);
+                    roomIndexesCopy.RemoveAt(idxIndex);
+                    if (possibleConnections.Count > 0)
+                        break;
+                }
                 if (possibleConnections.Count > 0)
-                {
-                    // set room parent to Floor
-                    room.transform.parent = floor.transform;
                     break;
-                }
                 Destroy(room.gameObject);
-                print("RETRY: " + depth + 1);
             }
 
-            if (possibleConnections.Count > 0)
+            // Skip this room
+            if (possibleConnections.Count == 0)
             {
-                //Pick a random connection
-                DoorsDiff randomConnection = possibleConnections[Random.Range(0, possibleConnections.Count - 1)];
-
-                room.offset = new Vector2(randomConnection.offset.x, randomConnection.offset.y) + rooms[randomIndex].offset;
-                room.partSizeBoundingBox = randomConnection.partSizeBoundingBox;
-
-                //Remove doors from possible positions
-                room.doorsPossiblePositions.Remove(randomConnection.doorPossiblePos);
-                lastRoom.doorsPossiblePositions.Remove(randomConnection.otherRoomDoor);
-
-                //Delete walls at door position
-                Cell roomCell = room.GetCellAt(randomConnection.doorPossiblePos);
-                if (roomCell != null && roomCell.gameObject != null)
-                {
-                    Destroy(roomCell.gameObject);
-                }
-                Cell lastRoomCell = lastRoom.GetCellAt(randomConnection.otherRoomDoor);
-                if (lastRoomCell != null && lastRoomCell.gameObject != null)
-                {
-                    Destroy(lastRoomCell.gameObject);
-                }
-
-                //Instantiate the door
-                GameObject doorInstance = Instantiate(PrefabManager.GetDoor(), randomConnection.doorPossiblePos, Quaternion.identity, room.transform);
-
-                Door door = doorInstance.GetComponent<Door>();
-
-                door.firstRoom = room;
-                door.secondRoom = rooms[randomIndex];
-
-                //
-                if (room.GetCellAt(new Vector2(randomConnection.doorPossiblePos.x + 1, randomConnection.doorPossiblePos.y)) == null)
-                {
-                    door.direction = Direction.right;
-                }
-                else if (room.GetCellAt(new Vector2(randomConnection.doorPossiblePos.x - 1, randomConnection.doorPossiblePos.y)) == null)
-                {
-                    door.direction = Direction.left;
-                }
-                else if (room.GetCellAt(new Vector2(randomConnection.doorPossiblePos.x, randomConnection.doorPossiblePos.y + 1)) == null)
-                {
-                    door.direction = Direction.top;
-                }
-                else
-                {
-                    door.direction = Direction.bottom;
-                }
-                //Add door to room and other room
-                room.doors.Add(door);
-                lastRoom.doors.Add(door);
-
-                //Move room by its offset
-                room.transform.position += new Vector3(room.offset.x, room.offset.y, 0);
-
-                lastRoom = room;
-            }
-            else
-            {
-                //SHOULD NOT HAPPEN ANYMORE
                 Destroy(room.gameObject);
                 throw new System.Exception("No compatible room found");
             }
-        }
 
-        rooms.Add(lastRoom);
+
+            //Pick a random connection
+            DoorsDiff randomConnection = possibleConnections[Random.Range(0, possibleConnections.Count - 1)];
+
+            room.offset = new Vector2(randomConnection.offset.x, randomConnection.offset.y) + matchingRoom.offset;
+            room.partSizeBoundingBox = randomConnection.partSizeBoundingBox;
+
+            //Remove doors from possible positions
+            room.doorsPossiblePositions.Remove(randomConnection.doorPossiblePos);
+            matchingRoom.doorsPossiblePositions.Remove(randomConnection.otherRoomDoor);
+
+            //Delete walls at door position
+            Cell roomCell = room.GetCellAt(randomConnection.doorPossiblePos);
+            if (roomCell != null && roomCell.gameObject != null)
+                Destroy(roomCell.gameObject);
+            Cell lastRoomCell = matchingRoom.GetCellAt(randomConnection.otherRoomDoor);
+            if (lastRoomCell != null && lastRoomCell.gameObject != null)
+                Destroy(lastRoomCell.gameObject);
+
+            //Instantiate the door
+            Door door = Instantiate(PrefabManager.GetDoor(), randomConnection.doorPossiblePos, Quaternion.identity, room.transform).GetComponent<Door>();
+
+            door.firstRoom = room;
+            door.secondRoom = matchingRoom;
+            door.direction = (Direction)room.getFreeDirectionFromDoor(randomConnection.doorPossiblePos);
+            //Add door to room and other room
+            room.doors.Add(door);
+            matchingRoom.doors.Add(door);
+
+            //Move room by its offset
+            room.transform.parent = floor.transform;
+            room.transform.position += new Vector3(room.offset.x, room.offset.y, 0);
+
+            rooms.Add(room);
+        }
+        GameManager.Instance.ChangeRoom(rooms[0]);
     }
 
     public void RegenerateFloor()

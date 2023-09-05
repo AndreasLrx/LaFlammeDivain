@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using NavMeshPlus.Components;
 using NavMeshPlus.Extensions;
 using UnityEngine;
-using Cinemachine;
-using Random = UnityEngine.Random;
 using static RoomGenerator;
+using Random = UnityEngine.Random;
 
 public class Room : MonoBehaviour
 {
@@ -29,6 +28,19 @@ public class Room : MonoBehaviour
             this.type = type;
             this.gameObject = gameObject;
         }
+    }
+
+    public struct DoorsDiff
+    {
+        //the diff between 2 doors
+        public Vector2 offset;
+        //door of this room 
+        public Vector2 doorPossiblePos;
+        //door of last otherRooms
+        public Vector2 otherRoomDoor;
+
+        //bounding box of the room base on parts
+        public List<RectInt> partSizeBoundingBox;
     }
 
     private Vector2 _partSize;
@@ -62,50 +74,14 @@ public class Room : MonoBehaviour
 
     public List<Door> doors = new();
 
-    private int enemiesCount;
+    public int remainingEnemies = 0;
 
-    public RoomGenerator.Range enemiesCountRange = new(2, 4);
-    public float eliteProbability = 0.2f;
     public Vector2 RandomPosition()
     {
         int randomIndex = Random.Range(0, emptyPositions.Count);
         Vector2 RandomPosition = emptyPositions[randomIndex];
         emptyPositions.RemoveAt(randomIndex);
         return RandomPosition;
-    }
-
-    public void PlaceEnemies()
-    {
-        enemiesCount = Random.Range(enemiesCountRange.minimum, enemiesCountRange.maximum + 1);
-
-        for (int i = 0; i < enemiesCount; i++)
-        {
-            Vector2 randomPosition = RandomPosition();
-            Enemy enemy = Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, this.transform).GetComponent<Enemy>();
-            enemy.InitTarget();
-
-            if (Random.Range(0f, 1f) < eliteProbability)
-                enemy.gameObject.AddComponent(PrefabManager.GetRandomEliteType());
-        }
-    }
-
-    public void PlacePlayer()
-    {
-        Vector2 randomPosition = RandomPosition();
-        if (!PlayerController.Instantiated())
-            Instantiate(PrefabManager.Instance.player, randomPosition, Quaternion.identity);
-        else
-            PlayerController.Instance.transform.position = randomPosition;
-
-        //Set virtual camera to follow player
-        var vcam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
-        vcam.Follow = PlayerController.Instance.transform;
-
-        if (AICompanion.Instance == null)
-            Instantiate(PrefabManager.Instance.companion, randomPosition, Quaternion.identity);
-        else
-            AICompanion.Instance.transform.position = randomPosition;
-        //AICompanion.Instance.roomGenerator = this;
     }
 
     public Vector2Int RoomToGrid(Vector2 roomPos)
@@ -256,78 +232,92 @@ public class Room : MonoBehaviour
     {
         foreach (Direction direction in (Direction[])Enum.GetValues(typeof(Direction)))
         {
-
             Cell cell = GetCellAt(MoveInDirection(door, direction));
-            if (cell == null || cell.type == CellType.Empty)
+            // if (cell == null || cell.type == CellType.Empty)
+            if (cell == null)// && cell.type == CellType.Border)
                 return direction;
         }
         return null;
     }
-    public List<DoorsDiff> getPossibleConnections(List<Room> otherRooms, int randomIndex)
+
+    public void ComputePartSizeBoundingBox()
+    {
+        partSizeBoundingBox.Clear();
+        foreach (Vector2 partPos in partsPositions)
+        {
+            RectInt boundingBox = new()
+            {
+                x = (int)(partPos.x * partSize.x),
+                y = (int)(partPos.y * partSize.y),
+                width = (int)partSize.x,
+                height = (int)partSize.y
+            };
+
+            partSizeBoundingBox.Add(boundingBox);
+        }
+    }
+
+    public List<DoorsDiff> getPossibleConnections(List<Room> otherRooms, Room otherRoom)
     {
         List<DoorsDiff> possibleConnections = new();
 
         foreach (Vector2 doorPossiblePos in doorsPossiblePositions)
         {
-            foreach (Vector2 otherRoomDoor in otherRooms[randomIndex].doorsPossiblePositions)
+            foreach (Vector2 otherRoomDoor in otherRoom.doorsPossiblePositions)
             {
+                // Offset from the other room local pos to this room local pos ??
                 offset = doorPossiblePos - otherRoomDoor;
-                if (offset == Vector2.zero)
-                    break;
-
-                bool isValid = true;
 
                 // Get free direction from door else it's not valid
                 Direction? doorPossibleDir = getFreeDirectionFromDoor(doorPossiblePos);
                 if (doorPossibleDir == null)
-                    isValid = false;
+                    continue;
 
                 // Get free direction from otherDoor else it's not valid
-                Direction? otherRoomDoorDir = otherRooms[randomIndex].getFreeDirectionFromDoor(otherRoomDoor);
+                Direction? otherRoomDoorDir = otherRoom.getFreeDirectionFromDoor(otherRoomDoor);
                 if (otherRoomDoorDir == null)
-                    isValid = false;
+                    continue;
 
                 // If they are not facing each other it's not valid
-                if (isValid && ((Direction)(((int)doorPossibleDir + 2) % 4) != otherRoomDoorDir))
-                    isValid = false;
+                if (((int)doorPossibleDir % 2) != (int)otherRoomDoorDir % 2)
+                    continue;
+
 
                 List<RectInt> partSizeBoundingBox = new List<RectInt>();
                 List<RectInt> otherPartSizeBoundingBox = new List<RectInt>();
-                if (isValid)
+                //Calculate bounding box of the room base on parts
+                foreach (Vector2 partPos in partsPositions)
                 {
-                    //Calculate bounding box of the room base on parts
-                    foreach (Vector2 partPos in partsPositions)
-                    {
-                        RectInt boundingBox = new();
-                        boundingBox.x = (int)(partPos.x * partSize.x);
-                        boundingBox.y = (int)(partPos.y * partSize.y);
-                        boundingBox.width = (int)(partSize.x);
-                        boundingBox.height = (int)(partSize.y);
-                        boundingBox.x += -(int)(offset.x - otherRooms[randomIndex].offset.x);
-                        boundingBox.y += -(int)(offset.y - otherRooms[randomIndex].offset.y);
+                    RectInt boundingBox = new();
+                    boundingBox.x = (int)(partPos.x * partSize.x);
+                    boundingBox.y = (int)(partPos.y * partSize.y);
+                    boundingBox.width = (int)(partSize.x);
+                    boundingBox.height = (int)(partSize.y);
+                    boundingBox.x += -(int)(offset.x - otherRoom.offset.x);
+                    boundingBox.y += -(int)(offset.y - otherRoom.offset.y);
 
-                        partSizeBoundingBox.Add(boundingBox);
-                    }
+                    partSizeBoundingBox.Add(boundingBox);
+                }
 
-                    //Check if they are colliding
-                    foreach (RectInt boundingBox in partSizeBoundingBox)
+                bool isValid = true;
+                //Check if they are colliding
+                foreach (RectInt boundingBox in partSizeBoundingBox)
+                {
+                    foreach (Room room in otherRooms)
                     {
-                        foreach (Room room in otherRooms)
+                        foreach (RectInt otherBoundingBox in room.partSizeBoundingBox)
                         {
-                            foreach (RectInt otherBoundingBox in room.partSizeBoundingBox)
+                            if (boundingBox.Overlaps(otherBoundingBox))
                             {
-                                if (boundingBox.Overlaps(otherBoundingBox))
-                                {
-                                    isValid = false;
-                                    break;
-                                }
-                            }
-                            if (!isValid)
+                                isValid = false;
                                 break;
+                            }
                         }
                         if (!isValid)
                             break;
                     }
+                    if (!isValid)
+                        break;
                 }
 
                 if (isValid)
@@ -336,19 +326,5 @@ public class Room : MonoBehaviour
         }
 
         return possibleConnections;
-    }
-
-
-    public struct DoorsDiff
-    {
-        //the diff between 2 doors
-        public Vector2 offset;
-        //door of this room 
-        public Vector2 doorPossiblePos;
-        //door of last otherRooms
-        public Vector2 otherRoomDoor;
-
-        //bounding box of the room base on parts
-        public List<RectInt> partSizeBoundingBox;
     }
 }
