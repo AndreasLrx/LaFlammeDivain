@@ -68,16 +68,25 @@ public abstract class Enemy : Entity
     protected virtual bool Attack() { return false; }
 
     protected virtual bool CanTakeDamage() { return true; }
+    
+    [SerializeField] private AudioSource DeathSound;
+    [SerializeField] private AudioSource HitSound;
+
 
     public void TakeDamage(float damage)
     {
         if (!CanTakeDamage())
             return;
         health -= damage;
+        HitSound.Play();
         onTakeDamage?.Invoke();
         // destroy the object when hp is 0
         if (health <= 0)
+        {
+            DeathSound.Play();
             StartCoroutine(Death());
+        }
+            
     }
 
     private IEnumerator Death()
