@@ -24,23 +24,27 @@ public class BombWisp : Wisp
         explosionCollider.contactCaptureLayers = explosionMask;
     }
 
+
     private IEnumerator OnActivate()
     {
-        hasExploded = false;
+        // This function is called when the wisp is activated
+        // If the wisp has not exploded yet, it will move towards its target
+        // Once the wisp has reached its target, it will explode
+
         SetTarget((Vector2)owner.transform.position + owner.aimedDirection * range);
-        while (MoveTowardsTarget() && !hasExploded)
+
+        while (MoveTowardsTarget())
             yield return null;
-        if (!hasExploded)
-            Explode();
-        hasExploded = true;
-        yield break;
+
+        Explode();
     }
 
     public void Explode()
     {
-        WispAttackSound.Play();
-
         List<Collider2D> colliders = new();
+        WispAttackSound.Play();
+        hasExploded = true;
+
         explosionCollider.GetContacts(colliders);
 
         foreach (Collider2D other in colliders)
@@ -57,13 +61,5 @@ public class BombWisp : Wisp
                     break;
             }
         }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (!IsDetached() || hasExploded)
-            return;
-        Explode();
-        hasExploded = true;
     }
 }
