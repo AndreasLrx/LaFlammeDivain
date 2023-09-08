@@ -27,16 +27,14 @@ public class BombWisp : Wisp
 
     private IEnumerator OnActivate()
     {
-        // This function is called when the wisp is activated
-        // If the wisp has not exploded yet, it will move towards its target
-        // Once the wisp has reached its target, it will explode
-
+        hasExploded = false;
         SetTarget((Vector2)owner.transform.position + owner.aimedDirection * range);
-
-        while (MoveTowardsTarget())
+        while (MoveTowardsTarget() && !hasExploded)
             yield return null;
-
-        Explode();
+        if (!hasExploded)
+            Explode();
+        hasExploded = true;
+        yield break;
     }
 
     public void Explode()

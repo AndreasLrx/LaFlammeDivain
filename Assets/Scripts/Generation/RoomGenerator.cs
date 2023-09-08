@@ -456,7 +456,6 @@ public class RoomGenerator : MonoBehaviour
         {
             Vector2 randomPosition = room.RandomPosition() + (Vector2)room.transform.position;
             Enemy enemy = Instantiate(PrefabManager.GetRandomEnemy(), randomPosition, Quaternion.identity, room.transform).GetComponent<Enemy>();
-            Enemy.list.Add(enemy);
             enemy.InitTarget();
 
             if (Random.Range(0f, 1f) < eliteProbability)

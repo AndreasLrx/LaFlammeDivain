@@ -20,8 +20,6 @@ public abstract class Enemy : Entity
     private float currentTargetUpdateCooldown = 0f;
     private float attackCooldown = 0f;
 
-    public static List<Enemy> list = new();
-
     protected virtual void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -87,13 +85,6 @@ public abstract class Enemy : Entity
         {
             DeathSound.Play();
             StartCoroutine(Death());
-
-            // Remove this instance from the list of enemies in the room
-            list.Remove(this);
-            // if (list.Count == 0)
-            // {
-            //     // If there are no more enemies in the room, open the doors
-            // }
 
         }
 
