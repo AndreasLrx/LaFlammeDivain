@@ -92,7 +92,8 @@ public class Player : MonoBehaviour
 
     public void Attack()
     {
-        if (onlyWeaponAttack || !wisps.ActivateSelectedWisp()){
+        if (onlyWeaponAttack || !wisps.ActivateSelectedWisp())
+        {
             weapon?.Attack();
             attackSound.pitch = Random.Range(0.9f, 1.1f);
             attackSound.Play();
@@ -119,7 +120,7 @@ public class Player : MonoBehaviour
         }
         else
             WispAbsorbSound.Play();
-            
+
     }
 
     void ResetColor()

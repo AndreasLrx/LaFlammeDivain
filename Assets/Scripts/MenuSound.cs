@@ -8,7 +8,8 @@ public class MenuSound : MonoBehaviour
 
     public AudioSource audioSource;
 
-    public void SelectOption(){
+    public void SelectOption()
+    {
         audioSource.Play();
     }
 
