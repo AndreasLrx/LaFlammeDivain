@@ -34,10 +34,59 @@ Why ? Because we want to discover new technologies in that project
 
 - [![C#][csharp-icon]][csharp-url]
 - [![Unity][unity-icon]][unity-url]
+- [![Figma][figma-icon]][figma-url]
+- [![Git-LFS][git-lfs-icon]][git-lfs-url]
 
 <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 
 ---
+
+<!-- GETTING STARTED -->
+
+## Getting Started
+
+To get a local copy up and running follow these simple steps.
+
+### Prerequisites
+
+You need to install Unity, Visual Studio (Code) and Git LFS
+
+- Unity
+  - [Download Unity](https://unity3d.com/get-unity/download)
+- Visual Studio (Code)
+  - [Download Visual Studio](https://visualstudio.microsoft.com/downloads/)
+  - [Download Visual Studio Code](https://code.visualstudio.com/download)
+- Git LFS
+  - [Download Git LFS](https://git-lfs.github.com)
+
+### Installation
+
+1. Install Unity version 2022.3.2f1
+2. Install Visual Studio (or Visual Studio Code)
+3. Install Git LFS
+
+    ```sh
+    curl -fsSL https://bun.sh/install | bash
+    git lfs install
+    ```
+
+4. Clone the repo and check that git LFS elements are downloaded
+
+   ```sh
+    git clone git@github.com:AndreasLrx/LaFlammeDivain.git
+    cd LaFlammeDivain
+    git lfs checkout
+    git lfs pull
+   ```
+
+5. Open the project with Unity
+6. Set the external script editor to Visual Studio (or Visual Studio Code)
+7. Open the project with Visual Studio (or Visual Studio Code)
+8. Check that `com.unity.ide.visualstudio` is in the `Packages/manifest.json`, with the right version (2.0.20), and that the`com.unity.ide.vscode` is not in the `Packages/manifest.json` (the latter is deprecated, and both work with Visual Studio Code)
+9. Open the `Menu` scene
+10. Play the game, develop and enjoy !
+
+<p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
 
@@ -60,3 +109,7 @@ Some useful links we used during the project and would like to give credit to.
 [unity-url]: https://unity.com
 [csharp-icon]: https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=c-sharp&logoColor=white
 [csharp-url]: https://learn.microsoft.com/dotnet/csharp/
+[figma-icon]: https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white
+[figma-url]: https://www.figma.com
+[git-lfs-icon]: https://img.shields.io/badge/git-lfs-%23F05032.svg?style=for-the-badge&logo=git-lfs&logoColor=white
+[git-lfs-url]: https://git-lfs.github.com
