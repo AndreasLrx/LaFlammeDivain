@@ -24,6 +24,15 @@ Before starting the app, we have created a [Game Design Document](https://www.fi
 
 This is the end of year Epitech project in the Pre-MSc cursus. In this project, students decides their own project to show the skills they acquired during the year.
 
+We decided to create a rogue-lite video game.
+
+Main technical points:
+
+ - Player moveset
+ - Prodecural generation
+ - Scripted AI (enemies)
+ - Supervised AI
+
  <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 
 ---
@@ -34,6 +43,24 @@ Why ? Because we want to discover new technologies in that project
 
 - [![C#][csharp-icon]][csharp-url]
 - [![Unity][unity-icon]][unity-url]
+
+<p align="right">(<a href="#readme-top">Back to the top</a>)</p>
+
+---
+
+<!-- Getting Started -->
+
+## Getting Started
+
+### Prerequisites
+
+Unity version 2022.3.2f1
+
+### Installation
+
+Open the project with unity and click on the play button at the top.
+
+You can also play a live build by selecting file->Build And Run
 
 <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 
