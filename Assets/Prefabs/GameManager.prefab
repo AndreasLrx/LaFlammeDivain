@@ -51,18 +51,23 @@ MonoBehaviour:
   wallPrefab: {fileID: 6765124784350681279, guid: 3bc6f6454839a4fcda3b6ec7446829f1, type: 3}
   floorPrefab: {fileID: 457957571952232914, guid: 7f12890b0dee84ff59e09c4d8a289fb7, type: 3}
   wallTiles:
+  - {fileID: 21300000, guid: 4d151bad3661a194ba7e2911b902664d, type: 3}
+  - {fileID: 21300000, guid: 967cae2486faba5428e161f4dddbee91, type: 3}
+  - {fileID: 21300000, guid: 4422f0c8219d3a147abef92c28d5e3ec, type: 3}
+  floorTiles:
+  - {fileID: 21300000, guid: 55d0fd2530d61bc42afa8606dc8ffe45, type: 3}
   - {fileID: 21300000, guid: 3093f9ce6c4ac3945bf589ec0b618be0, type: 3}
   - {fileID: 21300000, guid: ca10df7e5838f484288ca3c27f6b3f7a, type: 3}
   - {fileID: 21300000, guid: ba5deb33bb383384786d219e0eeb54bc, type: 3}
   - {fileID: 21300000, guid: bfb5545359a29b1448093fff561b3988, type: 3}
-  floorTiles:
-  - {fileID: 21300000, guid: 55d0fd2530d61bc42afa8606dc8ffe45, type: 3}
   - {fileID: 21300000, guid: c12c2ab337e590141b3c55be99ffe036, type: 3}
   - {fileID: 21300000, guid: 3a1e320f53e23814da17c6a0858b1c82, type: 3}
   - {fileID: 21300000, guid: d469f84d80dd0f44f96459a03e8f8eb7, type: 3}
   - {fileID: 21300000, guid: d7fbb8589acc8334c90ac3ebd423b705, type: 3}
   - {fileID: 21300000, guid: 2810eab164c32cc43b8bf7051bc5e307, type: 3}
   - {fileID: 21300000, guid: 0ecb048ac1f0ab242a6d936889bbc815, type: 3}
+  closedPortal: {fileID: 21300000, guid: 59e07ec3ad479e24398ed752adff8440, type: 3}
+  OpenedPortal: {fileID: 21300000, guid: 8c5df8f46e9d5114286c92c54ce29b36, type: 3}
   enemies:
   - {fileID: 4557188609176430170, guid: 9a84eccaf3b222c459b7ce3ac560cc13, type: 3}
   - {fileID: 1338902929213844915, guid: ab5efd412608a63429432b1e50efcd62, type: 3}
@@ -83,7 +88,6 @@ MonoBehaviour:
   - {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
   lightPoint: {fileID: 7649469973289764995, guid: f2bec35a2403b3f459e02bde45f61d8a, type: 3}
   fireTrail: {fileID: 7649469973289764995, guid: d33347bb42554854bb1d8ed088f10374, type: 3}
-  humanoidNavMesh: {fileID: 7496402137135331960, guid: f0b8ad2ac8a21fd4e9b73ccda9dc62ba, type: 3}
   doorTiles: {fileID: 6765124784350681279, guid: 3a0d96d852acd4c5bbfe43b43d0286f0, type: 3}
 --- !u!114 &6366123417487268299
 MonoBehaviour:
@@ -114,6 +118,7 @@ MonoBehaviour:
     minimum: 5
     maximum: 10
   roomGenerator: {fileID: -6590489944768131976}
+  rooms: []
 --- !u!114 &-6590489944768131976
 MonoBehaviour:
   m_ObjectHideFlags: 0

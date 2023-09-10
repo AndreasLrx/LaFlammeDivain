@@ -46,7 +46,7 @@ public class GameMusic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PlayerController.Instance.GetComponent<PlayerController>().currentRoom.remainingEnemies > 0)
+        if (PlayerController.Instantiated() && PlayerController.Instance.GetComponent<PlayerController>().currentRoom.remainingEnemies > 0)
         {
             IntenseMusic();
         }

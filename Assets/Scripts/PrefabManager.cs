@@ -12,6 +12,8 @@ public class PrefabManager : Singleton<PrefabManager>
     public GameObject floorPrefab;
     public Sprite[] wallTiles;
     public Sprite[] floorTiles;
+    public Sprite closedPortal;
+    public Sprite OpenedPortal;
     public Enemy[] enemies;
     public Projectile boneProjectile;
     public Projectile ectoplasmProjectile;

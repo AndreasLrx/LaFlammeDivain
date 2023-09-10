@@ -14,12 +14,12 @@ public class Player : MonoBehaviour
     private Weapon weapon;
     private Animator animator;
     private bool onlyWeaponAttack = false;
-    [SerializeField] private AudioSource attackSound;
+    [SerializeField] private AudioSource attackSound = null;
     // [SerializeField] private AudioSource runningSound;
-    [SerializeField] private AudioSource SwitchNextWispSound;
-    [SerializeField] private AudioSource SwitchPreviousWispSound;
-    [SerializeField] private AudioSource DeathSound;
-    [SerializeField] private AudioSource WispAbsorbSound;
+    [SerializeField] private AudioSource SwitchNextWispSound = null;
+    [SerializeField] private AudioSource SwitchPreviousWispSound = null;
+    [SerializeField] private AudioSource DeathSound = null;
+    [SerializeField] private AudioSource WispAbsorbSound = null;
 
     public WispsGroup wisps { get { return _wisps; } }
     public Vector2 aimedDirection
@@ -116,7 +116,8 @@ public class Player : MonoBehaviour
         if (!wisps.AbsorbDamage())
         {
             GameManager.Instance.GameOver();
-            DeathSound.Play();
+            if (DeathSound != null && DeathSound.clip != null)
+                DeathSound.Play();
         }
         else
             WispAbsorbSound.Play();
