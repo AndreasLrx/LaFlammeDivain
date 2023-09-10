@@ -24,6 +24,15 @@ Before starting the app, we have created a [Game Design Document](https://www.fi
 
 This is the end of year Epitech project in the Pre-MSc cursus. In this project, students decides their own project to show the skills they acquired during the year.
 
+We decided to create a rogue-lite video game.
+
+Main technical points:
+
+ - Player moveset
+ - Prodecural generation
+ - Scripted AI (enemies)
+ - Supervised AI
+
  <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 
 ---
@@ -85,6 +94,10 @@ You need to install Unity, Visual Studio (Code) and Git LFS
 8. Check that `com.unity.ide.visualstudio` is in the `Packages/manifest.json`, with the right version (2.0.20), and that the`com.unity.ide.vscode` is not in the `Packages/manifest.json` (the latter is deprecated, and both work with Visual Studio Code)
 9. Open the `Menu` scene
 10. Play the game, develop and enjoy !
+
+### Build a live version (optional)
+
+You can play a live build by selecting file->Build And Run, select a directory and wait for the build to finish.
 
 <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 
